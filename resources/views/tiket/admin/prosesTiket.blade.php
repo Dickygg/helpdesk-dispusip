@@ -57,6 +57,10 @@ $statusStyle = match($tiket->status){
 default => 'btn-secondary',
 };
 @endphp
+
+@php
+$prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
+@endphp
 <div id="section-print">
     <div class="container-fluid">
         <div class="card shadow mb-4">
@@ -176,7 +180,7 @@ default => 'btn-secondary',
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="border-start ps-3" id="noteSection" style="display: none; flex: 1; min-width: 220px;">
-                                                            <form action="{{ route('admin.tiket.rejected', $tiket->id) }}" method="POST">
+                                                            <form action="{{ route($prefix.'admin.tiket.rejected', $tiket->id) }}" method="POST">
                                                                 @csrf
                                                                 @method('put')
                                                                 <input type="hidden" name="status" value="false">
@@ -253,7 +257,7 @@ default => 'btn-secondary',
                                                         <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:2px;">*Assign Petugas</div>
                                                         <div class="text-secondary" style="font-size: 0.65rem; font-weight: bold; margin:0;">Lakukan Pemilihan Petugas Teknis.</div>
                                                         <div class="mt-2">
-                                                            <form action="{{route('admin.tiket.assignment',$tiket->id)}}" method="POST">
+                                                            <form action="{{route($prefix.'admin.tiket.assignment',$tiket->id)}}" method="POST">
                                                                 @csrf
                                                                 @method('POST')
                                                                 <input type="hidden" value="{{$tiket->id}}" name="ticket_id">
@@ -461,7 +465,7 @@ default => 'btn-secondary',
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('admin.tiket.verification',$tiket->id)}}" method="post"
+                <form action="{{ route($prefix.'admin.tiket.verification',$tiket->id)}}" method="post"
                     enctype="multipart/form-data">
                     @csrf
                     @method('put')
@@ -499,7 +503,7 @@ default => 'btn-secondary',
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{route('admin.tiket.updatePiority',$tiket->id)}}" method="post"
+                <form action="{{route($prefix.'admin.tiket.updatePiority',$tiket->id)}}" method="post"
                     enctype="multipart/form-data">
                     @csrf
                     @method('put')

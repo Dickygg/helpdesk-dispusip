@@ -207,6 +207,7 @@ class TicketAdminController extends Controller
         }
 
         $tiket = TicketModels::findOrFail($id);
+        $newpriority = TicketPriorityModels::findOrFail($request->priority_id);
         $oldpiority = $tiket->priority?->name;
         if (!$tiket) {
             abort(404);
@@ -221,7 +222,7 @@ class TicketAdminController extends Controller
             ActivityHelper::logUpdate(
                 $tiket,
                 before: ['Pioritas' => $oldpiority],
-                after: ['Pioritas' => $request->name],
+                after: ['Pioritas' => $newpriority->name],
             );
 
             DB::commit();
