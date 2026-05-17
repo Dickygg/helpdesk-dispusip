@@ -1,0 +1,220 @@
+use App\Helpers\ActivityHelper;
+
+// store - tiket dibuat
+ActivityHelper::logCreate($tiket, [
+'ticket_code' => $tiket->ticket_code,
+'aplikasi' => $aplikasi->name,
+'title' => $tiket->title,
+]);
+
+// show - tiket dilihat
+ActivityHelper::logView($tiket, [
+'ticket_code' => $tiket->ticket_code,
+]);
+
+// update - tiket diperbarui
+ActivityHelper::logUpdate($tiket,
+before: ['status' => $oldStatus, 'title' => $oldTitle],
+after: ['status' => $newStatus, 'title' => $tiket->title],
+);
+
+// update - status berubah
+if ($oldStatus !== $newStatus) {
+ActivityHelper::logStatusChange($tiket, $oldStatus, $newStatus);
+}
+
+// destroy - tiket dihapus
+ActivityHelper::logDelete($tiket, [
+'ticket_code' => $tiket->ticket_code,
+'title' => $tiket->title,
+]);
+
+Nanti Kalau Mau Pakai di Controller Lain
+Tinggal tambah trait di model dan import helper:
+
+// Di model lain
+use App\Traits\HasActivityLog;
+class RoleModels extends BaseModel
+{
+use HasActivityLog;
+}
+
+// Di controller lain
+use App\Helpers\ActivityHelper;
+ActivityHelper::logCreate($role, ['name' => $role->roles_name]);
+ActivityHelper::logDelete($role, ['name' => $role->roles_name]);
+
+
+
+
+
+<!-- detail section lama -->
+@php
+$statusStyle = match($tiket->status?->name) {
+'Open' => 'text-primary',
+'Accept' => 'text-info',
+'Assigned' => 'text-warning',
+'In Progres' => 'text-warning',
+'Resolved' => 'text-success',
+'Closed' => 'text-secondary',
+'Rejected' => 'text-danger',
+default => 'text-secondary',
+};
+
+$priorityStyle = match($tiket->priority?->name) {
+'High' => 'text-danger',
+'Medium' => 'text-warning',
+'Low' => 'text-success',
+default => 'text-secondary',
+};
+
+$verificationStyle = match($tiket->verification_status) {
+'pending' => 'text-warning',
+'verified' => 'text-success',
+'rejected' => 'text-danger',
+default => 'text-secondary',
+};
+@endphp
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fw-bold">{{ $tiket->ticket_code }}</span>
+            </div>
+            <div class="card-body">
+                <h6 class="card-title">Judul Tiket : {{ $tiket->title }}</h6>
+                <h6 class="card-title">Prioritas Tiket : <span class="{{ $priorityStyle }} fw-bold">{{ $tiket->priority?->name ?? '-' }}</span></h6>
+                <h6 class="card-title">Status Verifikasi : <span class="{{ $verificationStyle }} fw-bold">{{ $tiket->verification_status ?? '-' }}</span></h6>
+                <h6 class="card-title">Status Tiket : <span class="fw-bold {{ $statusStyle }}">{{ $tiket->status?->name ?? '-' }}</span></h6>
+                <h6 class="card-title">Deskripsi Tiket:</h6>
+                <div class="p-3 bg-light rounded">
+                    <p class="mb-0">{{ $tiket->description ?? '-' }}</p>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between text-muted small">
+                <span>{{ $tiket->created_at->format('d M Y') }}</span>
+                <span>Estimasi: {{ $tiket->due_date ? \Carbon\Carbon::parse($tiket->due_date)->format('d M Y') : '-' }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <span class="fw-bold ">Attachments Tiket</span>
+            </div>
+            <div class="card-body">
+                @forelse ($tiket->attachments as $attachment)
+                <img src="{{ asset('storage/' . $attachment->file_path . '/' . $attachment->file_name) }}"
+                    alt="{{ $attachment->file_name }}"
+                    class="img-fluid rounded mb-2">
+                @empty
+                <p class="text-muted">Tidak ada lampiran.</p>
+                @endforelse
+            </div>
+            <div class="card-footer d-flex justify-content-between text-muted small">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row align-items-start">
+    <div class="col-md-8 align-self-start">
+        <h6 class="card-title text-dark">catatan :</h6>
+        @if($tiket->status->name == 'Rejected')
+        <div class="p-3 bg-danger text-light rounded mt-2">
+            <p class="mb-0">{{ $tiket->note ?? '-' }}</p>
+        </div>
+
+        @elseif($tiket->status->name == 'Resolved' || $tiket->status->name == 'Closed')
+        <div class="p-3 bg-success text-light rounded mt-2">
+            <p class="mb-0">{{ $tiket->description ?? '-' }}</p>
+            <a href="#" class=""> <span class="btn btn-sm btn-light text-success mt-4"><i class="fas fa-eye"></i> Bukti pengerjaan</span></a>
+        </div>
+        @else
+        <div class="p-3 bg-dispusip rounded mt-2">
+            <p class="mb-0">{{ $tiket->note ?? '-' }}</p>
+        </div>
+        @endif
+    </div>
+    <div class="col">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-history"></i> Riwayat Aktivitas
+                </h6>
+            </div>
+            <div class="card-body">
+                @forelse($logs as $log)
+                <div class="d-flex mb-3">
+
+                    {{-- Avatar --}}
+                    <div class="mr-3">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                            style="width:35px; height:35px; font-size:11px;">
+                            {{ strtoupper(substr($log->causer?->name ?? 'S', 0, 2)) }}
+                        </div>
+                    </div>
+
+                    {{-- Detail --}}
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ $log->causer?->name ?? 'System' }}</strong>
+                            <small class="text-muted">{{ $log->created_at->diffForHumans() }}</small>
+                        </div>
+
+                        {{-- Deskripsi --}}
+                        <p class="mb-1">{{ $log->description }}</p>
+
+                        {{-- Properties --}}
+                        @if($log->properties->isNotEmpty())
+                        @if($log->properties->has('before'))
+                        {{-- Tampilkan before & after --}}
+                        <small class="text-muted d-block">
+                            <strong>Sebelum:</strong>
+                            @foreach($log->properties['before'] as $key => $value)
+                            <span class="badge badge-light">{{ $key }}: {{ $value ?? '-' }}</span>
+                            @endforeach
+                        </small>
+                        <small class="text-muted d-block">
+                            <strong>Sesudah:</strong>
+                            @foreach($log->properties['after'] as $key => $value)
+                            <span class="badge badge-light">{{ $key }}: {{ $value ?? '-' }}</span>
+                            @endforeach
+                        </small>
+                        @elseif($log->properties->has('dari'))
+                        {{-- Tampilkan perubahan status --}}
+                        <small class="text-muted">
+                            <span class="badge badge-warning">{{ $log->properties['dari'] }}</span>
+                            <i class="fas fa-arrow-right mx-1"></i>
+                            <span class="badge badge-success">{{ $log->properties['ke'] }}</span>
+                        </small>
+                        @else
+                        {{-- Tampilkan properties lainnya --}}
+                        @foreach($log->properties as $key => $value)
+                        <small class="text-muted">
+                            <span class="badge badge-light">{{ $key }}: {{ $value }}</span>
+                        </small>
+                        @endforeach
+                        @endif
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Garis pemisah --}}
+                @if(!$loop->last)
+                <hr class="my-2">
+                @endif
+
+                @empty
+                <p class="text-muted text-center mb-0">Belum ada aktivitas.</p>
+                @endforelse
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- aaaa -->

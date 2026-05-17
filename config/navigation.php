@@ -1,0 +1,185 @@
+<?php
+// navigation menu bar
+return [
+    'Super Admin' => [
+        [
+            'heading' => 'Dashboard',
+        ],
+        [
+            'title' => 'Dashboard',
+            'route' => 'dashboard.super-admin',
+            'icon' => 'fas fa-fw fa-home'
+        ],
+        [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
+            'heading' => 'Manajemen Akses'
+        ],
+        [
+            'title' => 'Roles',
+            'route' => 'manage.roles.index',
+            'icon'  => 'fas fa-user-shield'
+        ],
+        [
+            'title' => 'Permissions',
+            'route' => 'manage.permissions.index',
+            'icon'  => 'fas fa-key'
+        ],
+        [
+            'title' => 'Assign Role User',
+            'route' => 'manage.user-roles.index',
+            'icon'  => 'fas fa-users-cog'
+        ],
+        [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
+            'heading' => 'Data Master'
+        ],
+        [
+            'title' => 'Data Daftar Aplikasi',
+            'route' => 'application.index',
+            'icon' => 'bi bi-menu-app'
+        ],
+        [
+            'title' => 'Data Daftar Prioritas',
+            'route' => 'piority.index',
+            'icon' => 'bi bi-exclamation-square'
+        ],
+        [
+            'title' => 'Data Daftar Status',
+            'route' => 'status.index',
+            'icon' => 'bi bi-arrow-repeat'
+        ],
+        [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
+            'heading' => 'Data Tiket'
+        ],
+        [
+            'title' => 'Buat Tiket',
+            'route' => 'sa.tiket.create',  // ← diubah
+            'icon' => 'bi-plus-square'
+        ],
+        [
+            'title' => 'Tiket Saya',
+            'route' => 'sa.tiket.index',   // ← diubah
+            'icon' => 'bi-ticket-detailed'
+        ],
+        [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
+            'heading' => 'Data Tiket (Admin)'
+        ],
+        [
+            'title' => 'Daftar Tiket',
+            'route' => 'sa.admin.tiket.index',  // ← diubah
+            'icon' => 'bi-ticket-detailed'
+        ],
+    ],
+
+    'Admin Helpdesk' => [
+        [
+            'heading' => 'Dashboard',
+        ],
+        [
+            'title' => 'Dashboard',
+            'route' => 'dashboard.admin',  // ← diubah, sebelumnya salah pakai dashboard.super-admin
+            'icon' => 'fas fa-fw fa-home'
+        ],
+        [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
+            'heading' => 'Data Master',
+        ],
+        [
+            'title' => 'Data Daftar Aplikasi',
+            'route' => 'application.index',
+            'icon' => 'bi bi-menu-app'
+        ],
+        [
+            'title' => 'Data Daftar Prioritas',
+            'route' => 'piority.index',
+            'icon' => 'bi bi-exclamation-square'
+        ],
+        [
+            'title' => 'Data Daftar Status',
+            'route' => 'status.index',
+            'icon' => 'bi bi-arrow-repeat'
+        ],
+        [
+            'heading' => 'Data Tiket (Admin)'
+        ],
+        [
+            'title' => 'Buat Tiket',
+            'route' => 'admin.tiket.create',
+            'icon' => 'bi-plus-square'
+        ],
+        [
+            'title' => 'Daftar Tiket',
+            'route' => 'admin.tiket.index',
+            'icon' => 'bi-ticket-detailed'
+        ],
+
+    ],
+
+    'Petugas Teknis' => [
+        [
+            'heading' => 'Dashboard',
+        ],
+        [
+            'title' => 'Dashboard',
+            'route' => 'dashboard.petugas',  // ← diubah, sebelumnya pakai testlayout
+            'icon' => 'fas fa-fw fa-home'
+        ],
+        [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
+            'heading' => 'Data Tiket'
+        ],
+        [
+            'title' => 'Tiket Masuk',
+            'route' => 'tiket.index',
+            'icon' => 'bi-ticket-detailed'
+        ],
+    ],
+
+    'Pengguna' => [
+        [
+            'heading' => 'Dashboard',
+        ],
+        [
+            'title' => 'Dashboard',
+            'route' => 'dashboard.pengguna',  // ← diubah, sebelumnya pakai dashboard.petugas
+            'icon' => 'fas fa-fw fa-home'
+        ],
+        [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
+            'heading' => 'Data Tiket'
+        ],
+        [
+            'title' => 'Buat Tiket',
+            'route' => 'tiket.create',
+            'icon' => 'bi-plus-square'
+        ],
+        [
+            'title' => 'Tiket Saya',
+            'route' => 'tiket.index',
+            'icon' => 'bi-ticket-detailed'
+        ],
+    ],
+];
