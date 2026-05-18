@@ -329,23 +329,6 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                 </div>
             </a>
         </div>
-        <!-- Closed -->
-        <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
-            <a href="{{ route($prefix . 'admin.tiket.index', ['status' => 'Closed']) }}" class="text-decoration-none">
-                <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Closed' ? 'active' : '' }}">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="bg-dark bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
-                            <i class="bi bi-x-circle-fill text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
-                        </div>
-                        <div>
-                            <div class="text-secondary title-cardtiket">Closed</div>
-                            <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $tiketstats->firstWhere('status', 'Closed')->total ?? 0 }}</div>
-                            <div class="text-muted title-cardtiket">Semua tiket</div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div>
     </div>
 
     <div class="row">

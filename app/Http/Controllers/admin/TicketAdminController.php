@@ -33,7 +33,7 @@ class TicketAdminController extends Controller
             ->with(['priority' => function ($query) {
                 $query->select('id', 'name');
             }])
-
+            ->whereNotin('status', ['Closed', 'Rejected'])
             ->when($request->status, function ($query, $status) {
                 $query->where('status', $status);
             })
