@@ -61,6 +61,8 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
     Route::put('super-admin/admin/tiket/verification/{tiket}', [TicketAdminController::class, 'VerificationAdmin'])->name('sa.admin.tiket.verification');
     Route::post('super-admin/admin/tiket/assignment/{tiket}', [AssigmentController::class, 'assignment'])->name('sa.admin.tiket.assignment');
     Route::put('super-admin/tiket/updatePiority/{tiket}', [TicketAdminController::class, 'updatePiorityTiket'])->name('sa.admin.tiket.updatePiority');
+    Route::get('super-admin/tiket/closeTiket/{tiket}', [TicketAdminController::class, 'closeTiket'])->name('sa.admin.tiket.closeTiket');
+
 
     // Tiket Pengguna — URL super-admin/tiket
     Route::get('super-admin/tiket', [TicketController::class, 'index'])->name('sa.tiket.index');
