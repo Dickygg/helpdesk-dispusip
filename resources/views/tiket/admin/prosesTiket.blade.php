@@ -340,8 +340,9 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                                 <i class="bi bi-flag"></i> Escalate Tiket
                                             </a>
                                             @endif
-                                            <a class="mb-3 d-flex justify-content-center btn btn-outline-danger">
+                                            <a href="#" class="mb-3 d-flex justify-content-center btn btn-outline-danger">
                                                 <i class="bi bi-lock"></i> Close Tiket
+                                                <!-- {{route('admin.tiket.closeTiket', $tiket->id)}} -->
                                             </a>
                                         </div>
                                     </div>
@@ -514,7 +515,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                             <select class="form-select form-control" aria-label="Default select example" name="priority_id" id="priority_id">
                                 <option value="" selected disabled>---- Pilih Prioritas ----</option>
                                 @foreach($piority as $s)
-                                <option value="{{$s->id}}">{{$s->name}} ({{$s->estimated_hours}} Jam)</option>
+                                <option value="{{$s->id}}">{{$s->name}} ({{$s->estimated_hours}} Jam) {{ $tiket->priority_id == $s->id ? '(Aktif)' : '' }}</option>
                                 @endforeach
                             </select>
                             @error('priority_id')

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Spatie\Activitylog\Models\Activity;
 
 class TicketAdminController extends Controller
@@ -192,12 +193,19 @@ class TicketAdminController extends Controller
 
     public function updatePiorityTiket(Request $request, string $id)
     {
+        $tiket = TicketModels::findOrFail($id);
         $rules = [
-            'priority_id' => 'required'
+            'priority_id' => [
+                'required',
+                Rule::notIn([$tiket->priority_id])
+            ]
         ];
 
+
         $messages = [
-            'priority_id.required' => 'Mohon Tentukan Pioritas Tiket Terlebih Dahulu!'
+            'priority_id.required' => 'Mohon Tentukan Pioritas Tiket Terlebih Dahulu!',
+            'priority_id.not_in' => 'Tidak bisa memilih prioritas yang sama dengan sekarang!'
+
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -206,7 +214,7 @@ class TicketAdminController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $tiket = TicketModels::findOrFail($id);
+
         $newpriority = TicketPriorityModels::findOrFail($request->priority_id);
         $oldpiority = $tiket->priority?->name;
         if (!$tiket) {
@@ -233,6 +241,29 @@ class TicketAdminController extends Controller
             return redirect()->back()->with('error', 'Oops, Gagal Memperbarui Data!.');
         }
     }
+
+    // public function closeTiket(string $id)
+    // {
+    //     $tiket = TicketModels::findOrFail($id);
+
+    //     if (!$this->cekUserverified($tiket)) {
+    //         return redirect()->back()->with('error', 'Oops, Pengguna Belum ConfirmasiTiket!.');
+    //     }
+
+    //     if ($tiket->status !== 'Resolved') {
+    //         return redirect()->back()->with('error', 'Oops, Status Tiket Belum Resolved!.');
+    //     }
+    // }
+
+    // private function cekUserverified(TicketModels $tiket)
+    // {
+    //     if (is_null($tiket->user_confirmed_at)) return false;
+
+    //     return [
+    //         'status' => true,
+    //         'message' => 'Pengguna Belum Verifikasi Tiket!.'
+    //     ];
+    // }
 
     private function getTotalStatus()
     {

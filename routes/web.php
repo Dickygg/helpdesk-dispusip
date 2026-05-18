@@ -83,6 +83,7 @@ Route::middleware(['auth', 'role:admin helpdesk'])->group(function () {
     Route::get('admin/tiket/create', [TicketController::class, 'create'])->name('admin.tiket.create');
     Route::put('admin/tiket/updatePiority/{tiket}', [TicketAdminController::class, 'updatePiorityTiket'])->name('admin.tiket.updatePiority');
 
+
     //assigment tiket
     Route::post('admin/tiket/assignment/{tiket}', [AssigmentController::class, 'assignment'])->name('admin.tiket.assignment');
 });
