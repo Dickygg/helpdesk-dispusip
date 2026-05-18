@@ -83,6 +83,11 @@ return [
             'route' => 'sa.admin.tiket.index',  // ← diubah
             'icon' => 'bi-ticket-detailed'
         ],
+        [
+            'title' => 'Daftar Riwayat Tiket',
+            'route' => 'sa.admin.tiket.historyTiket',
+            'icon' => 'bi-ticket-detailed'
+        ],
     ],
 
     'Admin Helpdesk' => [
@@ -117,6 +122,10 @@ return [
             'icon' => 'bi bi-arrow-repeat'
         ],
         [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
             'heading' => 'Data Tiket (Admin)'
         ],
         [
@@ -125,9 +134,21 @@ return [
             'icon' => 'bi-plus-square'
         ],
         [
-            'title' => 'Daftar Tiket',
+            'title' => 'Daftar Tiket Berjalan',
             'route' => 'admin.tiket.index',
             'icon' => 'bi-ticket-detailed'
+        ],
+        [
+            'title' => 'Daftar Riwayat Tiket',
+            'route' => 'admin.tiket.historyTiket',
+            'icon' => 'bi-ticket-detailed'
+        ],
+        [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
+            'heading' => 'Data Assigment (Admin)'
         ],
 
     ],

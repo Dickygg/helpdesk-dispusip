@@ -55,6 +55,7 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
         ->parameters(['user-roles' => 'user']);
 
     // Tiket Admin — URL super-admin/admin/tiket
+    Route::get('super-admin/tiket/historyTiket', [TicketAdminController::class, 'historyTiket'])->name('sa.admin.tiket.historyTiket');
     Route::resource('super-admin/admin/tiket', TicketAdminController::class)->names('sa.admin.tiket');
     Route::get('super-admin/admin/tiket/proses/{tiket}', [TicketAdminController::class, 'SiteprosesTiket'])->name('sa.admin.tiket.proses');
     Route::put('super-admin/admin/tiket/rejected/{tiket}', [TicketAdminController::class, 'rejectVerificationAdmin'])->name('sa.admin.tiket.rejected');
@@ -62,6 +63,7 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
     Route::post('super-admin/admin/tiket/assignment/{tiket}', [AssigmentController::class, 'assignment'])->name('sa.admin.tiket.assignment');
     Route::put('super-admin/tiket/updatePiority/{tiket}', [TicketAdminController::class, 'updatePiorityTiket'])->name('sa.admin.tiket.updatePiority');
     Route::get('super-admin/tiket/closeTiket/{tiket}', [TicketAdminController::class, 'closeTiket'])->name('sa.admin.tiket.closeTiket');
+
 
 
     // Tiket Pengguna — URL super-admin/tiket
@@ -78,6 +80,7 @@ Route::middleware(['auth', 'role:admin helpdesk'])->group(function () {
     Route::get('/dashboard/admin', [AdminDashboardController::class, 'index'])->name('dashboard.admin');
 
     // Tiket Admin
+    Route::get('admin/tiket/historyTiket', [TicketAdminController::class, 'historyTiket'])->name('admin.tiket.historyTiket');
     Route::resource('admin/tiket', TicketAdminController::class)->names('admin.tiket');
     Route::get('admin/tiket/proses/{tiket}', [TicketAdminController::class, 'SiteprosesTiket'])->name('admin.tiket.proses');
     Route::put('admin/tiket/rejected/{tiket}', [TicketAdminController::class, 'rejectVerificationAdmin'])->name('admin.tiket.rejected');

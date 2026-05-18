@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Helpres\ActivityHelper;
 use App\Http\Controllers\Controller;
+use App\Models\ApplicationModels;
 use App\Models\TicketAssignmentModels;
 use App\Models\TicketModels;
 use App\Models\TicketPriorityModels;
@@ -283,6 +284,45 @@ class TicketAdminController extends Controller
         }
     }
 
+    public function historyTiket(Request $request)
+    {
+
+        $data = TicketModels::with(['user' => function ($query) {
+            $query->select('id', 'name');
+        }])
+            ->with(['application' => function ($query) {
+                $query->select('id', 'name');
+            }])
+            ->with(['priority' => function ($query) {
+                $query->select('id', 'name');
+            }])
+            ->whereIn('status', ['Closed', 'Rejected'])
+            ->when($request->status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->when($request->start_date, function ($q) use ($request) {
+                $q->whereDate('created_at', '>=', $request->start_date);
+            })
+
+            ->when($request->end_date, function ($q) use ($request) {
+                $q->whereDate('created_at', '<=', $request->end_date);
+            })
+            ->when($request->id_aplikasi, function ($q) use ($request) {
+                $q->where('application_id', $request->id_aplikasi);
+            })
+            ->orderBy('created_at', 'DESC')
+            ->get();
+
+        $getTiketstats = $this->getTotalStatus();
+        $aplikasi = ApplicationModels::select('id', 'name')->get();
+        return view('tiket.admin.historyTiket', [
+            'tickets' => $data,
+            'aplikasi' => $aplikasi,
+            'tiketstats' => $getTiketstats['tiketstats'],      // langsung collection-nya kara tidak ingin di loop di view
+            'tikettotal' => $getTiketstats['tikettotalhistory'],
+        ]);
+    }
+
     private function cekUserverified(TicketModels $tiket)
     {
         if (is_null($tiket->user_confirmed_at)) return false;
@@ -301,9 +341,12 @@ class TicketAdminController extends Controller
 
         $tiketTotal = $tiketStats->sum('total');
 
+        $tiketTotalHistory = TicketModels::whereIn('status', ['Closed', 'Rejected'])->count();
+
         return [
             'tiketstats' => $tiketStats,
-            'tikettotal' => $tiketTotal
+            'tikettotal' => $tiketTotal,
+            'tikettotalhistory' => $tiketTotalHistory
         ];
     }
 }
