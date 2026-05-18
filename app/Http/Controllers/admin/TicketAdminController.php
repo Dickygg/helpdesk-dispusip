@@ -193,6 +193,7 @@ class TicketAdminController extends Controller
 
     public function updatePiorityTiket(Request $request, string $id)
     {
+        abort_if(Auth::user()->cannot('tiket.admin.Updatepriority'), 403);
 
         $tiket = TicketModels::findOrFail($id);
         $rules = [
@@ -245,6 +246,7 @@ class TicketAdminController extends Controller
 
     public function closeTiket(string $id)
     {
+        abort_if(Auth::user()->cannot('tiket.admin.closeTiket'), 403);
 
         $tiket = TicketModels::findOrFail($id);
         if (!$tiket) {
