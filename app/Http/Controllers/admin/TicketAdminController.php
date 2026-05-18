@@ -127,7 +127,8 @@ class TicketAdminController extends Controller
             $tiket->update([
                 'status' => 'Accept',
                 'verification_status' => 'verified',
-                'priority_id' => $request->priority_id
+                'priority_id' => $request->priority_id,
+                'admin_verified_at' => now()
             ]);
 
             ActivityHelper::logUpdate(
