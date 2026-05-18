@@ -47,7 +47,7 @@ class ManagePermissionController extends Controller
 
     public function destroy(Permission $permission)
     {
-        abort_if(Auth::user()->cannot('manage.permissions.destory'), 403);
+        abort_if(Auth::user()->cannot('manage.permissions.destroy'), 403);
         activity()->causedBy(auth()->user())
             ->log("Menghapus permission: {$permission->name}");
 

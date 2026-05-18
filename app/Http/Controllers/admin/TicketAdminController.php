@@ -193,6 +193,7 @@ class TicketAdminController extends Controller
 
     public function updatePiorityTiket(Request $request, string $id)
     {
+
         $tiket = TicketModels::findOrFail($id);
         $rules = [
             'priority_id' => [
@@ -242,28 +243,52 @@ class TicketAdminController extends Controller
         }
     }
 
-    // public function closeTiket(string $id)
-    // {
-    //     $tiket = TicketModels::findOrFail($id);
+    public function closeTiket(string $id)
+    {
 
-    //     if (!$this->cekUserverified($tiket)) {
-    //         return redirect()->back()->with('error', 'Oops, Pengguna Belum ConfirmasiTiket!.');
-    //     }
+        $tiket = TicketModels::findOrFail($id);
+        if (!$tiket) {
+            abort(404);
+        }
 
-    //     if ($tiket->status !== 'Resolved') {
-    //         return redirect()->back()->with('error', 'Oops, Status Tiket Belum Resolved!.');
-    //     }
-    // }
+        if (!$this->cekUserverified($tiket)) {
+            return redirect()->back()->with('error', 'Oops, Pengguna Belum ConfirmasiTiket!.');
+        }
 
-    // private function cekUserverified(TicketModels $tiket)
-    // {
-    //     if (is_null($tiket->user_confirmed_at)) return false;
+        if ($tiket->status !== 'Resolved') {
+            return redirect()->back()->with('error', 'Oops, Status Tiket Belum Resolved!.');
+        }
 
-    //     return [
-    //         'status' => true,
-    //         'message' => 'Pengguna Belum Verifikasi Tiket!.'
-    //     ];
-    // }
+
+        $oldStatus = $tiket->status;
+        DB::beginTransaction();
+        try {
+            $tiket->update([
+                'status' => 'Closed',
+            ]);
+            ActivityHelper::logUpdate(
+                $tiket,
+                before: ['status' => $oldStatus],
+                after: ['status' => $tiket->status],
+            );
+            DB::commit();
+            return redirect()->back()->with('success', 'Tiket Berhasil DiClosed!.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e);
+            return redirect()->back()->with('error', 'Oops, Tiket Tidak Berhasil diClosed!.');
+        }
+    }
+
+    private function cekUserverified(TicketModels $tiket)
+    {
+        if (is_null($tiket->user_confirmed_at)) return false;
+
+        return [
+            'status' => true,
+            'message' => 'Pengguna Belum Verifikasi Tiket!.'
+        ];
+    }
 
     private function getTotalStatus()
     {

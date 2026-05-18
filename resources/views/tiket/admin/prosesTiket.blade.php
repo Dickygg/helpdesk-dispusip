@@ -340,9 +340,9 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                                 <i class="bi bi-flag"></i> Escalate Tiket
                                             </a>
                                             @endif
-                                            <a href="#" class="mb-3 d-flex justify-content-center btn btn-outline-danger">
+                                            <a href="{{route('admin.tiket.closeTiket', $tiket->id)}}" class="mb-3 d-flex justify-content-center btn btn-outline-danger">
                                                 <i class="bi bi-lock"></i> Close Tiket
-                                                <!-- {{route('admin.tiket.closeTiket', $tiket->id)}} -->
+
                                             </a>
                                         </div>
                                     </div>
