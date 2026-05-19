@@ -331,6 +331,69 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
         </div>
     </div>
 
+    <form action="{{ route($prefix . 'admin.tiket.index')}}" method="GET">
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <div class="row align-items-end g-3">
+                            <!-- Tanggal Dari -->
+                            <div class="col-lg-3 col-md-6">
+                                <label class="form-label fw-semibold text-secondary">
+                                    Dari
+                                </label>
+                                <input type="date"
+                                    name="start_date"
+                                    class="form-control rounded-3 shadow-sm border-0">
+                            </div>
+                            <!-- Tanggal Sampai -->
+                            <div class="col-lg-3 col-md-6">
+                                <label class="form-label fw-semibold text-secondary">
+                                    Sampai
+                                </label>
+                                <input type="date"
+                                    name="end_date"
+                                    class="form-control rounded-3 shadow-sm border-0">
+                            </div>
+                            <!-- Search -->
+                            <div class="col-lg-3 col-md-6">
+
+                                <label class="form-label fw-semibold text-secondary">
+                                    Aplikasi
+                                </label>
+                                <select class="form-select form-control" name="id_aplikasi" id="id_aplikasi">
+                                    <option value="" selected>Semua Aplikasi</option>
+                                    @foreach($aplikasi as $s)
+                                    <option value="{{$s->id}}">{{$s->name}}</option>
+                                    @endforeach
+                                </select>
+                                @error('id_aplikasi')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
+
+                            </div>
+                            <!-- Tombol -->
+                            <div class="col-lg-3 col-md-12 d-flex justify-content-end">
+                                <div class="d-grid gap-2">
+                                    <button type="submit"
+                                        class="btn btn-primary rounded-3 shadow-sm">
+                                        <i class="bi bi-funnel me-1"></i>
+                                        Filter
+                                    </button>
+                                    <a href="#"
+                                        class="btn btn-outline-primary rounded-3 shadow-sm">
+                                        <i class="bi bi-download me-1"></i>
+                                        Export PDF
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
     <div class="row">
         <div class="col-12">
             <div class="card shadow-md mb-4">

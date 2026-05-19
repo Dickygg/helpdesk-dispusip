@@ -38,14 +38,25 @@ class TicketAdminController extends Controller
             ->when($request->status, function ($query, $status) {
                 $query->where('status', $status);
             })
+            ->when($request->start_date, function ($q) use ($request) {
+                $q->whereDate('created_at', '>=', $request->start_date);
+            })
+
+            ->when($request->end_date, function ($q) use ($request) {
+                $q->whereDate('created_at', '<=', $request->end_date);
+            })
+            ->when($request->id_aplikasi, function ($q) use ($request) {
+                $q->where('application_id', $request->id_aplikasi);
+            })
             ->orderBy('created_at', 'DESC')
             ->get();
 
 
         $getTiketstats = $this->getTotalStatus();
-
+        $aplikasi = ApplicationModels::select('id', 'name')->get();
         return view('tiket.admin.index', [
             'tickets' => $data,
+            'aplikasi' => $aplikasi,
             'tiketstats' => $getTiketstats['tiketstats'],      // langsung collection-nya kara tidak ingin di loop di view
             'tikettotal' => $getTiketstats['tikettotal']
         ]);
