@@ -24,12 +24,24 @@ class TicketController extends Controller
 
     // abort_if(Auth::user()->cannot('tiket.create'), 403); ikuti nama permission bukan dari names route
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
+        // dd($request->all());
 
         $data = TicketModels::with(['application', 'priority'])
             ->where('user_id', $user->id)
+            ->when($request->status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->when($request->search, function ($q) use ($request) {
+                $q->where(function ($query) use ($request) {
+                    $query->where('ticket_code', 'like', '%' . $request->search . '%')
+                        ->orWhereHas('application', function ($query) use ($request) {
+                            $query->where('name', 'like', '%' . $request->search . '%');
+                        });
+                });
+            })
             ->orderBy('created_at', 'DESC')
             ->get();
 

@@ -73,7 +73,8 @@
 @endpush
 
 @php
-$prefix = auth()->user()->hasRole('super admin') ? 'sa.admin.' : '';
+$prefix = auth()->user()->hasRole('super admin') ? 'admin.' : '';
+$prefix = auth()->user()->hasRole('admin helpdesk') ? 'sa.admin.' : '';
 @endphp
 <div class="container-fluid">
     <div class="row mb-3">
@@ -165,37 +166,65 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.admin.' : '';
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-6 d-none d-md-flex">
+                <div class="col-8 d-none d-md-flex">
                     <div class="btn-group " role="btn-group">
-                        <button type="button" class="btn btn-primary btn-sm px-4">
-                            <i class="bi bi-grid me-2"></i> Semua
-                        </button>
-
-                        <button type="button" class="btn btn-white btn-sm  border px-4">
-                            <span class="text-primary me-2">●</span> Open
-                        </button>
-
-                        <button type="button" class="btn btn-white btn-sm border px-4">
-                            <span class="text-warning me-2">●</span> Diproses
-                        </button>
-
-                        <button type="button" class="btn btn-white btn-sm border px-4">
-                            <span class="text-success me-2">●</span> Selesai
-                        </button>
-
-                        <button type="button" class="btn btn-white btn-sm border px-4">
-                            <span class="text-secondary me-2">●</span> Ditutup
-                        </button>
+                        <a href="{{ route($prefix . 'tiket.index', ['status' => '']) }}">
+                            <button type="button" class="btn btn-primary btn-sm px-4">
+                                <i class="bi bi-grid me-2"></i> Semua
+                            </button>
+                        </a>
+                        <a href="{{ route($prefix . 'tiket.index', ['status' => 'Open']) }}">
+                            <button type="button" class="btn btn-white btn-sm  border px-4">
+                                <span class="text-success me-2">●</span> Open
+                            </button>
+                        </a>
+                        <a href="{{ route($prefix . 'tiket.index', ['status' => 'Accept']) }}">
+                            <button type="button" class="btn btn-white btn-sm  border px-4">
+                                <span class="text-secondary me-2">●</span> Accept
+                            </button>
+                        </a>
+                        <a href="{{ route($prefix . 'tiket.index', ['status' => 'Assign']) }}">
+                            <button type="button" class="btn btn-white btn-sm  border px-4">
+                                <span class="text-primary me-2">●</span> Assign
+                            </button>
+                        </a>
+                        <a href="{{ route($prefix . 'tiket.index', ['status' => 'Progress']) }}">
+                            <button type="button" class="btn btn-white btn-sm border px-4">
+                                <span class="text-warning me-2">●</span> Diproses
+                            </button>
+                        </a>
+                        <a href="{{ route($prefix . 'tiket.index', ['status' => 'Resolved']) }}">
+                            <button type="button" class="btn btn-white btn-sm border px-4">
+                                <span class="text-success me-2">●</span> Selesai
+                            </button>
+                        </a>
+                        <a href="{{ route($prefix . 'tiket.index', ['status' => 'Closed']) }}">
+                            <button type="button" class="btn btn-white btn-sm border px-4">
+                                <span class="text-secondary me-2">●</span> Ditutup
+                            </button>
+                        </a>
                     </div>
                 </div>
                 <div class="col d-flex justify-content-end align-items-center">
-                    <form action="">
-                        <input
-                            type="text"
-                            class="form-control rounded-pill ps-4 pe-5 shadow-sm border-0 bg-light"
-                            placeholder="Cari tiket...">
+                    <form action="{{ route('tiket.index') }}" method="GET">
+                        <div class="d-flex justify-content-end align-items-center">
+                            <input
+                                type="text"
+                                name="search"
+                                value="{{ request('search') }}"
+                                class="form-control rounded-pill ps-4 pe-5 shadow-sm border-0 bg-light"
+                                placeholder="Cari tiket..."
+                                style="margin-right: 3px;">
+
+                            <button
+                                type="submit"
+                                class="btn btn-sm btn-primary ms-2"
+                                style="border-radius: 50%; height: fit-content;">
+
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
                     </form>
-                    <a type="Submit" class="btn btn-sm btn-primary" style="border-radius: 50%; height:fit-content; margin-left: 10px;"><i class="bi bi-search"></i></a>
                 </div>
             </div>
             <hr>
