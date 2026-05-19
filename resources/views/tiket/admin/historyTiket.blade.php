@@ -222,7 +222,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
         </div>
         <!-- Open -->
         <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
-            <a href="{{ route($prefix . 'admin.tiket.historyTiket', ['status' => 'Closed']) }}" class="text-decoration-none">
+            <a href="{{ route($prefix . 'admin.tiket.historyTiket',array_merge(request()->query()), ['status' => 'Closed']) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Closed' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
                         <div class="bg-secondary bg-opacity-10 p-2 shadow-sm" style="width: 55px; height:55px; border-radius:20px; margin-right:7px;">
@@ -239,7 +239,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
         </div>
         <!-- Accept -->
         <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
-            <a href="{{ route($prefix . 'admin.tiket.historyTiket', ['status' => 'Rejected']) }}" class="text-decoration-none">
+            <a href="{{ route($prefix . 'admin.tiket.historyTiket',array_merge(request()->query()), ['status' => 'Rejected']) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Rejected' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
                         <div class="bg-danger bg-opacity-10 p-2 shadow-sm" style="width: 55px; height:55px; border-radius:20px; margin-right:7px;">

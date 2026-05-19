@@ -246,7 +246,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
         </div>
         <!-- Open -->
         <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
-            <a href="{{ route($prefix . 'admin.tiket.index', ['status' => 'Open']) }}" class="text-decoration-none">
+            <a href="{{ route($prefix . 'admin.tiket.index', array_merge(request()->query()) , ['status' => 'Open']) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Open' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
                         <div class="bg-primary bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
@@ -263,7 +263,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
         </div>
         <!-- Accept -->
         <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
-            <a href="{{ route($prefix . 'admin.tiket.index', ['status' => 'Accept']) }}" class="text-decoration-none">
+            <a href="{{ route($prefix . 'admin.tiket.index',array_merge(request()->query()), ['status' => 'Accept']) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Accept' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
                         <div class="bg-success bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
@@ -280,7 +280,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
         </div>
         <!-- Assigned -->
         <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
-            <a href="{{ route($prefix . 'admin.tiket.index', ['status' => 'Assigned']) }}" class="text-decoration-none">
+            <a href="{{ route($prefix . 'admin.tiket.index',array_merge(request()->query()), ['status' => 'Assigned']) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Assigned' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
                         <div class="bg-secondary bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
@@ -297,7 +297,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
         </div>
         <!-- In Progress -->
         <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
-            <a href="{{ route($prefix . 'admin.tiket.index', ['status' => 'In Progress']) }}" class="text-decoration-none">
+            <a href="{{ route($prefix . 'admin.tiket.index',array_merge(request()->query()), ['status' => 'In Progress']) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'In Progress' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
                         <div class="bg-warning bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
@@ -314,7 +314,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
         </div>
         <!-- Resolved -->
         <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
-            <a href="{{ route($prefix . 'admin.tiket.index', ['status' => 'Resolved']) }}" class="text-decoration-none">
+            <a href="{{ route($prefix . 'admin.tiket.index',array_merge(request()->query()), ['status' => 'Resolved']) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Resolved' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
                         <div class="bg-info bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">

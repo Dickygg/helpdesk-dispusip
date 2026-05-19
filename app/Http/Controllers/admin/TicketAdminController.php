@@ -52,7 +52,7 @@ class TicketAdminController extends Controller
             ->get();
 
 
-        $getTiketstats = $this->getTotalStatus();
+        $getTiketstats = $this->getTotalStatus($request);
         $aplikasi = ApplicationModels::select('id', 'name')->get();
         return view('tiket.admin.index', [
             'tickets' => $data,
@@ -324,7 +324,7 @@ class TicketAdminController extends Controller
             ->orderBy('created_at', 'DESC')
             ->get();
 
-        $getTiketstats = $this->getTotalStatus();
+        $getTiketstats = $this->getTotalStatus($request);
         $aplikasi = ApplicationModels::select('id', 'name')->get();
         return view('tiket.admin.historyTiket', [
             'tickets' => $data,
@@ -344,15 +344,35 @@ class TicketAdminController extends Controller
         ];
     }
 
-    private function getTotalStatus()
+    private function getTotalStatus(Request $request)
     {
-        $tiketStats = TicketModels::select('status', DB::raw('COUNT(*) as total'))
+        $query = TicketModels::query()
+
+            ->when($request->start_date, function ($q) use ($request) {
+                $q->whereDate('created_at', '>=', $request->start_date);
+            })
+
+            ->when($request->end_date, function ($q) use ($request) {
+                $q->whereDate('created_at', '<=', $request->end_date);
+            })
+
+            ->when($request->id_aplikasi, function ($q) use ($request) {
+                $q->where('application_id', $request->id_aplikasi);
+            });
+
+        // Statistik Status
+        $tiketStats = (clone $query)
+            ->select('status', DB::raw('COUNT(*) as total'))
             ->groupBy('status')
             ->get();
 
-        $tiketTotal = $tiketStats->sum('total');
+        // Total Semua
+        $tiketTotal = (clone $query)->count();
 
-        $tiketTotalHistory = TicketModels::whereIn('status', ['Closed', 'Rejected'])->count();
+        // Total History
+        $tiketTotalHistory = (clone $query)
+            ->whereIn('status', ['Closed', 'Rejected'])
+            ->count();
 
         return [
             'tiketstats' => $tiketStats,
