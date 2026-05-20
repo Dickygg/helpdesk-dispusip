@@ -29,6 +29,12 @@ class TicketModels extends BaseModel
         'admin_verified_at',
         'verification_status',
         'note',
+        'due_date'
+    ];
+
+
+    protected $casts = [
+        'due_date' => 'datetime',
     ];
 
     public function getActivitylogOptions(): LogOptions

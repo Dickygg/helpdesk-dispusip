@@ -253,7 +253,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                     <th>Aplikasi</th>
                                     <th>Prioritas</th>
                                     <th>Status</th>
-                                    <th>Tanggal Diassign</th>
+                                    <th>Deadline</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -294,7 +294,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                             {{ $r->ticket?->status }}
                                         </span>
                                     </td>
-                                    <td>{{ $r->created_at->format('d M Y') }}</td>
+                                    <td>{{ $r->ticket?->due_date ? $r->ticket?->due_date->format('d F Y, H:i') : '-'}}</td>
                                     <td class="text-center">
                                         <div class="dropdown">
                                             <button class="btn btn-sm btn-outline-primary rounded-3"

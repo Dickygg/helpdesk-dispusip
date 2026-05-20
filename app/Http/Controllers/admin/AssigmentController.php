@@ -61,14 +61,17 @@ class AssigmentController extends Controller
         $oldStatus = $tiket->status;
         DB::beginTransaction();
         try {
-            TicketAssignmentModels::create([
+            $assignment = TicketAssignmentModels::create([
                 'ticket_id' => $id,
                 'user_id' => $request->user_id,
                 'assigned_by' => Auth::user()->id,
                 'assigned_at' => now()
             ]);
             $tiket->update([
-                'status' => 'Assigned'
+                'status' => 'Assigned',
+                'due_date' => $assignment->assigned_at
+                    ->copy()
+                    ->addHours($tiket->priority->estimated_hours)
             ]);
 
             ActivityHelper::logAssign(

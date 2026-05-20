@@ -4,6 +4,14 @@
 @section('content')
 @push('styles')
 @endpush
+
+@php
+$prefix = match(true) {
+auth()->user()->hasRole('super admin') => 'sa.',
+auth()->user()->hasRole('admin helpdesk') => 'admin.',
+default => ''
+};
+@endphp
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
