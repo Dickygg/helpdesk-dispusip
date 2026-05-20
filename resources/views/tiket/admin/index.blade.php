@@ -355,9 +355,8 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                     name="end_date"
                                     class="form-control rounded-3 shadow-sm border-0">
                             </div>
-                            <!-- Search -->
+                            <!-- Search aplikasi-->
                             <div class="col-lg-3 col-md-6">
-
                                 <label class="form-label fw-semibold text-secondary">
                                     Aplikasi
                                 </label>
@@ -372,8 +371,25 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 @enderror
 
                             </div>
+                            <!-- seacrh deadline -->
+                            <div class="col-lg-3 col-md-6">
+                                <label class="form-label fw-semibold text-secondary">
+                                    Deadline
+                                </label>
+                                <select class="form-select form-control" name="deadline_filter" id="deadline_filter">
+                                    <option value="" selected>Semua Deadline</option>
+                                    <option value="today">Hari Ini</option>
+                                    <option value="week">Minggu Ini</option>
+                                    <option value="overdue">Overdue</option>
+                                    <option value="upcoming">Hampir Telat</option>
+                                </select>
+                                @error('id_aplikasi')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
+
+                            </div>
                             <!-- Tombol -->
-                            <div class="col-lg-3 col-md-12 d-flex justify-content-end">
+                            <div class="col-lg-12 col-md-12 d-flex justify-content-end mt-md-2">
                                 <div class="d-grid gap-2">
                                     <button type="submit"
                                         class="btn btn-primary rounded-3 shadow-sm">

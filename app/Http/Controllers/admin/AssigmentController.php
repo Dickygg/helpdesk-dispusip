@@ -18,9 +18,29 @@ use Illuminate\Support\Facades\Validator;
 class AssigmentController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
         $assignment = TicketAssignmentModels::with(['ticket', 'technician', 'admin'])
+            ->when($request->start_date, function ($q) use ($request) {
+                $q->whereDate('created_at', '>=', $request->start_date);
+            })
+
+            ->when($request->end_date, function ($q) use ($request) {
+                $q->whereDate('created_at', '<=', $request->end_date);
+            })
+            ->when($request->id_aplikasi, function ($q) use ($request) {
+                $q->whereHas('ticket', function ($q) use ($request) {
+                    $q->where('application_id', $request->id_aplikasi);
+                });
+            })
+            ->when($request->id_petugas, function ($q) use ($request) {
+                $q->where('user_id', $request->id_petugas);
+            })
+            ->when($request->id_priority, function ($q) use ($request) {
+                $q->whereHas('ticket', function ($q) use ($request) {
+                    $q->where('priority_id', $request->id_priority);
+                });
+            })
             ->orderBy('created_at', 'DESC')
             ->get();
 

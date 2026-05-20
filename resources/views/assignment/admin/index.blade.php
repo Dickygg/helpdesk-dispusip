@@ -143,7 +143,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
 
 <div class="container-fluid">
     <!-- searchbar -->
-    <form action="{{ route($prefix . 'admin.tiket.index')}}" method="GET">
+    <form action="{{ route($prefix . 'admin.assigment.index')}}" method="GET">
         <div class="row">
             <div class="col-12">
                 <div class="card border-0 shadow-sm rounded-4 mb-4">
@@ -184,6 +184,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 @enderror
 
                             </div>
+                            <!-- petugas -->
                             <div class="col-lg-4 col-md-6">
                                 <label class="form-label fw-semibold text-secondary">
                                     Petugas
