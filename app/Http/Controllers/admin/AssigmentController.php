@@ -4,8 +4,11 @@ namespace App\Http\Controllers\admin;
 
 use App\Helpres\ActivityHelper;
 use App\Http\Controllers\Controller;
+use App\Models\ApplicationModels;
 use App\Models\TicketAssignmentModels;
 use App\Models\TicketModels;
+use App\Models\TicketPriorityModels;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +17,28 @@ use Illuminate\Support\Facades\Validator;
 
 class AssigmentController extends Controller
 {
+
+    public function index()
+    {
+        $assignment = TicketAssignmentModels::with(['ticket', 'technician', 'admin'])
+            ->orderBy('created_at', 'DESC')
+            ->get();
+
+
+        $aplikasi = ApplicationModels::select('id', 'name')->get();
+        $petugas = User::select('id', 'username')
+            ->role('petugas teknis')
+            ->get();
+        $prioritas = TicketPriorityModels::select('id', 'name')->get();
+
+        return view('assignment.admin.index', [
+            'data' => $assignment,
+            'aplikasi' => $aplikasi,
+            'petugas' => $petugas,
+            'prioritas' => $prioritas
+        ]);
+    }
+
     public function assignment(Request $request, string $id)
     {
         abort_if(Auth::user()->cannot('tiket.admin.assignment'), 403);

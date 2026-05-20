@@ -88,6 +88,19 @@ return [
             'route' => 'sa.admin.tiket.historyTiket',
             'icon' => 'bi-ticket-detailed'
         ],
+        [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
+            'heading' => 'Data Assigment (Admin)'
+        ],
+        [
+            'title' => 'Daftar Assigment',
+            'route' => 'sa.admin.assigment.index',
+            'icon' => 'bi-ticket-detailed'
+        ],
+
     ],
 
     'Admin Helpdesk' => [

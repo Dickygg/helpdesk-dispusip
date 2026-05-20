@@ -54,6 +54,10 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
         ->only(['index', 'edit', 'update'])
         ->parameters(['user-roles' => 'user']);
 
+    //Route Assigment super-admin
+    Route::get('super-admin/admin/assigment/', [AssigmentController::class, 'index'])->name('sa.admin.assigment.index');
+
+
     // Tiket Admin — URL super-admin/admin/tiket
     Route::get('super-admin/tiket/historyTiket', [TicketAdminController::class, 'historyTiket'])->name('sa.admin.tiket.historyTiket');
     Route::resource('super-admin/admin/tiket', TicketAdminController::class)->names('sa.admin.tiket');
@@ -61,8 +65,8 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
     Route::put('super-admin/admin/tiket/rejected/{tiket}', [TicketAdminController::class, 'rejectVerificationAdmin'])->name('sa.admin.tiket.rejected');
     Route::put('super-admin/admin/tiket/verification/{tiket}', [TicketAdminController::class, 'VerificationAdmin'])->name('sa.admin.tiket.verification');
     Route::post('super-admin/admin/tiket/assignment/{tiket}', [AssigmentController::class, 'assignment'])->name('sa.admin.tiket.assignment');
-    Route::put('super-admin/tiket/updatePiority/{tiket}', [TicketAdminController::class, 'updatePiorityTiket'])->name('sa.admin.tiket.updatePiority');
-    Route::get('super-admin/tiket/closeTiket/{tiket}', [TicketAdminController::class, 'closeTiket'])->name('sa.admin.tiket.closeTiket');
+    Route::put('super-admin/admin/tiket/updatePiority/{tiket}', [TicketAdminController::class, 'updatePiorityTiket'])->name('sa.admin.tiket.updatePiority');
+    Route::get('super-admin/admin/tiket/closeTiket/{tiket}', [TicketAdminController::class, 'closeTiket'])->name('sa.admin.tiket.closeTiket');
 
 
 
@@ -72,6 +76,7 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
     Route::post('super-admin/tiket', [TicketController::class, 'store'])->name('sa.tiket.store');
     Route::get('super-admin/tiket/{tiket}', [TicketController::class, 'show'])->name('sa.tiket.show');
 });
+
 
 // -------------------------------------------------------
 // Admin Helpdesk
