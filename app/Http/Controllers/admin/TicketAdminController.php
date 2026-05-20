@@ -48,6 +48,24 @@ class TicketAdminController extends Controller
             ->when($request->id_aplikasi, function ($q) use ($request) {
                 $q->where('application_id', $request->id_aplikasi);
             })
+            ->when($request->deadline_filter == 'today', function ($query) {
+                $query->whereDate('due_date', today());
+            })
+            ->when($request->deadline_filter == 'week', function ($query) {
+                $query->whereBetween('due_date', [
+                    now(),
+                    now()->endOfWeek()
+                ]);
+            })
+            ->when($request->deadline_filter == 'overdue', function ($query) {
+                $query->where('due_date', '<', now());
+            })
+            ->when($request->deadline_filter == 'upcoming', function ($query) {
+                $query->whereBetween('due_time', [
+                    now(),
+                    now()->addHours(2)
+                ]);
+            })
             ->orderBy('created_at', 'DESC')
             ->get();
 
