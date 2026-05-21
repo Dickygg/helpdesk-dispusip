@@ -163,6 +163,11 @@ return [
         [
             'heading' => 'Data Assigment (Admin)'
         ],
+        [
+            'title' => 'Daftar Assignment',
+            'route' => 'admin.assigment.index',
+            'icon' => 'bi-ticket-detailed'
+        ],
 
     ],
 
