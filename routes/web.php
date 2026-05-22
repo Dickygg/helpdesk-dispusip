@@ -12,6 +12,7 @@ use App\Http\Controllers\PiorityController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\pengguna\TicketController;
+use App\Http\Controllers\petugas\HandlingTiketController;
 use App\Http\Controllers\SuperAdmin\ManagePermissionController;
 use App\Http\Controllers\SuperAdmin\ManageRoleController;
 use App\Http\Controllers\SuperAdmin\ManageUserRoleController;
@@ -105,8 +106,10 @@ Route::middleware(['auth', 'role:admin helpdesk'])->group(function () {
 Route::middleware(['auth', 'role:petugas teknis'])->group(function () {
     Route::get('/dashboard/petugas', [PetugasDashboardController::class, 'index'])->name('dashboard.petugas');
 
-    // Route::get('/tiket', [TicketController::class, 'index'])->name('tiket.index');
-    // Route::get('/tiket/{tiket}', [TicketController::class, 'show'])->name('tiket.show');
+    // handling petugas route
+    Route::get('/assignment/petugas/', [HandlingTiketController::class, 'index'])->name('assignment.petugas.index');
+    Route::get('/assignment/petugas/show/{assignment}', [HandlingTiketController::class, 'show'])->name('assignment.petugas.show');
+    Route::get('/assignment/petugas/prosesAssignment/{assignment}', [HandlingTiketController::class, 'prosesAssignment'])->name('assignment.petugas.prosesAssignment');
 });
 
 // -------------------------------------------------------

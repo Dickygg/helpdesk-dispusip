@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
         return redirect(match (true) {
             $role === 'super admin'    => route('dashboard.super-admin'),
             $role === 'admin helpdesk' => route('dashboard.admin'),
-            $role === 'petugas teknis' => route('dashboard.petugas-teknis'),
+            $role === 'petugas teknis' => route('dashboard.petugas'),
             $role === 'pengguna'       => route('dashboard.pengguna'),
             default                    => route('login'),
         });

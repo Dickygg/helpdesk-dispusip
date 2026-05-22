@@ -188,9 +188,9 @@ return [
             'heading' => 'Data Tiket'
         ],
         [
-            'title' => 'Tiket Masuk',
-            'route' => 'tiket.index',
-            'icon' => 'bi-ticket-detailed'
+            'title' => 'Data Assigment Masuk',
+            'route' => 'assignment.petugas.index',
+            'icon' => 'bi bi-send'
         ],
     ],
 

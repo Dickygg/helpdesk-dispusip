@@ -20,7 +20,7 @@ class RedirectIfAuthenticated
                 return match (true) {
                     $user->hasRole('super admin')    => redirect(route('dashboard.super-admin')),
                     $user->hasRole('admin helpdesk') => redirect(route('dashboard.admin')),
-                    $user->hasRole('petugas teknis') => redirect(route('dashboard.petugas-teknis')),
+                    $user->hasRole('petugas teknis') => redirect(route('dashboard.petugas')),
                     $user->hasRole('pengguna')       => redirect(route('dashboard.pengguna')),
                     default                          => abort(403, 'Role tidak dikenali'),
                 };
