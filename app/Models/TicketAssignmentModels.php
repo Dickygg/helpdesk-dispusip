@@ -15,8 +15,13 @@ class TicketAssignmentModels extends BaseModel
         'assigned_at',
         'started_at',
         'finished_at',
+        'work_duration',
         'status',
-        'notes',
+        'note',
+    ];
+    protected $casts = [
+        'started_at' => 'datetime',
+        'finish_at'  => 'datetime',
     ];
 
     public function ticket()
@@ -32,5 +37,14 @@ class TicketAssignmentModels extends BaseModel
     public function admin()
     {
         return $this->belongsTo(User::class, 'assigned_by');
+    }
+
+    public function Assignattachments()
+    {
+        return $this->hasOne(
+            AssignmentAttachmentModel::class,
+            'ticket_assignment_id',
+            'id'
+        );
     }
 }

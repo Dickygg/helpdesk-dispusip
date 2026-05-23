@@ -137,7 +137,7 @@ class TicketController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Gagal buat tiket: ' . $e->getMessage());
-            dd($e);
+
             return redirect()->back()->withInput()->with('error', 'Oops, Gagal menyimpan tiket, silakan coba lagi.');
         }
     }

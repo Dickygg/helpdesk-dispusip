@@ -85,7 +85,7 @@ default => 'btn-secondary',
                                     </div>
                                     <div class="col d-flex justify-content-end" style="height: fit-content;">
                                         <a onclick="downloadPDF()" class="btn btn-outline-success btn-sm" style="margin-right: 4px;"><i class="bi bi-download"></i> Unduh PDF</a>
-                                        <a class="btn btn-outline-primary btn-sm"><i class="bi bi-download"></i> Kerjakan Sekarang</a>
+                                        <a href="{{route('assignment.petugas.prosesAssignment', $data->id)}}" class="btn btn-outline-primary btn-sm"><i class="bi bi-download"></i> Kerjakan Sekarang</a>
                                     </div>
                                 </div>
                             </div>
@@ -158,8 +158,14 @@ default => 'btn-secondary',
 
                                                 @elseif($data->ticket->status == 'Resolved' || $data->ticket->status == 'Closed')
                                                 <div class="p-3 bg-success text-light rounded mt-2">
-                                                    <p class="mb-0">{{ $data->ticket->description ?? '-' }}</p>
-                                                    <a href="#" class=""> <span class="btn btn-sm btn-light text-success mt-4"><i class="fas fa-eye"></i> Bukti pengerjaan</span></a>
+                                                    <p class="mb-0">{{ $data->ticket->note ?? '-' }}</p>
+                                                    @if($data->Assignattachments?->file_path)
+                                                    <a href="{{ Storage::url($data->Assignattachments->file_path) }}" target="_blank">
+                                                        <span class="btn btn-sm btn-light text-success mt-2">
+                                                            <i class="fas fa-eye"></i> Bukti Pengerjaan
+                                                        </span>
+                                                    </a>
+                                                    @endif
                                                 </div>
                                                 @else
                                                 <div class="p-3 bg-dispusip rounded mt-2">

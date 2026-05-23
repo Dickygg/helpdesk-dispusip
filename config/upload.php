@@ -5,7 +5,8 @@ return  [
             'arjuna' => 'arjuna',
             'siapjak' => 'siapjak',
             'jaklitera' => 'jaklitera',
-            'website' => 'website'
+            'website' => 'website',
+            'assignment' => 'assignment'
         ],
         'accept_html' => [
             'image' => 'image/png,image/jpeg,image/jpg,image/webp',
