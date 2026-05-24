@@ -22,7 +22,7 @@ class TicketController extends Controller
      * Display a listing of the resource.
      */
 
-    // abort_if(Auth::user()->cannot('tiket.create'), 403); ikuti nama permission bukan dari names route
+    // abort_if(Auth::user()->cannot('data.create'), 403); ikuti nama permission bukan dari names route
 
     public function index(Request $request)
     {
@@ -149,7 +149,7 @@ class TicketController extends Controller
     {
         abort_if(Auth::user()->cannot('tiket.show'), 403);
 
-        $data = TicketModels::with(['application', 'priority', 'attachments'])
+        $data = TicketModels::with(['application', 'priority', 'attachments', 'assignment.Assignattachments'])
             ->where('id', $id)
             ->first();
 
@@ -157,6 +157,7 @@ class TicketController extends Controller
             ->where('subject_id', $data->id)
             ->with('causer')
             ->latest()
+            ->take(3)
             ->get();
 
         return view('tiket.pengguna.showdetail', [
@@ -166,27 +167,71 @@ class TicketController extends Controller
     }
 
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function Konfirmasi(string $id)
     {
-        //
+        $data = TicketModels::findOrFail($id);
+        $oldstatus = $data->status;
+        DB::beginTransaction();
+        try {
+            $data->update([
+                'user_confirmed_at' => now()
+            ]);
+            $data->refresh();
+            ActivityHelper::logUpdate(
+                $data,
+                before: ['status' => $oldstatus],
+                after: ['status' => $data->status],
+            );
+            DB::commit();
+            sendTelegram(
+                "📢 *Pemberitahuan Tiket*\n" .
+                    "⚡ Code Tiket: {$data->ticket_code}\n" .
+                    "📢 Pemberitahuan: Pengguna Sudah Mengkonfirmasi Tiket, Segera Tutup Tiket.!.\n"
+            );
+            return redirect()->route('tiket.index')->with('success', 'Tiket berhasil diKonfirmasi!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e);
+            dd($e);
+            return redirect()->back()->withInput()->with('error', 'Oops, Gagal Konfirmasi tiket, silakan coba lagi.');
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function rejectedKonfirmasi(Request $request, string $id)
     {
-        //
-    }
+        $data = TicketModels::findOrFail($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $request->validate([
+            'reason_rejected' => 'required'
+        ], [
+            'reason_rejected.required' => 'Harap Memberikan Alasan Penolakan!'
+        ]);
+
+        $oldstatus = $data->status;
+        DB::beginTransaction();
+        try {
+            $data->update([
+                'reason_rejected' => $request->reason_rejected,
+                'status' => 'Reopen'
+            ]);
+
+            ActivityHelper::logUpdate(
+                $data,
+                before: ['status' => $oldstatus],
+                after: ['status' => $data->status],
+            );
+            DB::commit();
+            sendTelegram(
+                "📢 *Pemberitahuan Tiket*\n" .
+                    "⚡ Code Tiket: {$data->ticket_code}\n" .
+                    "📢 Pemberitahuan: Pengguna Menolak Konfrimasi Tiket.!.\n"
+            );
+            return redirect()->route('tiket.index')->with('success', 'Tiket berhasil ditolak!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e);
+            dd($e);
+            return redirect()->route('tiket.index')->with('error', 'Oops, Gagal Mengubah Status Konfirmasi!');
+        }
     }
 }

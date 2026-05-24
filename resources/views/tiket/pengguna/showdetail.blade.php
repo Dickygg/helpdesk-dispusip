@@ -55,6 +55,13 @@ $verificationStyle = match($tiket->verification_status) {
 default => 'text-secondary',
 };
 
+$nodepriorityStyle = match($tiket->priority?->name) {
+'High' => 'bg-danger',
+'Medium' => 'bg-warning',
+'Low' => 'bg-success',
+default => 'bg-secondary',
+};
+
 $statusStyle = match($tiket->status){
 'Open' => 'btn-primary',
 'Accept' => 'btn-info',
@@ -63,6 +70,7 @@ $statusStyle = match($tiket->status){
 'Resolved' => 'btn-success',
 'Closed' => 'btn-secondary',
 'Rejected' => 'btn-danger',
+'Reopen' => 'btn-warning',
 default => 'btn-secondary',
 };
 
@@ -88,7 +96,8 @@ default => 'btn-secondary',
                                         </div>
                                     </div>
                                     <div class="col d-flex justify-content-md-end" style="height: fit-content;">
-                                        <a onclick="downloadPDF()" class="btn btn-outline-primary btn-sm"><i class="bi bi-download"></i> Unduh PDF</a>
+                                        <a href="{{route('tiket.index')}}" class="btn btn-outline-primary btn-sm" style="margin-right: 5px;"><i class="bi bi-arrow-left"></i> Kembali</a>
+                                        <a onclick="downloadPDF()" class="btn btn-outline-success btn-sm"><i class="bi bi-download"></i> Unduh PDF</a>
                                     </div>
                                 </div>
                             </div>
@@ -105,7 +114,7 @@ default => 'btn-secondary',
                                     <div class="col-md-3 col-sm-6 colums-card-body">
                                         <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-bookmark-star"></i> Prioritas</div>
                                         <div class="d-flex align-items-center gap-1" style="font-size: 0.8rem;">
-                                            <span style="margin-right:5px;width: 8px; height: 8px; border-radius: 50%; background-color: #726f6fff; display: inline-block;"></span>
+                                            <span class="{{$nodepriorityStyle}}" style="margin-right:5px;width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
                                             <span class="{{ $priorityStyle }} fw-bold">{{$tiket->priority?->name ?? 'Belum Ditentukan'}}</span>
                                         </div>
                                     </div>
@@ -153,11 +162,17 @@ default => 'btn-secondary',
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" style="margin-bottom: 10px;">
                                     <div class="col">
                                         <div class="card">
                                             <div class="card-body">
-                                                <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:6px;"><i class="bi bi-card-text"></i> Catatan Pengerjaan</div>
+                                                <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:6px;"><i class="bi bi-card-text"></i>
+                                                    @if($tiket->status == 'Rejected' || $tiket->status == 'Reopen')
+                                                    Alasan Penolakan
+                                                    @else
+                                                    Catatan Pengerjaan
+                                                    @endif
+                                                </div>
                                                 @if($tiket->status == 'Rejected')
                                                 <div class="p-3 bg-danger text-light rounded mt-2">
                                                     <p class="mb-0">{{ $tiket->note ?? '-' }}</p>
@@ -165,8 +180,18 @@ default => 'btn-secondary',
 
                                                 @elseif($tiket->status == 'Resolved' || $tiket->status == 'Closed')
                                                 <div class="p-3 bg-success text-light rounded mt-2">
-                                                    <p class="mb-0">{{ $tiket->description ?? '-' }}</p>
-                                                    <a href="#" class=""> <span class="btn btn-sm btn-light text-success mt-4"><i class="fas fa-eye"></i> Bukti pengerjaan</span></a>
+                                                    <p class="mb-0">{{ $tiket->note ?? '-' }}</p>
+                                                    @if($tiket->assignment?->Assignattachments?->file_path)
+                                                    <a href="{{ Storage::url($tiket->assignment?->Assignattachments->file_path) }}" target="_blank">
+                                                        <span class="btn btn-sm btn-light text-success mt-2">
+                                                            <i class="fas fa-eye"></i> Bukti Pengerjaan
+                                                        </span>
+                                                    </a>
+                                                    @endif
+                                                </div>
+                                                @elseif($tiket->status == 'Reopen')
+                                                <div class="p-3 bg-danger text-light rounded mt-2">
+                                                    <p class="mb-0">{{ $tiket->reason_rejected ?? '-' }}</p>
                                                 </div>
                                                 @else
                                                 <div class="p-3 bg-dispusip rounded mt-2">
@@ -175,9 +200,62 @@ default => 'btn-secondary',
                                                 @endif
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
+                                @if($tiket->status == 'Resolved')
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:2px;">*Tindakan Verifikasi</div>
+                                                        <div class="text-secondary" style="font-size: 0.65rem; font-weight: bold; margin:0;">Lakukan Verfikasi Terhadap data dan kelengkapan Informasi Tiket.</div>
+                                                        <div class="d-flex justify-content-start align-items-center" style="margin-top: 7px;">
+                                                            {{-- Verifikasi --}}
+                                                            <a href="#"
+                                                                class="btn btn-sm btn-outline-success"
+                                                                data-toggle="modal"
+                                                                data-target="#modalKonfirmasi"
+                                                                style="margin-right: 5px;">
+                                                                Verifikasi
+                                                            </a> {{-- Tolak --}}
+                                                            <button type="button" class="btn btn-sm btn-outline-danger" id="btnTolak">
+                                                                <i class="bi bi-x-lg"></i> Tolak
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="border-start ps-3" id="noteSection" style="display: none; flex: 1; min-width: 220px;">
+                                                            <form action="{{ route('tiket.rejectedKonfirmasi', $tiket->id) }}" method="POST">
+                                                                @csrf
+
+                                                                <div class="text-primary" style="font-size: 0.85rem; font-weight: bold;">*Catatan Penolakan</div>
+                                                                <div class="text-secondary" style="font-size: 0.70rem; font-weight: bold; margin-bottom: 6px;">
+                                                                    Harap berikan catatan alasan penolakan.
+                                                                </div>
+                                                                <textarea
+                                                                    class="form-control form-control-sm @error('reason_rejected') is-invalid @enderror"
+                                                                    id="reason_rejected"
+                                                                    name="reason_rejected"
+                                                                    rows="2"
+                                                                    placeholder="Masukan Catatan Penolakan">{{ old('reason_rejected') }}</textarea>
+                                                                @error('reason_rejected')
+                                                                <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                                <div class="d-flex justify-content-end mt-3">
+                                                                    <button type="button" class="btn btn-sm btn-secondary mx-2" id="btnBatal">Batal</button>
+                                                                    <button type="submit" class="btn btn-sm btn-danger">Kirim Penolakan</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -199,6 +277,7 @@ default => 'btn-secondary',
                                         @endforelse
                                     </div>
                                     <div class="card-footer d-flex justify-content-between text-muted small">
+                                        <a href="{{asset('storage/' . $attachment->file_path . '/' . $attachment->file_name)}}" class="btn btn-outline-primary btn-sm" target="_blank"><i class="bi bi-eye" style="margin: 0%; padding:0%"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -288,6 +367,30 @@ default => 'btn-secondary',
         </div>
     </div>
 </div>
+<div class="modal fade" id="modalKonfirmasi" tabindex="-1" role="dialog" aria-labelledby="modalKonfirmasiLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalKonfirmasiLabel">Konfirmasi Tiket</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Anda yakin ingin mengkonfirmasi tiket ini?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
+                <form action="{{ route('tiket.konfirmasi', $tiket->id) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Konfirmasi Tiket
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 @push('scripts')
 <script>
     const ticketCode = "{{ $tiket->ticket_code }}";
@@ -318,6 +421,19 @@ default => 'btn-secondary',
         pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
         pdf.save(`Detail_Tiket_${ticketCode}.pdf`);
     }
+
+
+    document.getElementById('btnTolak').addEventListener('click', function() {
+        document.getElementById('noteSection').style.display = 'block';
+    });
+    document.getElementById('btnBatal').addEventListener('click', function() {
+        document.getElementById('noteSection').style.display = 'none';
+    });
 </script>
+@if($errors->has('reason_rejected'))
+<script>
+    document.getElementById('noteSection').style.display = 'block';
+</script>
+@endif
 @endpush
 @endsection

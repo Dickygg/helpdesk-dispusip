@@ -124,6 +124,8 @@ Route::middleware(['auth', 'role:pengguna'])->group(function () {
     Route::get('/tiket/create', [TicketController::class, 'create'])->name('tiket.create');
     Route::post('/tiket', [TicketController::class, 'store'])->name('tiket.store');
     Route::get('/tiket/{tiket}', [TicketController::class, 'show'])->name('tiket.show');
+    Route::post('/tiket/konfirmasi/{tiket}', [TicketController::class, 'konfirmasi'])->name('tiket.konfirmasi');
+    Route::post('/tiket/rejectedKonfirmasi/{tiket}', [TicketController::class, 'rejectedKonfirmasi'])->name('tiket.rejectedKonfirmasi');
 });
 
 require __DIR__ . '/auth.php';

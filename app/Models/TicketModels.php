@@ -29,7 +29,10 @@ class TicketModels extends BaseModel
         'admin_verified_at',
         'verification_status',
         'note',
-        'due_date'
+        'due_date',
+        'closed_at',
+        'closed_by',
+        'reason_rejected'
     ];
 
 
