@@ -25,7 +25,7 @@ class TicketModels extends BaseModel
         'status',
         'title',
         'description',
-        'user_confirmade_at',
+        'user_confirmed_at',
         'admin_verified_at',
         'verification_status',
         'note',
