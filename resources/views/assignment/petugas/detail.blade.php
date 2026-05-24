@@ -61,6 +61,7 @@ $statusStyle = match($data->ticket->status){
 'Resolved' => 'btn-success',
 'Closed' => 'btn-secondary',
 'Rejected' => 'btn-danger',
+'Reopen' => 'btn-danger',
 default => 'btn-secondary',
 };
 @endphp
@@ -150,7 +151,13 @@ default => 'btn-secondary',
                                     <div class="col">
                                         <div class="card">
                                             <div class="card-body">
-                                                <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:6px;"><i class="bi bi-card-text"></i> Catatan Pengerjaan</div>
+                                                <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:6px;"><i class="bi bi-card-text"></i>
+                                                    @if($data->ticket?->status == 'Reopen' || $data->ticket?->status == 'Rejected')
+                                                    Alasaan Penolakan
+                                                    @else
+                                                    Catatan Pengerjaan
+                                                    @endif
+                                                </div>
                                                 @if($data->ticket->status == 'Rejected')
                                                 <div class="p-3 bg-danger text-light rounded mt-2">
                                                     <p class="mb-0">{{ $data->ticket->note ?? '-' }}</p>
@@ -166,6 +173,10 @@ default => 'btn-secondary',
                                                         </span>
                                                     </a>
                                                     @endif
+                                                </div>
+                                                @elseif($data->ticket->status == 'Reopen')
+                                                <div class="p-3 bg-danger text-light rounded mt-2">
+                                                    <p class="mb-0">{{ $data->ticket->reason_rejected ?? '-' }}</p>
                                                 </div>
                                                 @else
                                                 <div class="p-3 bg-dispusip rounded mt-2">

@@ -37,6 +37,7 @@ class HandlingTiketController extends Controller
                 match ($request->condition) {
                     'Resolved'    => $q->whereHas('ticket', fn($q) => $q->where('status', 'Resolved')),
                     'In Progress' => $q->whereHas('ticket', fn($q) => $q->where('status', 'In Progress')),
+                    'Reopen' => $q->whereHas('ticket', fn($q) => $q->where('status', 'Reopen')),
                     'upcoming'    => $q->whereHas('ticket', fn($q) => $q->whereBetween('due_date', [now(), now()->addHours(24)])),
                     'overDuetime' => $q->whereHas('ticket', fn($q) => $q->where('due_date', '<', now())->whereNotIn('status', ['Closed', 'Resolved'])),
                     default       => null
@@ -159,6 +160,11 @@ class HandlingTiketController extends Controller
     public function finishWork(Request $request, string $id)
     {
         $data = TicketAssignmentModels::with('ticket')->findOrFail($id);
+
+        if ($data->ticket?->status == 'Resolved' || $data->ticket?->status == 'Closed') {
+            return redirect()->back()->with('error', 'Oops, Anda Sudah Menyelesaikan Tiket!.');
+        };
+
         $oldStatus = $data->ticket->status;
 
         if (!$data->started_at) {
@@ -252,7 +258,7 @@ class HandlingTiketController extends Controller
         $AssignStats = (clone $query)
             ->select('tickets.status', DB::raw('COUNT(*) as total'))
             ->join('tickets', 'ticket_assignments.ticket_id', '=', 'tickets.id')
-            ->whereIn('tickets.status', ['Resolved', 'In Progress'])
+            ->whereIn('tickets.status', ['Resolved', 'In Progress', 'Reopen'])
             ->groupBy('tickets.status')
             ->get();
 
@@ -270,12 +276,14 @@ class HandlingTiketController extends Controller
 
         $selesai  = $AssignStats->firstWhere('status', 'Closed');
         $diproses = $AssignStats->firstWhere('status', 'In Progress');
+        $Reopen = $AssignStats->firstWhere('status', 'Reopen');
 
         return [
             'assignstats'     => $AssignStats,
             'assigntotal'     => $AssignTotal,
             'total_selesai'   => $selesai->total ?? 0,
             'total_diproses'  => $diproses->total ?? 0,
+            'total_reopen'  => $reopen->total ?? 0,
             'menuju_deadline' => $menujuDeadline,
             'overDuetime' => $overDuetime,
         ];

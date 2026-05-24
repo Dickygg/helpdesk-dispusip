@@ -61,6 +61,7 @@ $statusStyle = match($data->ticket->status){
 'Resolved' => 'btn-success',
 'Closed' => 'btn-secondary',
 'Rejected' => 'btn-danger',
+'Reopen' => 'btn-danger',
 default => 'btn-secondary',
 };
 @endphp
@@ -148,6 +149,23 @@ default => 'btn-secondary',
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- alasan penolakan -->
+                                    @if($data->ticket?->status == 'Reopen')
+                                    <div class="row" style="margin-bottom: 10px;">
+                                        <div class="col">
+                                            <div class="d-flex flex-column">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:6px;"><i class="bi bi-card-text"></i> Alasan Penolakan Pengguna</div>
+                                                        <div class="p-3 bg-light rounded">
+                                                            <p class="mb-0">{{ $data->ticket->reason_rejected ?? '-' }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endif
                                     <div class="row">
                                         <div class="col">
                                             <div class="card border-0 shadow-sm rounded-4 mb-3">
@@ -264,10 +282,20 @@ default => 'btn-secondary',
                                                     <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Ditugaskan Oleh</span>
                                                     <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold;">Admin</span>
                                                 </div>
-                                                <div class="d-flex justify-content-between align-items-center">
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
                                                     <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Waktu Pengerjaan</span>
                                                     <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
                                                         {{ $data->work_duration ? $data->work_duration . ' Menit' : '-' }}
+                                                    </span>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Pengguna Konfrimasi</span>
+                                                    <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
+                                                        @if(!$data->ticket?->user_confrimed_at)
+                                                        Belum Dikonfirmasi
+                                                        @else
+                                                        Pengguna Sudah Konfirmasi
+                                                        @endif
                                                     </span>
                                                 </div>
                                             </div>
