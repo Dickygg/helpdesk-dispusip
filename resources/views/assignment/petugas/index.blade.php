@@ -1,6 +1,6 @@
 @extends('_layouts.app')
-@section('title', 'Daftar Tiket Berjalan')
-@section('page-title', 'Daftar Tiket Berjalan')
+@section('title', 'Daftar Assignmen')
+@section('page-title', 'Daftar Assignmen')
 @section('content')
 @push('styles')
 <style>
@@ -319,7 +319,7 @@
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('condition') == 'Reopen' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
                         <div class="bg-danger bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
-                            <i class="bi bi-exclamation-circle-fill text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
+                            <i class="bi bi-arrow-repeat text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
                         </div>
                         <div>
                             <div class="text-secondary title-cardtiket">Tiket Reopen</div>
@@ -414,7 +414,7 @@
     <div class="card mb-2">
         <div class="card-body">
             <div class="d-flex justify-content-between">
-                <div class="fw-bold text-danger" style="font-size: 0.90rem; font-weight: bold;">Deadline Hari Ini!.</div>
+                <div class="fw-bold text-danger" style="font-size: 0.90rem; font-weight: bold;">Tiket Mendekati Deadline dan Overdue yang belum Selesai!.</div>
                 <i class="bi bi-exclamation-circle text-danger"></i>
             </div>
             <hr class="mt-1 mb-1">
@@ -435,9 +435,6 @@
                                 <span class="badge-priority-high">
                                     Important
                                 </span>
-                                <a href="#" class="btn-arrow">
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
                             </div>
                             <div class="mt-1">
                                 <div class="fw-bold text-primary" style="font-size: 1rem; font-weight: bold;">{{$d->ticket?->ticket_code}}</div>
@@ -457,6 +454,7 @@
             </div>
         </div>
     </div>
+
     <!-- data table-->
     <div class="row">
         <div class="col-12">

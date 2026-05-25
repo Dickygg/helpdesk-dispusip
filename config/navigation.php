@@ -192,6 +192,11 @@ return [
             'route' => 'assignment.petugas.index',
             'icon' => 'bi bi-send'
         ],
+        [
+            'title' => 'Data Riwayat Assigment',
+            'route' => 'assignment.petugas.history',
+            'icon' => 'bi bi-clock'
+        ],
     ],
 
     'Pengguna' => [

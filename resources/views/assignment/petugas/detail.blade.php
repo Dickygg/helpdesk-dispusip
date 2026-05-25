@@ -85,8 +85,7 @@ default => 'btn-secondary',
                                         </div>
                                     </div>
                                     <div class="col d-flex justify-content-end" style="height: fit-content;">
-                                        <a onclick="downloadPDF()" class="btn btn-outline-success btn-sm" style="margin-right: 4px;"><i class="bi bi-download"></i> Unduh PDF</a>
-                                        <a href="{{route('assignment.petugas.prosesAssignment', $data->id)}}" class="btn btn-outline-primary btn-sm"><i class="bi bi-download"></i> Kerjakan Sekarang</a>
+                                        <a href="{{route('assignment.petugas.index')}}" class="btn btn-outline-primary btn-sm"><i class="bi bi-arrow-left"></i> Kembali</a>
                                     </div>
                                 </div>
                             </div>
@@ -158,13 +157,13 @@ default => 'btn-secondary',
                                                     Catatan Pengerjaan
                                                     @endif
                                                 </div>
-                                                @if($data->ticket->status == 'Rejected')
+                                                @if($data->ticket->status == 'Rejected'|| $data->ticket->status == 'Reopen')
                                                 <div class="p-3 bg-danger text-light rounded mt-2">
-                                                    <p class="mb-0">{{ $data->ticket->note ?? '-' }}</p>
+                                                    <p class="mb-0">{{ $data->ticket->reason_rejected ?? '-' }}</p>
                                                 </div>
 
                                                 @elseif($data->ticket->status == 'Resolved' || $data->ticket->status == 'Closed')
-                                                <div class="p-3 bg-success text-light rounded mt-2">
+                                                <div class="p-3  bg-light text-light rounded mt-2">
                                                     <p class="mb-0">{{ $data->ticket->note ?? '-' }}</p>
                                                     @if($data->Assignattachments?->file_path)
                                                     <a href="{{ Storage::url($data->Assignattachments->file_path) }}" target="_blank">
@@ -174,12 +173,8 @@ default => 'btn-secondary',
                                                     </a>
                                                     @endif
                                                 </div>
-                                                @elseif($data->ticket->status == 'Reopen')
-                                                <div class="p-3 bg-danger text-light rounded mt-2">
-                                                    <p class="mb-0">{{ $data->ticket->reason_rejected ?? '-' }}</p>
-                                                </div>
                                                 @else
-                                                <div class="p-3 bg-dispusip rounded mt-2">
+                                                <div class="p-3  bg-light rounded mt-2">
                                                     <p class="mb-0">{{ $data->ticket->note ?? '-' }}</p>
                                                 </div>
                                                 @endif
@@ -192,6 +187,60 @@ default => 'btn-secondary',
                         </div>
                     </div>
                     <div class="col-md-4">
+                        <div class="row">
+                            <div class="col">
+                                <div class="card mb-3 border-0 shadow-sm rounded-4">
+                                    <div class="card-header bg-white border-bottom rounded-top-4">
+                                        <span class="text-primary" style="font-size: 0.85rem; letter-spacing: 0.3px; font-weight:bold;">
+                                            <i class="bi bi-lightning" style="margin-right: 5px;"></i>Quick Info
+                                        </span>
+                                    </div>
+                                    <div class="card-body">
+                                        {{-- Info --}}
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Deadline</span>
+                                                <span class="text-danger fw-bold" style="font-size: 0.78rem; font-weight: bold;">
+                                                    {{ $data->ticket->due_date ? $data->ticket->due_date->format('d F Y, H:i') : '-' }}
+                                                </span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Ditugaskan Oleh</span>
+                                                <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold;">Admin</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Waktu Pengerjaan</span>
+                                                <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
+                                                    {{ $data->work_duration ? $data->work_duration . ' Menit' : '-' }}
+                                                </span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Pengguna Konfrimasi</span>
+                                                <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
+                                                    @if(!$data->ticket?->user_confirmed_at)
+                                                    Belum Dikonfirmasi
+                                                    @else
+                                                    Pengguna Sudah Konfirmasi
+                                                    @endif
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <hr class="my-2">
+
+                                        {{-- Action Buttons --}}
+                                        <div class="d-flex flex-column gap-2">
+                                            <a onclick="downloadPDF()" class="mb-2 d-flex justify-content-center align-items-center btn btn-outline-success btn-sm">
+                                                <i class="bi bi-download" style="margin-right: 5px;"></i> Unduh PDF
+                                            </a>
+                                            <a href="{{route('assignment.petugas.prosesAssignment', $data->id)}}" class="mb-2 d-flex justify-content-center align-items-center btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-tools" style="margin-right: 5px;"></i> kerjakan Sekarang
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col">
                                 <div class="card mb-3">

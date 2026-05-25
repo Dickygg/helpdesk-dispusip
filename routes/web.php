@@ -110,6 +110,7 @@ Route::middleware(['auth', 'role:petugas teknis'])->group(function () {
     Route::get('/assignment/petugas/', [HandlingTiketController::class, 'index'])->name('assignment.petugas.index');
     Route::get('/assignment/petugas/show/{assignment}', [HandlingTiketController::class, 'show'])->name('assignment.petugas.show');
     Route::get('/assignment/petugas/prosesAssignment/{assignment}', [HandlingTiketController::class, 'prosesAssignment'])->name('assignment.petugas.prosesAssignment');
+    Route::get('/assignment/petugas/histroyAssignment', [HandlingTiketController::class, 'historyAssignment'])->name('assignment.petugas.history');
     Route::post('/assignment/petugas/startWork/{assignment}', [HandlingTiketController::class, 'startWork'])->name('assignment.petugas.startWork');
     Route::post('/assignment/petugas/finishWork/{assignment}', [HandlingTiketController::class, 'finishWork'])->name('assignment.petugas.finishtWork');
 });

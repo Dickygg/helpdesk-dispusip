@@ -92,12 +92,12 @@ default => ''
 
 <!-- Modal -->
 <div class="modal fade" id="infoModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document"
-        style="width: fit-content;">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered m-0 mx-auto" role="document"
+        style="width: fit-content; max-width: 95vw;">
+        <div class="modal-content border-0 bg-transparent shadow-none p-0">
             <img src="{{ asset('storage/alur_tiket.png') }}"
                 alt="poster"
-                style="width: 100%; height: 80vh; object-fit: contain;">
+                style="width: 70vw; max-width: 500px; max-height: 80vh; object-fit: contain; border-radius: 8px; display: block;">
         </div>
     </div>
 </div>

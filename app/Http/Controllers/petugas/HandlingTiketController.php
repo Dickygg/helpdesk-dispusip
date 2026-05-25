@@ -9,6 +9,7 @@ use App\Models\ApplicationModels;
 use App\Models\AssignmentAttachmentModel;
 use App\Models\TicketAssignmentModels;
 use App\Models\TicketModels;
+use App\Models\TicketPriorityModels;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -32,17 +33,6 @@ class HandlingTiketController extends Controller
             ->whereHas('ticket', function ($q) {
                 $q->whereNotIn('status', ['Closed']);
             })
-            // Filter condition (status/deadline)
-            ->when($request->condition, function ($q) use ($request) {
-                match ($request->condition) {
-                    'Resolved'    => $q->whereHas('ticket', fn($q) => $q->where('status', 'Resolved')),
-                    'In Progress' => $q->whereHas('ticket', fn($q) => $q->where('status', 'In Progress')),
-                    'Reopen' => $q->whereHas('ticket', fn($q) => $q->where('status', 'Reopen')),
-                    'upcoming'    => $q->whereHas('ticket', fn($q) => $q->whereBetween('due_date', [now(), now()->addHours(24)])),
-                    'overDuetime' => $q->whereHas('ticket', fn($q) => $q->where('due_date', '<', now())->whereNotIn('status', ['Closed', 'Resolved'])),
-                    default       => null
-                };
-            })
             // Filter tanggal
             ->when($request->start_date, fn($q) => $q->whereDate('ticket_assignments.created_at', '>=', $request->start_date))
             ->when($request->end_date,   fn($q) => $q->whereDate('ticket_assignments.created_at', '<=', $request->end_date))
@@ -63,8 +53,11 @@ class HandlingTiketController extends Controller
 
         $deadline = TicketAssignmentModels::with(['ticket', 'technician', 'admin'])
             ->where('user_id', $user)
+            ->wherehas('ticket', function ($q) {
+                $q->whereIn('status', ['In Progress', 'Assign', 'Reopen']);
+            })
             ->whereHas('ticket', function ($q) {
-                $q->whereDate('due_date', today());
+                $q->whereDate('due_date', '<=', today());
             })
             ->get();
 
@@ -81,6 +74,7 @@ class HandlingTiketController extends Controller
 
     public function show(string $id)
     {
+        abort_if(Auth::user()->cannot('assignment.show'), 403);
         $data = TicketAssignmentModels::with([
             'ticket.attachments',
             'ticket.priority',
@@ -107,6 +101,7 @@ class HandlingTiketController extends Controller
     }
     public function prosesAssignment(string $id)
     {
+        abort_if(Auth::user()->cannot('assignment.prosesAssignment'), 403);
         $data = TicketAssignmentModels::with([
             'ticket.attachments',
             'ticket.priority',
@@ -131,6 +126,8 @@ class HandlingTiketController extends Controller
 
     public function startWork(string $id)
     {
+        abort_if(Auth::user()->cannot('assignment.StartWork'), 403);
+
         $data = TicketAssignmentModels::with('ticket')->findOrFail($id);
         $oldStatus = $data->ticket->status;
         DB::beginTransaction();
@@ -159,6 +156,8 @@ class HandlingTiketController extends Controller
 
     public function finishWork(Request $request, string $id)
     {
+        abort_if(Auth::user()->cannot('assignment.finishWork'), 403);
+
         $data = TicketAssignmentModels::with('ticket')->findOrFail($id);
 
         if ($data->ticket?->status == 'Resolved' || $data->ticket?->status == 'Closed') {
@@ -237,12 +236,54 @@ class HandlingTiketController extends Controller
         }
     }
 
+    // site riwayat assigntment
+    public function historyAssignment(Request $request)
+    {
+        abort_if(Auth::user()->cannot('assignment.history'), 403);
+
+        $user = Auth::id();
+        $query = TicketAssignmentModels::with([
+            'ticket',
+            'technician:id,username',
+            'admin:id,username'
+        ])
+            ->where('ticket_assignments.user_id', $user)
+            ->whereHas('ticket', function ($q) {
+                $q->whereIn('status', ['Closed']);
+            })
+            // Filter tanggal
+            ->when($request->start_date, fn($q) => $q->whereDate('ticket_assignments.created_at', '>=', $request->start_date))
+            ->when($request->end_date,   fn($q) => $q->whereDate('ticket_assignments.created_at', '<=', $request->end_date))
+            // Filter aplikasi
+            ->when($request->id_aplikasi, fn($q) => $q->whereHas('ticket', fn($q) => $q->where('application_id', $request->id_aplikasi)))
+            ->when($request->id_priority, function ($q) use ($request) {
+                $q->whereHas('ticket', function ($q) use ($request) {
+                    $q->where('priority_id', $request->id_priority);
+                });
+            });
+
+        $data = $query->get();
+        $aplikasi = ApplicationModels::select('id', 'name')->get();
+        $prioritas = TicketPriorityModels::select('id', 'name')->get();
+        $getstats = $this->gethistroystats($request);
+
+        return view('assignment.petugas.history', [
+            'getassignstats' => $getstats,
+            'aplikasi'       => $aplikasi,
+            'data'           => $data,
+            'prioritas' => $prioritas
+        ]);
+    }
+
     private function gettotalAssign(Request $request)
     {
         $user = Auth::id();
 
         $query = TicketAssignmentModels::query()
             ->where('ticket_assignments.user_id', $user)
+            ->whereHas('ticket', function ($q) {
+                $q->whereNotIn('status', ['closed']); // sesuaikan value
+            })
             ->when($request->start_date, function ($q) use ($request) {
                 $q->whereDate('ticket_assignments.created_at', '>=', $request->start_date);
             })
@@ -283,9 +324,55 @@ class HandlingTiketController extends Controller
             'assigntotal'     => $AssignTotal,
             'total_selesai'   => $selesai->total ?? 0,
             'total_diproses'  => $diproses->total ?? 0,
-            'total_reopen'  => $reopen->total ?? 0,
+            'total_reopen'  => $Reopen->total ?? 0,
             'menuju_deadline' => $menujuDeadline,
             'overDuetime' => $overDuetime,
+        ];
+    }
+
+
+    private function gethistroystats(Request $request)
+    {
+        $user = Auth::id();
+
+        $query = TicketAssignmentModels::query()
+            ->where('ticket_assignments.user_id', $user)
+            ->whereHas('ticket', function ($q) {
+                $q->whereIn('status', ['closed']);
+            })
+            ->when($request->start_date, function ($q) use ($request) {
+                $q->whereDate('ticket_assignments.created_at', '>=', $request->start_date);
+            })
+            ->when($request->end_date, function ($q) use ($request) {
+                $q->whereDate('ticket_assignments.created_at', '<=', $request->end_date);
+            })
+            ->when($request->id_aplikasi, function ($q) use ($request) {
+                $q->whereHas('ticket', function ($q) use ($request) {
+                    $q->where('application_id', $request->id_aplikasi);
+                });
+            });
+
+        $AssignHistoryTotal = (clone $query)->count();
+
+        $avgWorkDuration = (clone $query)
+            ->avg('work_duration');
+        $avgMinutes = round($avgWorkDuration);
+        $hours      = intdiv($avgMinutes, 60);
+        $minutes    = $avgMinutes % 60;
+
+        $AssignHistoryTotalMonth = (clone $query)
+            ->whereHas('ticket', function ($q) {
+                $q->whereBetween('closed_at', [
+                    now()->startOfMonth(),
+                    now()->endOfMonth(),
+                ]);
+            })
+            ->count();
+
+        return [
+            'assigntotal'       => $AssignHistoryTotal,
+            'avg_work_duration' => "{$hours}j {$minutes}m",
+            'assignmounthtotal' => $AssignHistoryTotalMonth
         ];
     }
 }

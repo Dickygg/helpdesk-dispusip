@@ -266,7 +266,7 @@ default => 'btn-secondary',
                                     <div class="card mb-3 border-0 shadow-sm rounded-4">
                                         <div class="card-header bg-white border-bottom rounded-top-4">
                                             <span class="text-primary" style="font-size: 0.85rem; letter-spacing: 0.3px; font-weight:bold;">
-                                                <i class="bi bi-lightning" style="margin-right: 5px;"></i>Quick Action
+                                                <i class="bi bi-lightning" style="margin-right: 5px;"></i>Quick Info
                                             </span>
                                         </div>
                                         <div class="card-body">
@@ -291,7 +291,7 @@ default => 'btn-secondary',
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Pengguna Konfrimasi</span>
                                                     <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
-                                                        @if(!$data->ticket?->user_confrimed_at)
+                                                        @if(!$data->ticket?->user_confirmed_at)
                                                         Belum Dikonfirmasi
                                                         @else
                                                         Pengguna Sudah Konfirmasi
