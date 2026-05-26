@@ -125,7 +125,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                         <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"> {{$tiket->updated_at? $tiket->updated_at->format('d F Y, H:i') : '-'}}</div>
                                     </div>
                                     <div class="col-md-03 col-md-3 col-sm-6 colums-card-body">
-                                        <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-person-gear"></i> PIC Admin</div>
+                                        <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-person-gear"></i> PIC Petugas</div>
                                         <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;">
                                             @if(!$tiket->assignment?->admin?->name)
                                             Belum Ditentukan.
