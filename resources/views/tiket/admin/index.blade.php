@@ -495,11 +495,11 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                                         Proses Tiket
                                                     </a>
                                                 </li>
-                                                <li>
+                                                <!-- <li>
                                                     <hr class="dropdown-divider">
-                                                </li>
+                                                </li> -->
                                                 <!-- Hapus -->
-                                                <li>
+                                                <!-- <li>
                                                     <form action="{{ route($prefix . 'admin.tiket.destroy', $r->id) }}"
                                                         method="POST"
                                                         onsubmit="return confirm('Yakin ingin menghapus ticket ini?')">
@@ -510,7 +510,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                                             Hapus Ticket
                                                         </button>
                                                     </form>
-                                                </li>
+                                                </li> -->
                                             </ul>
                                         </div>
                                     </td>
