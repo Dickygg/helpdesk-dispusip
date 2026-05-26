@@ -6,6 +6,8 @@ return  [
             'siapjak' => 'siapjak',
             'jaklitera' => 'jaklitera',
             'website' => 'website',
+            'e-office' => 'e-office',
+            'sosial-media' => 'sosial-media',
             'assignment' => 'assignment'
         ],
         'accept_html' => [

@@ -79,9 +79,9 @@ return [
             'heading' => 'Data Tiket (Admin)'
         ],
         [
-            'title' => 'Daftar Tiket',
+            'title' => 'Daftar Tiket Berjalan',
             'route' => 'sa.admin.tiket.index',  // ← diubah
-            'icon' => 'bi-ticket-detailed'
+            'icon' => 'bi bi-list-task'
         ],
         [
             'title' => 'Daftar Riwayat Tiket',
@@ -149,7 +149,7 @@ return [
         [
             'title' => 'Daftar Tiket Berjalan',
             'route' => 'admin.tiket.index',
-            'icon' => 'bi-ticket-detailed'
+            'icon' => 'bi bi-list-task'
         ],
         [
             'title' => 'Daftar Riwayat Tiket',

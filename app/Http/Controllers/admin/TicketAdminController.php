@@ -82,7 +82,7 @@ class TicketAdminController extends Controller
 
     public function show(string $id)
     {
-        $data = TicketModels::with(['application', 'priority', 'attachments'])
+        $data = TicketModels::with(['application', 'priority', 'attachments', 'assignment.technician', 'assignment.Assignattachments'])
             ->where('id', $id)
             ->first();
 

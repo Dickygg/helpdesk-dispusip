@@ -39,6 +39,12 @@ $priorityStyle = match($tiket->priority?->name) {
 'Low' => 'text-success',
 default => 'text-secondary',
 };
+$nodepriorityStyle = match($tiket->priority?->name) {
+'High' => 'bg-danger',
+'Medium' => 'bg-warning',
+'Low' => 'bg-success',
+default => 'bg-secondary',
+};
 
 $verificationStyle = match($tiket->verification_status) {
 'pending' => 'text-warning',
@@ -55,9 +61,13 @@ $statusStyle = match($tiket->status){
 'Resolved' => 'btn-success',
 'Closed' => 'btn-secondary',
 'Rejected' => 'btn-danger',
+'Reopen' => 'btn-danger',
 default => 'btn-secondary',
 };
+
+$prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
 @endphp
+
 <div id="section-print">
     <div class="container-fluid">
         <div class="card shadow mb-4">
@@ -78,7 +88,7 @@ default => 'btn-secondary',
                                         </div>
                                     </div>
                                     <div class="col d-flex justify-content-md-end" style="height: fit-content;">
-                                        <a onclick="downloadPDF()" class="btn btn-outline-primary btn-sm"><i class="bi bi-download"></i> Unduh PDF</a>
+                                        <a href="{{route($prefix.'admin.tiket.index')}}" class="btn btn-outline-primary btn-sm"><i class="bi bi-arrow-left"></i> Kembali</a>
                                     </div>
                                 </div>
                             </div>
@@ -95,7 +105,7 @@ default => 'btn-secondary',
                                     <div class="col-md-3 col-sm-6 colums-card-body">
                                         <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-bookmark-star"></i> Prioritas</div>
                                         <div class="d-flex align-items-center gap-1" style="font-size: 0.8rem;">
-                                            <span style="margin-right:5px;width: 8px; height: 8px; border-radius: 50%; background-color: #726f6fff; display: inline-block;"></span>
+                                            <span class="{{$nodepriorityStyle}}" style="margin-right:5px;width: 8px; height: 8px; border-radius: 50%; background-color: #726f6fff; display: inline-block;"></span>
                                             <span class="{{ $priorityStyle }} fw-bold">{{$tiket->priority?->name ?? 'Belum Ditentukan'}}</span>
                                         </div>
                                     </div>
@@ -115,12 +125,12 @@ default => 'btn-secondary',
                                         <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"> {{$tiket->updated_at? $tiket->updated_at->format('d F Y, H:i') : '-'}}</div>
                                     </div>
                                     <div class="col-md-03 col-md-3 col-sm-6 colums-card-body">
-                                        <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-person-gear"></i> PIC Petugas</div>
+                                        <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-person-gear"></i> PIC Admin</div>
                                         <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;">
-                                            @if(!$tiket->assignment?->technician?->name)
+                                            @if(!$tiket->assignment?->admin?->name)
                                             Belum Ditentukan.
                                             @else
-                                            {{ $tiket->assignment?->technician?->name ?? '-' }}
+                                            {{ $tiket->assignment?->admin?->name ?? '-' }}
                                             @endif
                                         </div>
                                     </div>
@@ -148,18 +158,24 @@ default => 'btn-secondary',
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:6px;"><i class="bi bi-card-text"></i> Catatan Pengerjaan</div>
-                                                @if($tiket->status == 'Rejected')
+                                                @if($tiket->status == 'Rejected'|| $tiket->status == 'Reopen')
                                                 <div class="p-3 bg-danger text-light rounded mt-2">
-                                                    <p class="mb-0">{{ $tiket->note ?? '-' }}</p>
+                                                    <p class="mb-0">{{ $tiket->reason_rejected ?? '-' }}</p>
                                                 </div>
 
                                                 @elseif($tiket->status == 'Resolved' || $tiket->status == 'Closed')
-                                                <div class="p-3 bg-success text-light rounded mt-2">
+                                                <div class="p-3 bg-light  rounded mt-2">
                                                     <p class="mb-0">{{ $tiket->description ?? '-' }}</p>
-                                                    <a href="#" class=""> <span class="btn btn-sm btn-light text-success mt-4"><i class="fas fa-eye"></i> Bukti pengerjaan</span></a>
+                                                    @if($tiket->assignment?->Assignattachments->file_path)
+                                                    <a href="{{ Storage::url($tiket->assignment?->Assignattachments->file_path) }}" target="_blank">
+                                                        <span class="btn btn-sm btn-light text-success mt-2">
+                                                            <i class="fas fa-eye"></i> Bukti Pengerjaan
+                                                        </span>
+                                                    </a>
+                                                    @endif
                                                 </div>
                                                 @else
-                                                <div class="p-3 bg-dispusip rounded mt-2">
+                                                <div class="p-3 bg-light rounded mt-2">
                                                     <p class="mb-0">{{ $tiket->note ?? '-' }}</p>
                                                 </div>
                                                 @endif
@@ -174,20 +190,60 @@ default => 'btn-secondary',
                     <div class="col-md-4">
                         <div class="row">
                             <div class="col">
-                                <div class="card mb-3">
-                                    <div class="card-header">
-                                        <span class="fw-bold ">Attachments Tiket</span>
+                                <div class="card mb-3 border-0 shadow-sm rounded-4">
+                                    <div class="card-header bg-white border-bottom rounded-top-4">
+                                        <span class="text-primary" style="font-size: 0.85rem; letter-spacing: 0.3px; font-weight:bold;">
+                                            <i class="bi bi-lightning" style="margin-right: 5px;"></i>Quick Info
+                                        </span>
                                     </div>
                                     <div class="card-body">
-                                        @forelse ($tiket->attachments as $attachment)
-                                        <img src="{{ asset('storage/' . $attachment->file_path . '/' . $attachment->file_name) }}"
-                                            alt="{{ $attachment->file_name }}"
-                                            class="img-fluid rounded mb-2">
-                                        @empty
-                                        <p class="text-muted">Tidak ada lampiran.</p>
-                                        @endforelse
-                                    </div>
-                                    <div class="card-footer d-flex justify-content-between text-muted small">
+                                        {{-- Info --}}
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Deadline</span>
+                                                <span class="text-danger fw-bold" style="font-size: 0.78rem; font-weight: bold;">
+                                                    {{ $tiket->due_date ? $tiket->due_date->format('d F Y, H:i') : '-' }}
+                                                </span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Ditugaskan Ke</span>
+                                                <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold;">{{$tiket->assignment?->technician->name ?? 'Belum Ditentukan'}}</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Waktu Pengerjaan</span>
+                                                <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
+                                                    {{ $tiket->assignment?->work_duration ? $tiket->work_duration . ' Menit' : '-' }}
+                                                </span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Pengguna Konfrimasi</span>
+                                                <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
+                                                    @if(!$tiket?->user_confirmed_at)
+                                                    Belum Dikonfirmasi
+                                                    @else
+                                                    Pengguna Sudah Konfirmasi
+                                                    @endif
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <hr class="my-2">
+
+                                        {{-- Action Buttons --}}
+                                        <div class="d-flex flex-column gap-2">
+                                            <a onclick="downloadPDF()" class="mb-2 d-flex justify-content-center align-items-center btn btn-outline-success btn-sm">
+                                                <i class="bi bi-download" style="margin-right: 5px;"></i> Unduh PDF
+                                            </a>
+                                            <a href="{{route($prefix.'admin.tiket.proses' ,$tiket->id)}}" class="mb-2 d-flex justify-content-center align-items-center btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-tools" style="margin-right: 5px;"></i> Proses Sekarang
+                                            </a>
+                                            @forelse ($tiket->attachments as $attachment)
+                                            <a href="{{asset('storage/' . $attachment->file_path . '/' . $attachment->file_name) }}" target="_blank" class="mb-2 d-flex justify-content-center align-items-center btn btn-outline-info btn-sm">
+                                                <i class="bi bi-eye" style="margin-right: 5px;"></i> Lihat Lampiran
+                                            </a>
+                                            @empty
+                                            @endforelse
+                                        </div>
                                     </div>
                                 </div>
                             </div>
