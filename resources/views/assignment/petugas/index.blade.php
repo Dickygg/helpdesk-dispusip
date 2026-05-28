@@ -119,19 +119,28 @@
         text-align: center;
     }
 
-    .priority-low {
+    .priority-Normal {
         background: #E8FFF3;
         color: #198754;
     }
 
-    .priority-medium {
+    .priority-Urgent {
         background: #FFF8E1;
         color: #F59E0B;
     }
 
-    .priority-high {
+    .priority-Emergency {
         background: #FDEBEC;
         color: #DC3545;
+    }
+
+    .badge-priority-high {
+        background: #ffe5e5;
+        color: #dc3545;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
     }
 
     .assignment-priority-card {
@@ -148,14 +157,7 @@
         font-weight: 700;
     }
 
-    .badge-priority-high {
-        background: #ffe5e5;
-        color: #dc3545;
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-    }
+
 
     .btn-arrow {
         width: 34px;
@@ -493,10 +495,10 @@
                                 };
 
                                 $pioritystyle = match($r->ticket?->priority->name ?? '') {
-                                'Low' => 'priority-low',
-                                'Medium' => 'priority-medium',
-                                'High' => 'priority-high',
-                                default => 'priority-low'
+                                'Normal' => 'priority-Normal',
+                                'Urgent' => 'priority-Urgent',
+                                'Emergency' => 'priority-Emergency',
+                                default => 'priority-Normal'
                                 };
                                 @endphp
                                 <tr>

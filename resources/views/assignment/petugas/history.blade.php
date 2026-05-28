@@ -113,17 +113,17 @@
         text-align: center;
     }
 
-    .priority-low {
+    .priority-Normal {
         background: #E8FFF3;
         color: #198754;
     }
 
-    .priority-medium {
+    .priority-Urgent {
         background: #FFF8E1;
         color: #F59E0B;
     }
 
-    .priority-high {
+    .priority-Emergency {
         background: #FDEBEC;
         color: #DC3545;
     }
@@ -305,10 +305,10 @@
                                 @foreach($data as $r)
                                 @php
                                 $pioritystyle = match($r->ticket?->priority->name ?? '') {
-                                'Low' => 'priority-low',
-                                'Medium' => 'priority-medium',
-                                'High' => 'priority-high',
-                                default => 'priority-low'
+                                'Normal' => 'priority-Normal',
+                                'Urgent' => 'priority-Urgent',
+                                'Emergency' => 'priority-Emergency',
+                                default => 'priority-Normal'
                                 };
                                 @endphp
                                 <tr>

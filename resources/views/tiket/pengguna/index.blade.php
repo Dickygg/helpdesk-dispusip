@@ -235,9 +235,9 @@ default => ''
                 @forelse($tikets as $tickets)
                 @php
                 $priorityStyle = match($tickets->priority?->name) {
-                'High' => 'text-danger',
-                'Medium' => 'text-warning',
-                'Low' => 'text-success',
+                'Emergency' => 'text-danger',
+                'Urgent' => 'text-warning',
+                'Normal' => 'text-success',
                 default => 'text-secondary',
                 };
 
@@ -248,9 +248,9 @@ default => ''
                 default => 'text-secondary',
                 };
                 $nodepriorityStyle = match($tickets->priority?->name) {
-                'High' => 'bg-danger',
-                'Medium' => 'bg-warning',
-                'Low' => 'bg-success',
+                'Emergency' => 'bg-danger',
+                'Urgent' => 'bg-warning',
+                'Normal' => 'bg-success',
                 default => 'bg-secondary',
                 };
                 $statusStyle = match($tickets->status){
@@ -295,7 +295,7 @@ default => ''
                                 <div class="col-md-4 colums-card-body">
                                     <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-bookmark-star"></i> Prioritas</div>
                                     <div class="d-flex align-items-center gap-1" style="font-size: 0.8rem;">
-                                        <span class="{{$nodepriorityStyle}}" style="margin-right:5px;width: 8px; height: 8px; border-radius: 50%; background-color: #726f6fff; display: inline-block;"></span>
+                                        <span class="{{$nodepriorityStyle}}" style="margin-right:5px;width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
                                         <span class="{{ $priorityStyle }} fw-bold">{{$tickets->priority?->name ?? 'Belum Ditentukan'}}</span>
                                     </div>
                                 </div>

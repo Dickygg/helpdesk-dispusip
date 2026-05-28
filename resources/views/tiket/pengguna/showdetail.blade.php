@@ -46,9 +46,9 @@ default => ''
 
 
 $priorityStyle = match($tiket->priority?->name) {
-'High' => 'text-danger',
-'Medium' => 'text-warning',
-'Low' => 'text-success',
+'Emergency' => 'text-danger',
+'Urgent' => 'text-warning',
+'Normal' => 'text-success',
 default => 'text-secondary',
 };
 
@@ -60,9 +60,9 @@ default => 'text-secondary',
 };
 
 $nodepriorityStyle = match($tiket->priority?->name) {
-'High' => 'bg-danger',
-'Medium' => 'bg-warning',
-'Low' => 'bg-success',
+'Emergency' => 'bg-danger',
+'Urgent' => 'bg-warning',
+'Normal' => 'bg-success',
 default => 'bg-secondary',
 };
 

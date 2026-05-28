@@ -402,10 +402,10 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 };
 
                                 $pioritystyle = match($r->priority->name ?? '') {
-                                'Low' => 'priority-low',
-                                'Medium' => 'priority-medium',
-                                'High' => 'priority-high',
-                                default => 'priority-low'
+                                'Emergency' => 'text-danger',
+                                'Urgent' => 'text-warning',
+                                'Normal' => 'text-success',
+                                default => 'priority-normal'
                                 };
                                 @endphp
                                 <tr>

@@ -37,24 +37,24 @@
 @endpush
 @php
 $nodepriorityStyle = match($tiket->priority?->name) {
-'High' => 'bg-danger',
-'Medium' => 'bg-warning',
-'Low' => 'bg-success',
+'Emergency' => 'bg-danger',
+'Urgent' => 'bg-warning',
+'Normal' => 'bg-success',
 default => 'bg-secondary',
 };
 
 
 $priorityStyle = match($tiket->priority?->name) {
-'High' => 'text-danger',
-'Medium' => 'text-warning',
-'Low' => 'text-success',
+'Emergency' => 'text-danger',
+'Urgent' => 'text-warning',
+'Normal' => 'text-success',
 default => 'text-secondary',
 };
 
 $verificationStyle = match($tiket->verification_status) {
-'pending' => 'text-warning',
-'verified' => 'text-success',
-'rejected' => 'text-danger',
+'Emergency' => 'text-danger',
+'Urgent' => 'text-warning',
+'Normal' => 'text-success',
 default => 'text-secondary',
 };
 

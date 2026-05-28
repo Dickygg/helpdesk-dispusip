@@ -38,22 +38,22 @@
 @php
 
 $priorityStyle = match($data->ticket->priority?->name) {
-'High' => 'text-danger',
-'Medium' => 'text-warning',
-'Low' => 'text-success',
+'Emergency' => 'text-danger',
+'Urgent' => 'text-warning',
+'Normal' => 'text-success',
 default => 'text-secondary',
 };
 $nodepriorityStyle = match($data->ticket->priority?->name) {
-'High' => 'bg-danger',
-'Medium' => 'bg-warning',
-'Low' => 'bg-success',
+'Emergency' => 'bg-danger',
+'Urgent' => 'bg-warning',
+'Normal' => 'bg-success',
 default => 'bg-secondary',
 };
 
 $verificationStyle = match($data->ticket->verification_status) {
-'pending' => 'warning',
-'verified' => 'success',
-'rejected' => 'danger',
+'Emergency' => 'text-danger',
+'Urgent' => 'text-warning',
+'Normal' => 'text-success',
 default => 'secondary',
 };
 
