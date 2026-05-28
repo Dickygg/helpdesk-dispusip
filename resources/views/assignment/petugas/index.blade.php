@@ -414,7 +414,7 @@
     <div class="card mb-2">
         <div class="card-body">
             <div class="d-flex justify-content-between">
-                <div class="fw-bold text-danger" style="font-size: 0.90rem; font-weight: bold;">Tiket Mendekati Deadline dan Overdue yang belum Selesai!.</div>
+                <div class="fw-bold text-danger" style="font-size: 0.90rem; font-weight: bold;">Tiket Mendekati Deadline Atau Tiket Lewat Deadline yang belum Selesai!.</div>
                 <i class="bi bi-exclamation-circle text-danger"></i>
             </div>
             <hr class="mt-1 mb-1">

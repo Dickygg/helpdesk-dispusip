@@ -3,7 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
+/**
+ * @property Carbon $assigned_at
+ */
 class TicketAssignmentModels extends BaseModel
 {
     protected $table = 'ticket_assignments';
@@ -22,6 +26,7 @@ class TicketAssignmentModels extends BaseModel
     protected $casts = [
         'started_at' => 'datetime',
         'finish_at'  => 'datetime',
+        'assigned_at' => 'datetime',
     ];
 
     public function ticket()

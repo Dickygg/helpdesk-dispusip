@@ -26,7 +26,7 @@ class ActivityHelper
 
     public static function logupdate(Model $model, array $before, array $after): void
     {
-        self::log($model, 'Data DiPerbarui', [
+        self::log($model, 'Data Ticket Diperbarui', [
             'before' => $before,
             'after' => $after,
         ]);
@@ -37,7 +37,7 @@ class ActivityHelper
     }
     public static function logStatusChange(Model $model, string $dari, string $ke): void
     {
-        self::log($model, "Status diubah dari {$dari} ke {$ke}", [
+        self::log($model, "Status Tiket diubah dari {$dari} ke {$ke}", [
             'dari' => $dari,
             'ke'   => $ke,
         ]);

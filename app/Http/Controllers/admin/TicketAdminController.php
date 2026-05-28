@@ -226,7 +226,12 @@ class TicketAdminController extends Controller
     {
         abort_if(Auth::user()->cannot('tiket.admin.Updatepriority'), 403);
 
-        $tiket = TicketModels::findOrFail($id);
+
+        $tiket = TicketModels::with('assignment')->findOrFail($id);
+
+        if (!$tiket->priority_id) {
+            return redirect()->back()->with('error', 'Oops, Tiket Ini Belum Mempunyai Prioritas!.');
+        }
         $rules = [
             'priority_id' => [
                 'required',
@@ -247,17 +252,19 @@ class TicketAdminController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-
         $newpriority = TicketPriorityModels::findOrFail($request->priority_id);
         $oldpiority = $tiket->priority?->name;
         if (!$tiket) {
             abort(404);
         }
-
         DB::beginTransaction();
         try {
             $tiket->update([
-                'priority_id' => $request->priority_id
+                'priority_id' => $request->priority_id,
+                'due_date' => $tiket->assignment?->assigned_at
+                    ->copy()
+                    ->addHours($newpriority->estimated_hours)
+
             ]);
 
             ActivityHelper::logUpdate(
@@ -284,20 +291,23 @@ class TicketAdminController extends Controller
             abort(404);
         }
 
+        if ($tiket->status !== 'Resolved') {
+            return redirect()->back()->with('error', 'Oops, Status Tiket Belum Resolved!.');
+        }
         if (!$this->cekUserverified($tiket)) {
             return redirect()->back()->with('error', 'Oops, Pengguna Belum ConfirmasiTiket!.');
         }
 
-        if ($tiket->status !== 'Resolved') {
-            return redirect()->back()->with('error', 'Oops, Status Tiket Belum Resolved!.');
-        }
 
 
+        $user = Auth::user()->id;
         $oldStatus = $tiket->status;
         DB::beginTransaction();
         try {
             $tiket->update([
                 'status' => 'Closed',
+                'closed_at' => now(),
+                'closed_by' => $user
             ]);
             ActivityHelper::logUpdate(
                 $tiket,

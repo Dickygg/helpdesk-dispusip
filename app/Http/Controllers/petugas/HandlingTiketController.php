@@ -89,7 +89,6 @@ class HandlingTiketController extends Controller
             ->where('subject_id', $data->ticket->id)
             ->with('causer')
             ->latest()
-            ->take(4)
             ->get();
 
 
@@ -115,7 +114,6 @@ class HandlingTiketController extends Controller
             ->where('subject_id', $data->ticket->id)
             ->with('causer')
             ->latest()
-            ->take(3)
             ->get();
 
         return view('assignment.petugas.prosesAssignment', [

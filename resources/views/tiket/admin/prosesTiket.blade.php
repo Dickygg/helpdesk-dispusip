@@ -4,6 +4,10 @@
 @section('content')
 @push('styles')
 <style>
+    .log-hidden {
+        display: none;
+    }
+
     .icon-ticket {
         margin-right: 8px;
         font-size: 1.5rem;
@@ -32,6 +36,14 @@
 
 @endpush
 @php
+$nodepriorityStyle = match($tiket->priority?->name) {
+'High' => 'bg-danger',
+'Medium' => 'bg-warning',
+'Low' => 'bg-success',
+default => 'bg-secondary',
+};
+
+
 $priorityStyle = match($tiket->priority?->name) {
 'High' => 'text-danger',
 'Medium' => 'text-warning',
@@ -82,7 +94,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                         </div>
                                     </div>
                                     <div class="col d-flex justify-content-md-end" style="height: fit-content;">
-                                        <a href="{{url()->previous()}}" class="btn btn-outline-primary btn-sm"><i class="bi bi-arrow-left"></i> Kembali</a>
+                                        <a href="{{route($prefix .'admin.tiket.index')}}" class="btn btn-outline-primary btn-sm"><i class="bi bi-arrow-left"></i> Kembali</a>
                                     </div>
                                 </div>
                             </div>
@@ -99,7 +111,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                     <div class="col-md-3 col-sm-6 colums-card-body">
                                         <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-bookmark-star"></i> Prioritas</div>
                                         <div class="d-flex align-items-center gap-1" style="font-size: 0.8rem;">
-                                            <span style="margin-right:5px;width: 8px; height: 8px; border-radius: 50%; background-color: #726f6fff; display: inline-block;"></span>
+                                            <span class="{{$nodepriorityStyle }}" style="margin-right:5px;width: 8px; height: 8px; border-radius: 50%;  display: inline-block;"></span>
                                             <span class="{{ $priorityStyle }} fw-bold">{{$tiket->priority?->name ?? 'Belum Ditentukan'}}</span>
                                         </div>
                                     </div>
@@ -342,7 +354,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Waktu Pengerjaan</span>
                                                 <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
-                                                    {{ $tiket->assignment?->work_duration ? $tiket->work_duration . ' Menit' : '-' }}
+                                                    {{ $tiket->assignment?->work_duration ? $tiket->assignment?->work_duration . ' Menit' : '-' }}
                                                 </span>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center">
@@ -364,21 +376,32 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                             <a onclick="downloadPDF()" class="mb-2 d-flex justify-content-center align-items-center btn btn-outline-success btn-sm">
                                                 <i class="bi bi-download" style="margin-right: 5px;"></i> Unduh PDF
                                             </a>
-                                            @if($tiket->priority?->name == 'High' || in_array($tiket->status, ['Closed', 'Resolved']))
-                                            <a data-toggle="modal" data-target="#PiorityUpdateModal" class="mb-2 d-flex justify-content-center align-items-center btn btn-secondary btn-sm disabled">
-                                                <i class="bi bi-flag" style="margin-right: 5px;"></i> Escalate
-                                            </a>
-                                            @else
-                                            <a class="mb-2 d-flex justify-content-center align-items-center btn btn-outline-secondary btn-sm ">
-                                                <i class="bi bi-flag" style="margin-right: 5px;"></i> Escalate
-                                            </a>
-                                            @endif
                                             @forelse ($tiket->attachments as $attachment)
                                             <a href="{{asset('storage/' . $attachment->file_path . '/' . $attachment->file_name) }}" target="_blank" class="mb-2 d-flex justify-content-center align-items-center btn btn-outline-info btn-sm">
                                                 <i class="bi bi-eye" style="margin-right: 5px;"></i> Lihat Lampiran
                                             </a>
                                             @empty
                                             @endforelse
+
+                                            @if($tiket->priority?->name == 'High' || in_array($tiket->status, ['Closed', 'Resolved']))
+                                            <a class="mb-2 d-flex justify-content-center align-items-center btn btn-secondary btn-sm disabled">
+                                                <i class="bi bi-flag" style="margin-right: 5px;"></i> Escalate
+                                            </a>
+                                            @else
+                                            <a data-toggle="modal" data-target="#PiorityUpdateModal" class="mb-2 d-flex justify-content-center align-items-center btn btn-outline-secondary btn-sm ">
+                                                <i class="bi bi-flag" style="margin-right: 5px;"></i> Escalate
+                                            </a>
+                                            @endif
+
+                                            @if($tiket->status == 'Closed')
+                                            <a href="{{route($prefix.'admin.tiket.closeTiket',$tiket) }}" class="mb-2 d-flex justify-content-center align-items-center btn btn-danger btn-sm disabled">
+                                                <i class="bi bi-lock" style="margin-right: 5px;"></i> Close Tiket
+                                            </a>
+                                            @else
+                                            <a href="{{route($prefix.'admin.tiket.closeTiket',$tiket) }}" class="mb-2 d-flex justify-content-center align-items-center btn btn-outline-danger btn-sm">
+                                                <i class="bi bi-lock" style="margin-right: 5px;"></i> Close Tiket
+                                            </a>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -393,69 +416,75 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                             </div>
                                             <div class="card-body">
                                                 @forelse($logs as $log)
-                                                <div class="d-flex mb-3">
+                                                <div class="log-item {{ $loop->index >= 3 ? 'log-hidden' : '' }}">
 
-                                                    {{-- Avatar --}}
-                                                    <div class="mr-3">
-                                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                                                            style="width:35px; height:35px; font-size:11px;">
-                                                            {{ strtoupper(substr($log->causer?->name ?? 'S', 0, 2)) }}
+                                                    <div class="d-flex mb-3">
+                                                        {{-- Avatar --}}
+                                                        <div class="mr-3">
+                                                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                                                style="width:35px; height:35px; font-size:11px;">
+                                                                {{ strtoupper(substr($log->causer?->name ?? 'S', 0, 2)) }}
+                                                            </div>
+                                                        </div>
+
+                                                        {{-- Detail --}}
+                                                        <div class="flex-grow-1">
+                                                            <div class="d-flex justify-content-between">
+                                                                <strong>{{ $log->causer?->name ?? 'System' }}</strong>
+                                                                <small class="text-muted">{{ $log->created_at->diffForHumans() }}</small>
+                                                            </div>
+
+                                                            <p class="mb-1">{{ $log->description }}</p>
+
+                                                            @if($log->properties->isNotEmpty())
+                                                            @if($log->properties->has('before'))
+                                                            <small class="text-muted d-block">
+                                                                <strong>Sebelum:</strong>
+                                                                @foreach($log->properties['before'] as $key => $value)
+                                                                <span class="badge badge-light">{{ $key }}: {{ $value ?? '-' }}</span>
+                                                                @endforeach
+                                                            </small>
+                                                            <small class="text-muted d-block">
+                                                                <strong>Sesudah:</strong>
+                                                                @foreach($log->properties['after'] as $key => $value)
+                                                                <span class="badge badge-light">{{ $key }}: {{ $value ?? '-' }}</span>
+                                                                @endforeach
+                                                            </small>
+                                                            @elseif($log->properties->has('dari'))
+                                                            <small class="text-muted">
+                                                                <span class="badge badge-warning">{{ $log->properties['dari'] }}</span>
+                                                                <i class="fas fa-arrow-right mx-1"></i>
+                                                                <span class="badge badge-success">{{ $log->properties['ke'] }}</span>
+                                                            </small>
+                                                            @else
+                                                            @foreach($log->properties as $key => $value)
+                                                            <small class="text-muted">
+                                                                <span class="badge badge-light">{{ $key }}: {{ $value }}</span>
+                                                            </small>
+                                                            @endforeach
+                                                            @endif
+                                                            @endif
                                                         </div>
                                                     </div>
 
-                                                    {{-- Detail --}}
-                                                    <div class="flex-grow-1">
-                                                        <div class="d-flex justify-content-between">
-                                                            <strong>{{ $log->causer?->name ?? 'System' }}</strong>
-                                                            <small class="text-muted">{{ $log->created_at->diffForHumans() }}</small>
-                                                        </div>
+                                                    @if(!$loop->last)
+                                                    <hr class="my-2">
+                                                    @endif
 
-                                                        {{-- Deskripsi --}}
-                                                        <p class="mb-1">{{ $log->description }}</p>
-
-                                                        {{-- Properties --}}
-                                                        @if($log->properties->isNotEmpty())
-                                                        @if($log->properties->has('before'))
-                                                        {{-- Tampilkan before & after --}}
-                                                        <small class="text-muted d-block">
-                                                            <strong>Sebelum:</strong>
-                                                            @foreach($log->properties['before'] as $key => $value)
-                                                            <span class="badge badge-light">{{ $key }}: {{ $value ?? '-' }}</span>
-                                                            @endforeach
-                                                        </small>
-                                                        <small class="text-muted d-block">
-                                                            <strong>Sesudah:</strong>
-                                                            @foreach($log->properties['after'] as $key => $value)
-                                                            <span class="badge badge-light">{{ $key }}: {{ $value ?? '-' }}</span>
-                                                            @endforeach
-                                                        </small>
-                                                        @elseif($log->properties->has('dari'))
-                                                        {{-- Tampilkan perubahan status --}}
-                                                        <small class="text-muted">
-                                                            <span class="badge badge-warning">{{ $log->properties['dari'] }}</span>
-                                                            <i class="fas fa-arrow-right mx-1"></i>
-                                                            <span class="badge badge-success">{{ $log->properties['ke'] }}</span>
-                                                        </small>
-                                                        @else
-                                                        {{-- Tampilkan properties lainnya --}}
-                                                        @foreach($log->properties as $key => $value)
-                                                        <small class="text-muted">
-                                                            <span class="badge badge-light">{{ $key }}: {{ $value }}</span>
-                                                        </small>
-                                                        @endforeach
-                                                        @endif
-                                                        @endif
-                                                    </div>
                                                 </div>
-
-                                                {{-- Garis pemisah --}}
-                                                @if(!$loop->last)
-                                                <hr class="my-2">
-                                                @endif
-
                                                 @empty
                                                 <p class="text-muted text-center mb-0">Belum ada aktivitas.</p>
                                                 @endforelse
+
+                                                {{-- Tombol Selengkapnya --}}
+                                                @if($logs->count() > 3)
+                                                <div class="text-center mt-2">
+                                                    <button class="btn btn-sm btn-outline-primary" id="btnSelengkapnya" onclick="toggleLogs(this)">
+                                                        <i class="fas fa-chevron-down mr-1"></i>
+                                                        Selengkapnya ({{ $logs->count() - 3 }} lainnya)
+                                                    </button>
+                                                </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -592,6 +621,29 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
 
                     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
                     pdf.save(`Proses_Tiket_${ticketCode}.pdf`);
+                }
+
+                // hide activity
+                function toggleLogs(btn) {
+                    const hiddenLogs = document.querySelectorAll('.log-hidden, .log-item.log-visible-extra');
+
+                    const isHidden = document.querySelector('.log-item:nth-child(4)') &&
+                        document.querySelector('.log-item:nth-child(4)').style.display === 'none' ||
+                        document.querySelector('.log-hidden') !== null;
+
+                    document.querySelectorAll('.log-item').forEach((el, index) => {
+                        if (index >= 3) {
+                            if (el.classList.contains('log-hidden')) {
+                                el.classList.remove('log-hidden');
+                                btn.innerHTML = '<i class="fas fa-chevron-up mr-1"></i> Sembunyikan';
+                                btn.classList.replace('btn-outline-primary', 'btn-outline-secondary');
+                            } else {
+                                el.classList.add('log-hidden');
+                                btn.innerHTML = '<i class="fas fa-chevron-down mr-1"></i> Selengkapnya ({{ $logs->count() - 3 }} lainnya)';
+                                btn.classList.replace('btn-outline-secondary', 'btn-outline-primary');
+                            }
+                        }
+                    });
                 }
             </script>
             @endpush
