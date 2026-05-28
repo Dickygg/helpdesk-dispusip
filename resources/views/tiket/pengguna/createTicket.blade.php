@@ -19,7 +19,7 @@ default => ''
         </div>
         <div class="card-body">
             <div class="card shadow-sm">
-                <form action="{{ route('tiket.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route($prefix.'tiket.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('post')
                     <div class="card-body">
@@ -28,7 +28,7 @@ default => ''
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Judul Tiket<span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{ old('title') ?? '' }}">
+                                    <input type="text" class="form-control @error('title') is-invalid @enderror" name="title" value="{{ old('title') ?? '' }}" placeholder="Contoh: Tidak bisa login ke sistem">
                                     @error('title')
                                     <small class="text-danger">{{ $message }}</small>
                                     @enderror
@@ -37,7 +37,7 @@ default => ''
                                     <div class="form-group">
                                         <label class="form-label">Aplikasi Yang Digunakan<span class="text-danger">*</span></label>
                                         <select class="form-select form-control" aria-label="Default select example" name="id_aplikasi" id="id_aplikasi">
-                                            <option selected>----</option>
+                                            <option selected>Pilih Ruang Lingkup</option>
                                             @foreach($aplikasi as $s)
                                             <option value="{{$s->id}}">{{$s->name}}</option>
                                             @endforeach
@@ -51,7 +51,7 @@ default => ''
                                     <label class="form-label">Deskripsi Keluhan<span class="text-danger">*</span></label>
                                     <textarea class="form-control @error('description') is-invalid @enderror"
                                         name="description"
-                                        rows="4">{{ old('description') ?? '' }}</textarea>
+                                        rows="4" placeholder="Jelaskan kendala yang Anda alami secara detail, contoh: Saat login muncul pesan error 'Invalid credentials' padahal password sudah benar">{{ old('description') ?? '' }}</textarea>
                                     @error('description')
                                     <small class="text-danger">{{ $message }}</small>
                                     @enderror
@@ -72,7 +72,7 @@ default => ''
                                                 id="fileInput">
                                             <div class="file-upload-box">
                                                 <i class="fas fa-cloud-upload-alt me-2"></i>
-                                                <span id="fileLabel">Pilih File...</span>
+                                                <span id="fileLabel" style="font-size: 0.75rem;">Upload tangkapan layar yang menunjukkan kendala (Wajib)</span>
                                             </div>
                                         </label>
                                         <small class="text-muted">

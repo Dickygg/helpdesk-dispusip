@@ -28,15 +28,16 @@ class TicketController extends Controller
     {
         $user = Auth::user();
         // dd($request->all());
-
-        $data = TicketModels::with(['application', 'priority'])
+        $data = TicketModels::with(['application', 'priority', 'assignment'])
             ->where('user_id', $user->id)
+            ->whereNotIn('status', ['Closed', 'Rejected'])
             ->when($request->status, function ($query, $status) {
                 $query->where('status', $status);
             })
             ->when($request->search, function ($q) use ($request) {
-                $q->where(function ($query) use ($request) {
+                $q->where(function ($query) use ($request) { // ← bungkus dengan where()
                     $query->where('ticket_code', 'like', '%' . $request->search . '%')
+                        ->orWhere('title', 'like', '%' . $request->search . '%')
                         ->orWhereHas('application', function ($query) use ($request) {
                             $query->where('name', 'like', '%' . $request->search . '%');
                         });
@@ -44,7 +45,6 @@ class TicketController extends Controller
             })
             ->orderBy('created_at', 'DESC')
             ->get();
-
 
 
         return view('tiket.pengguna.index', [
@@ -157,7 +157,6 @@ class TicketController extends Controller
             ->where('subject_id', $data->id)
             ->with('causer')
             ->latest()
-            ->take(3)
             ->get();
 
         return view('tiket.pengguna.showdetail', [
@@ -170,7 +169,6 @@ class TicketController extends Controller
     public function Konfirmasi(string $id)
     {
         $data = TicketModels::findOrFail($id);
-        $oldstatus = $data->status;
         DB::beginTransaction();
         try {
             $data->update([
@@ -179,8 +177,8 @@ class TicketController extends Controller
             $data->refresh();
             ActivityHelper::logUpdate(
                 $data,
-                before: ['status' => $oldstatus],
-                after: ['status' => $data->status],
+                before: ['Tiket' => 'Pengguna Belum Konfirmasi'],
+                after: ['Tiket' => 'Pengguna Sudah Konfirmasi'],
             );
             DB::commit();
             sendTelegram(
@@ -188,7 +186,7 @@ class TicketController extends Controller
                     "⚡ Code Tiket: {$data->ticket_code}\n" .
                     "📢 Pemberitahuan: Pengguna Sudah Mengkonfirmasi Tiket, Segera Tutup Tiket.!.\n"
             );
-            return redirect()->route('tiket.index')->with('success', 'Tiket berhasil diKonfirmasi!');
+            return redirect()->back()->with('success', 'Tiket berhasil diKonfirmasi!');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error($e);
@@ -217,8 +215,8 @@ class TicketController extends Controller
 
             ActivityHelper::logUpdate(
                 $data,
-                before: ['status' => $oldstatus],
-                after: ['status' => $data->status],
+                before: ['Tiket' => 'Pengguna Belum Konfirmasi'],
+                after: ['Tiket' => 'Pengguna Menolak Konfirmasi'],
             );
             DB::commit();
             sendTelegram(

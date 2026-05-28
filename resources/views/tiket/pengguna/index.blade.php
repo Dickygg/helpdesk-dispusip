@@ -169,7 +169,7 @@ default => ''
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-8 d-none d-md-flex">
+                <div class="col-9 d-none d-md-flex">
                     <div class="btn-group " role="btn-group">
                         <a href="{{ route($prefix . 'tiket.index', ['status' => '']) }}">
                             <button type="button" class="btn btn-primary btn-sm px-4">
@@ -183,33 +183,33 @@ default => ''
                         </a>
                         <a href="{{ route($prefix . 'tiket.index', ['status' => 'Accept']) }}">
                             <button type="button" class="btn btn-white btn-sm  border px-4">
-                                <span class="text-secondary me-2">●</span> Accept
+                                <span class="text-info me-2">●</span> Accept
                             </button>
                         </a>
-                        <a href="{{ route($prefix . 'tiket.index', ['status' => 'Assign']) }}">
+                        <a href="{{ route($prefix . 'tiket.index', ['status' => 'Assigned']) }}">
                             <button type="button" class="btn btn-white btn-sm  border px-4">
-                                <span class="text-primary me-2">●</span> Assign
+                                <span class="text-primary me-2">●</span> Assigned
                             </button>
                         </a>
-                        <a href="{{ route($prefix . 'tiket.index', ['status' => 'Progress']) }}">
+                        <a href="{{ route($prefix . 'tiket.index', ['status' => 'In Progress']) }}">
                             <button type="button" class="btn btn-white btn-sm border px-4">
                                 <span class="text-warning me-2">●</span> Diproses
                             </button>
                         </a>
                         <a href="{{ route($prefix . 'tiket.index', ['status' => 'Resolved']) }}">
                             <button type="button" class="btn btn-white btn-sm border px-4">
-                                <span class="text-success me-2">●</span> Selesai
+                                <span class="text-success me-2">●</span> Resolved
                             </button>
                         </a>
-                        <a href="{{ route($prefix . 'tiket.index', ['status' => 'Closed']) }}">
+                        <a href="{{ route($prefix . 'tiket.index', ['status' => 'Reopen']) }}">
                             <button type="button" class="btn btn-white btn-sm border px-4">
-                                <span class="text-secondary me-2">●</span> Ditutup
+                                <span class="text-danger me-2">●</span> Reopen
                             </button>
                         </a>
                     </div>
                 </div>
                 <div class="col d-flex justify-content-end align-items-center">
-                    <form action="{{ route('tiket.index') }}" method="GET">
+                    <form action="{{ route($prefix.'tiket.index') }}" method="GET">
                         <div class="d-flex justify-content-end align-items-center">
                             <input
                                 type="text"
@@ -232,7 +232,7 @@ default => ''
             </div>
             <hr>
             <div class="row">
-                @foreach($tikets as $tickets)
+                @forelse($tikets as $tickets)
                 @php
                 $priorityStyle = match($tickets->priority?->name) {
                 'High' => 'text-danger',
@@ -247,7 +247,12 @@ default => ''
                 'rejected' => 'text-danger',
                 default => 'text-secondary',
                 };
-
+                $nodepriorityStyle = match($tickets->priority?->name) {
+                'High' => 'bg-danger',
+                'Medium' => 'bg-warning',
+                'Low' => 'bg-success',
+                default => 'bg-secondary',
+                };
                 $statusStyle = match($tickets->status){
                 'Open' => 'btn-primary',
                 'Accept' => 'btn-info',
@@ -256,6 +261,7 @@ default => ''
                 'Resolved' => 'btn-success',
                 'Closed' => 'btn-secondary',
                 'Rejected' => 'btn-danger',
+                'Reopen' => 'btn-danger',
                 default => 'btn-secondary',
                 };
                 @endphp
@@ -289,7 +295,7 @@ default => ''
                                 <div class="col-md-4 colums-card-body">
                                     <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-bookmark-star"></i> Prioritas</div>
                                     <div class="d-flex align-items-center gap-1" style="font-size: 0.8rem;">
-                                        <span style="margin-right:5px;width: 8px; height: 8px; border-radius: 50%; background-color: #726f6fff; display: inline-block;"></span>
+                                        <span class="{{$nodepriorityStyle}}" style="margin-right:5px;width: 8px; height: 8px; border-radius: 50%; background-color: #726f6fff; display: inline-block;"></span>
                                         <span class="{{ $priorityStyle }} fw-bold">{{$tickets->priority?->name ?? 'Belum Ditentukan'}}</span>
                                     </div>
                                 </div>
@@ -301,18 +307,20 @@ default => ''
                         </div>
                         <div class="card-footer bg-transparent">
                             <div class="row">
-                                <div class="col-md-10 colums-card-body">
+                                <div class="col-md-9 colums-card-body">
                                     <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-alarm"></i> Estimasi Selesai</div>
                                     <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"><i class="bi bi-hourglass-split"></i> {{ $tickets->due_date ? $tickets->due_date->format('d F Y, H:i') : '-' }}</div>
                                 </div>
-                                <div class="col-md-2 d-flex justify-content-md-end">
+                                <div class="col-md d-flex justify-content-md-end">
                                     <i class="btn btn-sm rounded-5 {{$statusStyle}}" style="cursor:default; height:fit-content;">{{$tickets['status']}}</i>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                @endforeach
+                @empty
+                @include('_layouts.components.empty_state')
+                @endforelse
             </div>
 
         </div>

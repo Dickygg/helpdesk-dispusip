@@ -104,6 +104,11 @@
         color: #DC3545;
     }
 
+    .status-reopen {
+        background: #FDEBEC;
+        color: #DC3545;
+    }
+
     .badge-priority {
         padding: 6px 14px;
         border-radius: 30px;
@@ -443,6 +448,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 'Resolved' => 'status-resolved',
                                 'Closed' => 'status-closed',
                                 'Rejected' => 'status-rejected',
+                                'Reopen' => 'status-reopen',
                                 default => ''
                                 };
 

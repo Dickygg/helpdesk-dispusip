@@ -76,6 +76,8 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
     Route::get('super-admin/tiket/create', [TicketController::class, 'create'])->name('sa.tiket.create');
     Route::post('super-admin/tiket', [TicketController::class, 'store'])->name('sa.tiket.store');
     Route::get('super-admin/tiket/{tiket}', [TicketController::class, 'show'])->name('sa.tiket.show');
+    Route::post('super-admin/tiket/konfirmasi/{tiket}', [TicketController::class, 'konfirmasi'])->name('sa.tiket.konfirmasi');
+    Route::post('super-admin/tiket/rejectedKonfirmasi/{tiket}', [TicketController::class, 'rejectedKonfirmasi'])->name('sa.tiket.rejectedKonfirmasi');
 });
 
 

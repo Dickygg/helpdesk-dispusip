@@ -4,6 +4,10 @@
 @section('content')
 @push('styles')
 <style>
+    .log-hidden {
+        display: none;
+    }
+
     .icon-ticket {
         margin-right: 8px;
         font-size: 1.5rem;
@@ -70,7 +74,7 @@ $statusStyle = match($tiket->status){
 'Resolved' => 'btn-success',
 'Closed' => 'btn-secondary',
 'Rejected' => 'btn-danger',
-'Reopen' => 'btn-warning',
+'Reopen' => 'btn-danger',
 default => 'btn-secondary',
 };
 
@@ -96,8 +100,7 @@ default => 'btn-secondary',
                                         </div>
                                     </div>
                                     <div class="col d-flex justify-content-md-end" style="height: fit-content;">
-                                        <a href="{{route('tiket.index')}}" class="btn btn-outline-primary btn-sm" style="margin-right: 5px;"><i class="bi bi-arrow-left"></i> Kembali</a>
-                                        <a onclick="downloadPDF()" class="btn btn-outline-success btn-sm"><i class="bi bi-download"></i> Unduh PDF</a>
+                                        <a href="{{route($prefix.'tiket.index')}}" class="btn btn-outline-primary btn-sm" style="margin-right: 5px;"><i class="bi bi-arrow-left"></i> Kembali</a>
                                     </div>
                                 </div>
                             </div>
@@ -134,12 +137,12 @@ default => 'btn-secondary',
                                         <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"> {{$tiket->updated_at? $tiket->updated_at->format('d F Y, H:i') : '-'}} </div>
                                     </div>
                                     <div class="col-md-03 col-md-3 col-sm-6 colums-card-body">
-                                        <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-person-gear"></i> PIC Petugas</div>
+                                        <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-person-gear"></i> PIC</div>
                                         <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;">
-                                            @if(!$tiket->assignment?->technician?->name)
+                                            @if(!$tiket->assignment?->admin?->name)
                                             Belum Ditentukan.
                                             @else
-                                            {{ $tiket->assignment?->technician?->name ?? '-' }}
+                                            {{ $tiket->assignment?->admin?->name ?? '-' }}
                                             @endif
                                         </div>
                                     </div>
@@ -162,48 +165,45 @@ default => 'btn-secondary',
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row" style="margin-bottom: 10px;">
+                                <div class="row">
                                     <div class="col">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:6px;"><i class="bi bi-card-text"></i>
-                                                    @if($tiket->status == 'Rejected' || $tiket->status == 'Reopen')
+                                                    @if($tiket->status == 'Reopen' || $tiket->status == 'Rejected')
                                                     Alasan Penolakan
                                                     @else
                                                     Catatan Pengerjaan
                                                     @endif
                                                 </div>
-                                                @if($tiket->status == 'Rejected')
+                                                @if($tiket->status == 'Rejected'|| $tiket->status == 'Reopen')
                                                 <div class="p-3 bg-danger text-light rounded mt-2">
-                                                    <p class="mb-0">{{ $tiket->note ?? '-' }}</p>
+                                                    <p class="mb-0">{{ $tiket->reason_rejected ?? '-' }}</p>
                                                 </div>
 
                                                 @elseif($tiket->status == 'Resolved' || $tiket->status == 'Closed')
-                                                <div class="p-3 bg-success text-light rounded mt-2">
-                                                    <p class="mb-0">{{ $tiket->note ?? '-' }}</p>
-                                                    @if($tiket->assignment?->Assignattachments?->file_path)
+                                                <div class="p-3 bg-light  rounded mt-2">
+                                                    <p class="mb-0">{{ $tiket->description ?? '-' }}</p>
+                                                    @if($tiket->assignment?->Assignattachments->file_path)
                                                     <a href="{{ Storage::url($tiket->assignment?->Assignattachments->file_path) }}" target="_blank">
-                                                        <span class="btn btn-sm btn-light text-success mt-2">
+                                                        <span class="btn btn-sm btn-success mt-2">
                                                             <i class="fas fa-eye"></i> Bukti Pengerjaan
                                                         </span>
                                                     </a>
                                                     @endif
                                                 </div>
-                                                @elseif($tiket->status == 'Reopen')
-                                                <div class="p-3 bg-danger text-light rounded mt-2">
-                                                    <p class="mb-0">{{ $tiket->reason_rejected ?? '-' }}</p>
-                                                </div>
                                                 @else
-                                                <div class="p-3 bg-dispusip rounded mt-2">
+                                                <div class="p-3 bg-light rounded mt-2">
                                                     <p class="mb-0">{{ $tiket->note ?? '-' }}</p>
                                                 </div>
                                                 @endif
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
-                                @if($tiket->status == 'Resolved')
-                                <div class="row">
+                                @if(!$tiket->user_confirmed_at && $tiket->status == 'Resolved')
+                                <div class="row mt-2">
                                     <div class="col">
                                         <div class="card">
                                             <div class="card-body">
@@ -260,24 +260,59 @@ default => 'btn-secondary',
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <!-- attchment -->
                         <div class="row">
                             <div class="col">
-                                <div class="card mb-3">
-                                    <div class="card-header">
-                                        <span class="fw-bold ">Attachments Tiket</span>
+                                <div class="card mb-3 border-0 shadow-sm rounded-4">
+                                    <div class="card-header bg-white border-bottom rounded-top-4">
+                                        <span class="text-primary" style="font-size: 0.85rem; letter-spacing: 0.3px; font-weight:bold;">
+                                            <i class="bi bi-lightning" style="margin-right: 5px;"></i>Quick Info
+                                        </span>
                                     </div>
                                     <div class="card-body">
-                                        @forelse ($tiket->attachments as $attachment)
-                                        <img src="{{ asset('storage/' . $attachment->file_path . '/' . $attachment->file_name) }}"
-                                            alt="{{ $attachment->file_name }}"
-                                            class="img-fluid rounded mb-2">
-                                        @empty
-                                        <p class="text-muted">Tidak ada lampiran.</p>
-                                        @endforelse
-                                    </div>
-                                    <div class="card-footer d-flex justify-content-between text-muted small">
-                                        <a href="{{asset('storage/' . $attachment->file_path . '/' . $attachment->file_name)}}" class="btn btn-outline-primary btn-sm" target="_blank"><i class="bi bi-eye" style="margin: 0%; padding:0%"></i></a>
+                                        {{-- Info --}}
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Deadline</span>
+                                                <span class="text-danger fw-bold" style="font-size: 0.78rem; font-weight: bold;">
+                                                    {{ $tiket->due_date ? $tiket->due_date->format('d F Y, H:i') : '-' }}
+                                                </span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Ditugaskan Ke</span>
+                                                <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold;">{{$tiket->assignment?->technician->name ?? 'Belum Ditentukan'}}</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Waktu Pengerjaan</span>
+                                                <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
+                                                    {{ $tiket->assignment?->work_duration ? $tiket->assignment?->work_duration . ' Menit' : '-' }}
+                                                </span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Pengguna Konfrimasi</span>
+                                                <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
+                                                    @if(!$tiket?->user_confirmed_at)
+                                                    Belum Dikonfirmasi
+                                                    @else
+                                                    Pengguna Sudah Konfirmasi
+                                                    @endif
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <hr class="my-2">
+
+                                        {{-- Action Buttons --}}
+                                        <div class="d-flex flex-column gap-2">
+                                            <a onclick="downloadPDF()" class="mb-2 d-flex justify-content-center align-items-center btn btn-outline-success btn-sm">
+                                                <i class="bi bi-download" style="margin-right: 5px;"></i> Unduh PDF
+                                            </a>
+                                            @forelse ($tiket->attachments as $attachment)
+                                            <a href="{{asset('storage/' . $attachment->file_path . '/' . $attachment->file_name) }}" target="_blank" class="mb-2 d-flex justify-content-center align-items-center btn btn-outline-info btn-sm">
+                                                <i class="bi bi-eye" style="margin-right: 5px;"></i> Lihat Lampiran
+                                            </a>
+                                            @empty
+                                            @endforelse
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -287,75 +322,81 @@ default => 'btn-secondary',
                             <div class="col">
                                 <div class="card mb-4">
                                     <div class="card-header">
-                                        <h6 class="m-0 font-weight-bold text-primary">
+                                        <span class="text-primary" style="font-size: 0.85rem; letter-spacing: 0.3px; font-weight:bold;">
                                             <i class="fas fa-history"></i> Riwayat Aktivitas
-                                        </h6>
+                                        </span>
                                     </div>
                                     <div class="card-body">
                                         @forelse($logs as $log)
-                                        <div class="d-flex mb-3">
+                                        <div class="log-item {{ $loop->index >= 3 ? 'log-hidden' : '' }}">
 
-                                            {{-- Avatar --}}
-                                            <div class="mr-3">
-                                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                                                    style="width:35px; height:35px; font-size:11px;">
-                                                    {{ strtoupper(substr($log->causer?->name ?? 'S', 0, 2)) }}
+                                            <div class="d-flex mb-3">
+                                                {{-- Avatar --}}
+                                                <div class="mr-3">
+                                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                                        style="width:35px; height:35px; font-size:11px;">
+                                                        {{ strtoupper(substr($log->causer?->name ?? 'S', 0, 2)) }}
+                                                    </div>
+                                                </div>
+
+                                                {{-- Detail --}}
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex justify-content-between">
+                                                        <strong>{{ $log->causer?->name ?? 'System' }}</strong>
+                                                        <small class="text-muted">{{ $log->created_at->diffForHumans() }}</small>
+                                                    </div>
+
+                                                    <p class="mb-1">{{ $log->description }}</p>
+
+                                                    @if($log->properties->isNotEmpty())
+                                                    @if($log->properties->has('before'))
+                                                    <small class="text-muted d-block">
+                                                        <strong>Sebelum:</strong>
+                                                        @foreach($log->properties['before'] as $key => $value)
+                                                        <span class="badge badge-light">{{ $key }}: {{ $value ?? '-' }}</span>
+                                                        @endforeach
+                                                    </small>
+                                                    <small class="text-muted d-block">
+                                                        <strong>Sesudah:</strong>
+                                                        @foreach($log->properties['after'] as $key => $value)
+                                                        <span class="badge badge-light">{{ $key }}: {{ $value ?? '-' }}</span>
+                                                        @endforeach
+                                                    </small>
+                                                    @elseif($log->properties->has('dari'))
+                                                    <small class="text-muted">
+                                                        <span class="badge badge-warning">{{ $log->properties['dari'] }}</span>
+                                                        <i class="fas fa-arrow-right mx-1"></i>
+                                                        <span class="badge badge-success">{{ $log->properties['ke'] }}</span>
+                                                    </small>
+                                                    @else
+                                                    @foreach($log->properties as $key => $value)
+                                                    <small class="text-muted">
+                                                        <span class="badge badge-light">{{ $key }}: {{ $value }}</span>
+                                                    </small>
+                                                    @endforeach
+                                                    @endif
+                                                    @endif
                                                 </div>
                                             </div>
 
-                                            {{-- Detail --}}
-                                            <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between">
-                                                    <strong>{{ $log->causer?->name ?? 'System' }}</strong>
-                                                    <small class="text-muted">{{ $log->created_at->diffForHumans() }}</small>
-                                                </div>
+                                            @if(!$loop->last)
+                                            <hr class="my-2">
+                                            @endif
 
-                                                {{-- Deskripsi --}}
-                                                <p class="mb-1">{{ $log->description }}</p>
-
-                                                {{-- Properties --}}
-                                                @if($log->properties->isNotEmpty())
-                                                @if($log->properties->has('before'))
-                                                {{-- Tampilkan before & after --}}
-                                                <small class="text-muted d-block">
-                                                    <strong>Sebelum:</strong>
-                                                    @foreach($log->properties['before'] as $key => $value)
-                                                    <span class="badge badge-light">{{ $key }}: {{ $value ?? '-' }}</span>
-                                                    @endforeach
-                                                </small>
-                                                <small class="text-muted d-block">
-                                                    <strong>Sesudah:</strong>
-                                                    @foreach($log->properties['after'] as $key => $value)
-                                                    <span class="badge badge-light">{{ $key }}: {{ $value ?? '-' }}</span>
-                                                    @endforeach
-                                                </small>
-                                                @elseif($log->properties->has('dari'))
-                                                {{-- Tampilkan perubahan status --}}
-                                                <small class="text-muted">
-                                                    <span class="badge badge-warning">{{ $log->properties['dari'] }}</span>
-                                                    <i class="fas fa-arrow-right mx-1"></i>
-                                                    <span class="badge badge-success">{{ $log->properties['ke'] }}</span>
-                                                </small>
-                                                @else
-                                                {{-- Tampilkan properties lainnya --}}
-                                                @foreach($log->properties as $key => $value)
-                                                <small class="text-muted">
-                                                    <span class="badge badge-light">{{ $key }}: {{ $value }}</span>
-                                                </small>
-                                                @endforeach
-                                                @endif
-                                                @endif
-                                            </div>
                                         </div>
-
-                                        {{-- Garis pemisah --}}
-                                        @if(!$loop->last)
-                                        <hr class="my-2">
-                                        @endif
-
                                         @empty
                                         <p class="text-muted text-center mb-0">Belum ada aktivitas.</p>
                                         @endforelse
+
+                                        {{-- Tombol Selengkapnya --}}
+                                        @if($logs->count() > 3)
+                                        <div class="text-center mt-2">
+                                            <button class="btn btn-sm btn-outline-primary" id="btnSelengkapnya" onclick="toggleLogs(this)">
+                                                <i class="fas fa-chevron-down mr-1"></i>
+                                                Selengkapnya ({{ $logs->count() - 3 }} lainnya)
+                                            </button>
+                                        </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -381,7 +422,7 @@ default => 'btn-secondary',
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
-                <form action="{{ route('tiket.konfirmasi', $tiket->id) }}" method="POST">
+                <form action="{{ route($prefix.'tiket.konfirmasi', $tiket->id) }}" method="POST">
                     @csrf
                     <button type="submit" class="btn btn-success">
                         <i class="bi bi-check-circle"></i> Konfirmasi Tiket
@@ -429,6 +470,29 @@ default => 'btn-secondary',
     document.getElementById('btnBatal').addEventListener('click', function() {
         document.getElementById('noteSection').style.display = 'none';
     });
+
+    // activty
+    function toggleLogs(btn) {
+        const hiddenLogs = document.querySelectorAll('.log-hidden, .log-item.log-visible-extra');
+
+        const isHidden = document.querySelector('.log-item:nth-child(4)') &&
+            document.querySelector('.log-item:nth-child(4)').style.display === 'none' ||
+            document.querySelector('.log-hidden') !== null;
+
+        document.querySelectorAll('.log-item').forEach((el, index) => {
+            if (index >= 3) {
+                if (el.classList.contains('log-hidden')) {
+                    el.classList.remove('log-hidden');
+                    btn.innerHTML = '<i class="fas fa-chevron-up mr-1"></i> Sembunyikan';
+                    btn.classList.replace('btn-outline-primary', 'btn-outline-secondary');
+                } else {
+                    el.classList.add('log-hidden');
+                    btn.innerHTML = '<i class="fas fa-chevron-down mr-1"></i> Selengkapnya ({{ $logs->count() - 3 }} lainnya)';
+                    btn.classList.replace('btn-outline-secondary', 'btn-outline-primary');
+                }
+            }
+        });
+    }
 </script>
 @if($errors->has('reason_rejected'))
 <script>

@@ -159,7 +159,7 @@ default => 'btn-secondary',
                                         <div class="d-flex flex-column">
                                             <div class="card">
                                                 <div class="card-body">
-                                                    <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:6px;"><i class="bi bi-card-text"></i> Alasan Penolakan Pengguna</div>
+                                                    <div class="text-danger" style="font-size: 0.85rem; font-weight: bold; margin-bottom:6px;"><i class="bi bi-card-text"></i> Alasan Penolakan Pengguna</div>
                                                     <div class="p-3 bg-light rounded">
                                                         <p class="mb-0">{{ $data->ticket->reason_rejected ?? '-' }}</p>
                                                     </div>

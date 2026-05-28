@@ -1,54 +1,28 @@
 @push('style')
 <style>
-    .empty-state {
-        padding: 2rem 1rem;
-        text-align: center;
-        background-color: #f9f9f9;
-        border: 2px dashed #ED7423;
-        border-radius: 12px;
-        transition: background-color 0.3s ease;
-    }
-
-    .empty-state:hover {
-        background-color: #fff8f3;
-    }
-
-    .empty-state i {
-        font-size: 3rem;
-        color: #ED7423;
-        margin-bottom: 1rem;
-    }
-
-    .empty-state h5 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #444;
-    }
-
-    .empty-state p {
-        font-size: 0.95rem;
-        color: #777;
-        margin-bottom: 0;
-    }
-
-    @media (max-width: 767.98px) {
-        .empty-state {
-            padding: 1.5rem 1rem;
-        }
-
-        .empty-state i {
-            font-size: 2.5rem;
-        }
-
-        .empty-state h5 {
-            font-size: 1.125rem;
-        }
+    .status-rejected {
+        background: #f66d6dff;
+        color: #f8f6f6ff;
     }
 </style>
 @endpush
-
-<div class="empty-state mb-4">
-    <i class="{{ $icon ?? 'fa-solid fa-warning' }}"></i>
-    <h5>{{ $dataTitle ?? 'Tidak Ada Data' }}</h5>
-    <p>{{ $message ?? 'Belum ada data yang tersedia.' }}</p>
+@php
+$prefix = match(true) {
+auth()->user()->hasRole('super admin') => 'sa.',
+auth()->user()->hasRole('admin helpdesk') => 'admin.',
+default => ''
+};
+@endphp
+<div class="d-flex justify-content-center align-content-center" style="width: 100%;">
+    <div class="card">
+        <div class="row">
+            <div class=" col-12">
+                <div class="card-body d-flex flex-column justify-content-center ">
+                    <h5 class=" card-title d-flex justify-content-center">Data Tiket Tidak Ditemuka!.</h5>
+                    <p class="card-text">Anda belum memiliki tiket aktif saat ini. Buat tiket baru untuk melaporkan kendala Anda.</p>
+                    <a href="{{route($prefix.'tiket.create')}}" class="btn btn-outline-primary">Buat Tiket</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

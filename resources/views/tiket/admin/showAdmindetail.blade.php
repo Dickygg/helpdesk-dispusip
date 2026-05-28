@@ -172,7 +172,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                                     <p class="mb-0">{{ $tiket->description ?? '-' }}</p>
                                                     @if($tiket->assignment?->Assignattachments->file_path)
                                                     <a href="{{ Storage::url($tiket->assignment?->Assignattachments->file_path) }}" target="_blank">
-                                                        <span class="btn btn-sm btn-light text-success mt-2">
+                                                        <span class="btn btn-sm btn-success mt-2">
                                                             <i class="fas fa-eye"></i> Bukti Pengerjaan
                                                         </span>
                                                     </a>

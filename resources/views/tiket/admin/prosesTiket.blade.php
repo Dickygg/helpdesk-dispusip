@@ -1,6 +1,6 @@
 @extends('_layouts.app')
-@section('title', 'Detail Tiket')
-@section('page-title', 'Detail Tiket')
+@section('title', 'Proses Tiket')
+@section('page-title', 'Proses Tiket')
 @section('content')
 @push('styles')
 <style>
@@ -66,6 +66,7 @@ $statusStyle = match($tiket->status){
 'Resolved' => 'btn-success',
 'Closed' => 'btn-secondary',
 'Rejected' => 'btn-danger',
+'Reopen' => 'btn-danger',
 default => 'btn-secondary',
 };
 @endphp
@@ -311,18 +312,36 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                     <div class="col">
                                         <div class="card">
                                             <div class="card-body">
-                                                <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:6px;"><i class="bi bi-card-text"></i> Catatan Pengerjaan</div>
-
-                                                <div class="p-3 bg-light text-light rounded mt-2">
-                                                    <p class="mb-0 text-dark">{{ $tiket->description ?? 'Catatan Pengerjaan Belum Ada.' }}</p>
-                                                    @if($tiket->status == 'Resolved' || $tiket->status == 'Close')
-                                                    <a href="#" class=""> <span class="btn btn-sm btn-light text-success mt-4"><i class="fas fa-eye"></i> Bukti pengerjaan</span></a>
+                                                <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:6px;"><i class="bi bi-card-text"></i>
+                                                    @if($tiket->status == 'Reopen' || $tiket->status == 'Rejected')
+                                                    Alasan Penolakan
+                                                    @else
+                                                    Catatan Pengerjaan
                                                     @endif
                                                 </div>
+                                                @if($tiket->status == 'Rejected'|| $tiket->status == 'Reopen')
+                                                <div class="p-3 bg-danger text-light rounded mt-2">
+                                                    <p class="mb-0">{{ $tiket->reason_rejected ?? '-' }}</p>
+                                                </div>
 
+                                                @elseif($tiket->status == 'Resolved' || $tiket->status == 'Closed')
+                                                <div class="p-3 bg-light  rounded mt-2">
+                                                    <p class="mb-0">{{ $tiket->description ?? '-' }}</p>
+                                                    @if($tiket->assignment?->Assignattachments->file_path)
+                                                    <a href="{{ Storage::url($tiket->assignment?->Assignattachments->file_path) }}" target="_blank">
+                                                        <span class="btn btn-sm btn-success mt-2">
+                                                            <i class="fas fa-eye"></i> Bukti Pengerjaan
+                                                        </span>
+                                                    </a>
+                                                    @endif
+                                                </div>
+                                                @else
+                                                <div class="p-3 bg-light rounded mt-2">
+                                                    <p class="mb-0">{{ $tiket->note ?? '-' }}</p>
+                                                </div>
+                                                @endif
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
