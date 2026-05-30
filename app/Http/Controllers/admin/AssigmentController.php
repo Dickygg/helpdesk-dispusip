@@ -21,10 +21,12 @@ class AssigmentController extends Controller
     public function index(Request $request)
     {
         $assignment = TicketAssignmentModels::with(['ticket', 'technician', 'admin'])
+            ->whereHas('ticket', function ($q) {
+                $q->whereNotIn('status', ['Closed', 'Rejected']);
+            })
             ->when($request->start_date, function ($q) use ($request) {
                 $q->whereDate('created_at', '>=', $request->start_date);
             })
-
             ->when($request->end_date, function ($q) use ($request) {
                 $q->whereDate('created_at', '<=', $request->end_date);
             })

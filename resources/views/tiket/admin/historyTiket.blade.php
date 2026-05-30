@@ -280,7 +280,23 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                     name="end_date"
                                     class="form-control rounded-3 shadow-sm border-0">
                             </div>
-                            <!-- Search -->
+                            <!-- Prioritas-->
+                            <div class="col-lg-3 col-md-6">
+
+                                <label class="form-label fw-semibold text-secondary">
+                                    Prioritas
+                                </label>
+                                <select class="form-select form-control" name="priority_id" id="priority_id">
+                                    <option value="" selected>Semua Prioritas</option>
+                                    @foreach($priority as $s)
+                                    <option value="{{$s->id}}">{{$s->name}}</option>
+                                    @endforeach
+                                </select>
+                                @error('priority_id')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
+
+                            </div>
                             <div class="col-lg-3 col-md-6">
 
                                 <label class="form-label fw-semibold text-secondary">
@@ -298,7 +314,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
 
                             </div>
                             <!-- Tombol -->
-                            <div class="col-lg-3 col-md-12 d-flex justify-content-end">
+                            <div class="col-lg-12 col-md-12 d-flex justify-content-end mt-3">
                                 <div class="d-grid gap-2">
                                     <button type="submit"
                                         class="btn btn-primary rounded-3 shadow-sm">
@@ -306,7 +322,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                         Filter
                                     </button>
                                     <a href="#"
-                                        class="btn btn-outline-primary rounded-3 shadow-sm">
+                                        class="btn btn-outline-success rounded-3 shadow-sm">
                                         <i class="bi bi-download me-1"></i>
                                         Export PDF
                                     </a>

@@ -72,9 +72,11 @@ class TicketAdminController extends Controller
 
         $getTiketstats = $this->getTotalStatus($request);
         $aplikasi = ApplicationModels::select('id', 'name')->get();
+        $piority = TicketPriorityModels::select('id', 'name')->get();
         return view('tiket.admin.index', [
             'tickets' => $data,
             'aplikasi' => $aplikasi,
+            'piority' => $piority,
             'tiketstats' => $getTiketstats['tiketstats'],      // langsung collection-nya kara tidak ingin di loop di view
             'tikettotal' => $getTiketstats['tikettotal']
         ]);
@@ -350,14 +352,19 @@ class TicketAdminController extends Controller
             ->when($request->id_aplikasi, function ($q) use ($request) {
                 $q->where('application_id', $request->id_aplikasi);
             })
+            ->when($request->priority_id, function ($q) use ($request) {
+                $q->where('priority_id', $request->priority_id);
+            })
             ->orderBy('created_at', 'DESC')
             ->get();
 
         $getTiketstats = $this->getTotalStatus($request);
         $aplikasi = ApplicationModels::select('id', 'name')->get();
+        $piority  = TicketPriorityModels::select('id', 'name')->get();
         return view('tiket.admin.historyTiket', [
             'tickets' => $data,
             'aplikasi' => $aplikasi,
+            'priority' => $piority,
             'tiketstats' => $getTiketstats['tiketstats'],      // langsung collection-nya kara tidak ingin di loop di view
             'tikettotal' => $getTiketstats['tikettotalhistory'],
         ]);
@@ -387,6 +394,9 @@ class TicketAdminController extends Controller
 
             ->when($request->id_aplikasi, function ($q) use ($request) {
                 $q->where('application_id', $request->id_aplikasi);
+            })
+            ->when($request->priority_id, function ($q) use ($request) {
+                $q->where('priority_id', $request->priority_id);
             });
 
         // Statistik Status
