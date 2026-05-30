@@ -32,12 +32,15 @@ class TicketModels extends BaseModel
         'due_date',
         'closed_at',
         'closed_by',
-        'reason_rejected'
+        'reason_rejected',
+        'rejected_at'
     ];
 
 
     protected $casts = [
         'due_date' => 'datetime',
+        'rejected_at'  => 'datetime',
+        'closed_at' => 'datetime',
     ];
 
     public function getActivitylogOptions(): LogOptions

@@ -44,7 +44,8 @@ class TicketController extends Controller
                 });
             })
             ->orderBy('created_at', 'DESC')
-            ->get();
+            ->paginate(4)
+            ->appends($request->query());
 
 
         return view('tiket.pengguna.index', [
@@ -142,9 +143,6 @@ class TicketController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         abort_if(Auth::user()->cannot('tiket.show'), 403);
@@ -231,5 +229,34 @@ class TicketController extends Controller
             dd($e);
             return redirect()->route('tiket.index')->with('error', 'Oops, Gagal Mengubah Status Konfirmasi!');
         }
+    }
+
+    // riwayat tiket section
+    public function historyTicket(Request $request)
+    {
+        $user = Auth::user();
+        $data = TicketModels::with(['application', 'priority', 'assignment'])
+            ->where('user_id', $user->id)
+            ->whereIn('status', ['Closed', 'Rejected'])
+            ->when($request->status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->when($request->search, function ($q) use ($request) {
+                $q->where(function ($query) use ($request) { // ← bungkus dengan where()
+                    $query->where('ticket_code', 'like', '%' . $request->search . '%')
+                        ->orWhere('title', 'like', '%' . $request->search . '%')
+                        ->orWhereHas('application', function ($query) use ($request) {
+                            $query->where('name', 'like', '%' . $request->search . '%');
+                        });
+                });
+            })
+            ->orderBy('created_at', 'DESC')
+            ->paginate(4)
+            ->appends($request->query());
+
+
+        return view('tiket.pengguna.history', [
+            'tikets' => $data,
+        ]);
     }
 }

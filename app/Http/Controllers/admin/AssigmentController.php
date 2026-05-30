@@ -63,6 +63,7 @@ class AssigmentController extends Controller
     {
         abort_if(Auth::user()->cannot('tiket.admin.assignment'), 403);
 
+
         $rules = [
             'user_id' => 'required'
         ];
@@ -78,6 +79,10 @@ class AssigmentController extends Controller
         }
 
         $tiket   = TicketModels::findOrFail($id);
+        if (in_array($tiket->status, ['Rejected', 'Closed'])) {
+            return redirect()->back()->with('error', 'Tiket ini sudah ditutup atau Ditolak dan tidak dapat diubah.');
+        }
+
         $oldStatus = $tiket->status;
         DB::beginTransaction();
         try {

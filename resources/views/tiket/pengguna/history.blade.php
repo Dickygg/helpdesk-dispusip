@@ -170,46 +170,27 @@ default => ''
         <div class="card-body">
             <div class="row">
                 <div class="col-9 d-none d-md-flex">
-                    <div class="btn-group " role="btn-group">
-                        <a href="{{ route($prefix . 'tiket.index', ['status' => '']) }}">
-                            <button type="button" class="btn btn-primary btn-sm px-4">
+                    <div class="btn-group" role="btn-group">
+                        <a href="{{ route($prefix . 'tiket.history', array_merge(request()->query(), ['status' => ''])) }}">
+                            <button type="button" class="btn btn-sm px-4 {{ !request('status') ? 'btn-primary' : 'btn-white border' }}">
                                 <i class="bi bi-grid me-2"></i> Semua
                             </button>
                         </a>
-                        <a href="{{ route($prefix . 'tiket.index', array_merge(request()->query(), ['status' => 'Open'])) }}">
-                            <button type="button" class="btn btn-white btn-sm  border px-4">
-                                <span class="text-success me-2">●</span> Open
+                        <a href="{{ route($prefix . 'tiket.history', array_merge(request()->query(), ['status' => 'Closed'])) }}">
+                            <button type="button" class="btn btn-sm px-4 {{ request('status') == 'Closed' ? 'btn-success' : 'btn-white border' }}">
+                                <span class="text-success me-2">●</span> Closed
                             </button>
                         </a>
-                        <a href="{{ route($prefix . 'tiket.index', array_merge(request()->query(), ['status' => 'Accept'])) }}">
-                            <button type="button" class="btn btn-white btn-sm  border px-4">
-                                <span class="text-info me-2">●</span> Accept
-                            </button>
-                        </a>
-                        <a href="{{ route($prefix . 'tiket.index', array_merge(request()->query(), ['status' => 'Assigned'])) }}">
-                            <button type="button" class="btn btn-white btn-sm  border px-4">
-                                <span class="text-primary me-2">●</span> Assigned
-                            </button>
-                        </a>
-                        <a href="{{ route($prefix . 'tiket.index', array_merge(request()->query(), ['status' => 'In Progress'])) }}">
-                            <button type="button" class="btn btn-white btn-sm border px-4">
-                                <span class="text-warning me-2">●</span> Diproses
-                            </button>
-                        </a>
-                        <a href="{{ route($prefix . 'tiket.index', array_merge(request()->query(), ['status' => 'Resolved'])) }}">
-                            <button type="button" class="btn btn-white btn-sm border px-4">
-                                <span class="text-success me-2">●</span> Resolved
-                            </button>
-                        </a>
-                        <a href="{{ route($prefix . 'tiket.index', array_merge(request()->query(), ['status' => 'Reopen'])) }}">
-                            <button type="button" class="btn btn-white btn-sm border px-4">
-                                <span class="text-danger me-2">●</span> Reopen
+                        <a href="{{ route($prefix . 'tiket.history', array_merge(request()->query(), ['status' => 'Rejected'])) }}">
+                            <button type="button" class="btn btn-sm px-4 {{ request('status') == 'Rejected' ? 'btn-danger' : 'btn-white border' }}">
+                                <span class="text-danger me-2">●</span> Rejected
                             </button>
                         </a>
                     </div>
                 </div>
                 <div class="col d-flex justify-content-end align-items-center">
-                    <form action="{{ route($prefix.'tiket.index') }}" method="GET">
+                    <form action="{{ route($prefix.'tiket.history') }}" method="GET">
+                        <input type="hidden" name="status" value="{{ request('status') }}">
                         <div class="d-flex justify-content-end align-items-center">
                             <input
                                 type="text"
@@ -218,12 +199,10 @@ default => ''
                                 class="form-control rounded-pill ps-4 pe-5 shadow-sm border-0 bg-light"
                                 placeholder="Cari tiket..."
                                 style="margin-right: 3px;">
-
                             <button
                                 type="submit"
                                 class="btn btn-sm btn-primary ms-2"
                                 style="border-radius: 50%; height: fit-content;">
-
                                 <i class="bi bi-search"></i>
                             </button>
                         </div>
@@ -296,20 +275,72 @@ default => ''
                                     <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-bookmark-star"></i> Prioritas</div>
                                     <div class="d-flex align-items-center gap-1" style="font-size: 0.8rem;">
                                         <span class="{{$nodepriorityStyle}}" style="margin-right:5px;width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
-                                        <span class="{{ $priorityStyle }} fw-bold">{{$tickets->priority?->name ?? 'Belum Ditentukan'}}</span>
+                                        <span class="{{ $priorityStyle }} fw-bold" style="font-size: 0.75rem; font-weight:bolder;">{{$tickets->priority?->name ?? 'Belum Ditentukan'}}</span>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-shield-check"></i> Verifikasi Data</div>
-                                    <div class="{{$verificationStyle}} text-capitalize" style="font-size: 0.75rem; font-weight: bold; margin-bottom:0px;">{{$tickets->verification_status}}</div>
+                                    <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-stopwatch"></i> kinerja Penyelesaian</div>
+                                    <div class="d-flex align-items-center gap-1" style="font-size: 0.8rem;">
+                                        <span class="{{$nodepriorityStyle}}" style="margin-right:5px;width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
+                                        <span class="{{ $priorityStyle }}" style="font-size: 0.75rem; font-weight:bolder;">{{$tickets->priority?->name ?? 'Belum Ditentukan'}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row d-flex" style="margin-bottom:0;">
+                                <div class="col-md-4 colums-card-body">
+                                    <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-menu-app"></i> Dibuat Pada</div>
+                                    <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"> <i class="bi bi-clock-history" style="margin-right: 3px;"></i>
+                                        {{ $tickets->created_at ? $tickets->created_at->format('d F Y') : '-' }}
+                                    </div>
+                                </div>
+                                <div class="col-md-4 colums-card-body">
+                                    @if($tickets->rejected_at)
+                                    <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-calendar-minus"></i> Ditolak Pada</div>
+                                    <div class="d-flex align-items-center gap-1" style="font-size: 0.8rem;">
+                                        <i class="bi bi-clock-history" style="margin-right: 3px;"></i>
+                                        <span class="text-danger fw-bold" style="font-size: 0.75rem; font-weight:bolder;">{{ $tickets->rejected_at ? $tickets->rejected_at->format('d F Y') : '-' }}</span>
+                                    </div>
+                                    @else
+                                    <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-calendar-check"></i> Tiket Selesai</div>
+                                    <div class="d-flex align-items-center gap-1" style="font-size: 0.8rem;">
+                                        <i class="bi bi-clock-history" style="margin-right: 3px;"></i>
+                                        <span class="text-secondary fw-bold" style="font-size: 0.75rem; font-weight:bolder;">{{ $tickets->closed_at ? $tickets->closed_at->format('d F Y') : '-' }}</span>
+                                    </div>
+                                    @endif
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-stopwatch"></i> Durasi Pengerjaan</div>
+                                    <div class="d-flex align-items-center gap-1" style="font-size: 0.8rem;">
+                                        <i class="bi bi-clock-history" style="margin-right: 3px;"></i>
+                                        <span class="text-secondary fw-bold" style="font-size: 0.75rem; font-weight:bolder;"> @if($tickets->assignment?->work_duration)
+                                            @php
+                                            $totalMenit = $tickets->assignment->work_duration;
+                                            $jam = floor($totalMenit / 60);
+                                            $menit = $totalMenit % 60;
+                                            @endphp
+
+                                            @if($jam > 0)
+                                            {{ $jam }} Jam {{ $menit }} Menit
+                                            @else
+                                            {{ $menit }} Menit
+                                            @endif
+                                            @else
+                                            -
+                                            @endif</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="card-footer bg-transparent">
                             <div class="row">
-                                <div class="col-md-9 colums-card-body">
-                                    <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-alarm"></i> Estimasi Selesai</div>
-                                    <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"><i class="bi bi-hourglass-split"></i> {{ $tickets->due_date ? $tickets->due_date->format('d F Y, H:i') : '-' }}</div>
+                                <div class="col-md-4 colums-card-body">
+                                    <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-person-fill-gear"></i> Petugas Teknis</div>
+                                    <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"><i>*</i> {{ $tickets->assignment->technician->name ?? '-'}}</div>
+                                </div>
+                                <div class="col-md-4 colums-card-body">
+                                    <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-person-vcard-fill"></i> PIC</div>
+                                    <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"><i>*</i> {{ $tickets->assignment?->admin?->name ?? '-' }}</div>
                                 </div>
                                 <div class="col-md d-flex justify-content-md-end">
                                     <i class="btn btn-sm rounded-5 {{$statusStyle}}" style="cursor:default; height:fit-content;">{{$tickets['status']}}</i>
@@ -323,7 +354,6 @@ default => ''
                 @endforelse
             </div>
             {{ $tikets->links('pagination::bootstrap-5') }}
-
         </div>
     </div>
 </div>

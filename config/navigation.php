@@ -64,12 +64,12 @@ return [
         [
             'title' => 'Buat Tiket',
             'route' => 'sa.tiket.create',  // ← diubah
-            'icon' => 'bi-plus-square'
+            'icon' => 'bi-ticket-detailed'
         ],
         [
             'title' => 'Tiket Saya',
             'route' => 'sa.tiket.index',   // ← diubah
-            'icon' => 'bi-ticket-detailed'
+            'icon' => 'bi bi-list-task'
         ],
         [
             'title' => 'Divider',
@@ -86,7 +86,7 @@ return [
         [
             'title' => 'Daftar Riwayat Tiket',
             'route' => 'sa.admin.tiket.historyTiket',
-            'icon' => 'bi-ticket-detailed'
+            'icon' => 'bi bi-clock'
         ],
         [
             'title' => 'Divider',
@@ -144,7 +144,7 @@ return [
         [
             'title' => 'Buat Tiket',
             'route' => 'admin.tiket.create',
-            'icon' => 'bi-plus-square'
+            'icon' => 'bi-ticket-detailed'
         ],
         [
             'title' => 'Daftar Tiket Berjalan',
@@ -154,7 +154,7 @@ return [
         [
             'title' => 'Daftar Riwayat Tiket',
             'route' => 'admin.tiket.historyTiket',
-            'icon' => 'bi-ticket-detailed'
+            'icon' => 'bi bi-clock'
         ],
         [
             'title' => 'Divider',
@@ -218,12 +218,17 @@ return [
         [
             'title' => 'Buat Tiket',
             'route' => 'tiket.create',
-            'icon' => 'bi-plus-square'
+            'icon' => 'bi-ticket-detailed'
         ],
         [
             'title' => 'Tiket Saya',
             'route' => 'tiket.index',
-            'icon' => 'bi-ticket-detailed'
+            'icon' => 'bi bi-list-task'
+        ],
+        [
+            'title' => 'Data Riwayat Tiket',
+            'route' => 'tiket.history',
+            'icon' => 'bi bi-clock'
         ],
     ],
 ];

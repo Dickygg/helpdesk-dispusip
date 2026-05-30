@@ -222,7 +222,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
         </div>
         <!-- Open -->
         <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
-            <a href="{{ route($prefix . 'admin.tiket.historyTiket',array_merge(request()->query()), ['status' => 'Closed']) }}" class="text-decoration-none">
+            <a href="{{ route($prefix . 'admin.tiket.historyTiket', array_merge(request()->query(), ['status' => 'Closed'])) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Closed' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
                         <div class="bg-secondary bg-opacity-10 p-2 shadow-sm" style="width: 55px; height:55px; border-radius:20px; margin-right:7px;">
@@ -239,7 +239,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
         </div>
         <!-- Accept -->
         <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
-            <a href="{{ route($prefix . 'admin.tiket.historyTiket',array_merge(request()->query()), ['status' => 'Rejected']) }}" class="text-decoration-none">
+            <a href="{{ route($prefix . 'admin.tiket.historyTiket', array_merge(request()->query(), ['status' => 'Rejected'])) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Rejected' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
                         <div class="bg-danger bg-opacity-10 p-2 shadow-sm" style="width: 55px; height:55px; border-radius:20px; margin-right:7px;">
@@ -254,57 +254,6 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                 </div>
             </a>
         </div>
-        <!-- Assigned -->
-        <!-- <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
-            <a href="{{ route($prefix . 'admin.tiket.index', ['status' => 'Assigned']) }}" class="text-decoration-none">
-                <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Assigned' ? 'active' : '' }}">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="bg-secondary bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
-                            <i class="bi bi-person-fill-check text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
-                        </div>
-                        <div>
-                            <div class="text-secondary title-cardtiket">Assigned</div>
-                            <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $tiketstats->firstWhere('status', 'Assigned')->total ?? 0 }}</div>
-                            <div class="text-muted title-cardtiket">Ditugaskan</div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div> -->
-        <!-- In Progress -->
-        <!-- <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
-            <a href="{{ route($prefix . 'admin.tiket.index', ['status' => 'In Progress']) }}" class="text-decoration-none">
-                <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'In Progress' ? 'active' : '' }}">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="bg-warning bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
-                            <i class="bi bi-arrow-repeat text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
-                        </div>
-                        <div>
-                            <div class="text-secondary title-cardtiket">Progres</div>
-                            <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $tiketstats->firstWhere('status', 'In Progress')->total ?? 0 }}</div>
-                            <div class="text-muted title-cardtiket">Dikerjakan</div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div> -->
-        <!-- Resolved -->
-        <!-- <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
-            <a href="{{ route($prefix . 'admin.tiket.index', ['status' => 'Resolved']) }}" class="text-decoration-none">
-                <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Resolved' ? 'active' : '' }}">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="bg-info bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
-                            <i class="bi bi-check-circle-fill text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
-                        </div>
-                        <div>
-                            <div class="text-secondary title-cardtiket">Resolved</div>
-                            <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $tiketstats->firstWhere('status', 'Resolved')->total ?? 0 }}</div>
-                            <div class="text-muted title-cardtiket">Selesai</div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        </div> -->
     </div>
 
     <form action="{{ route($prefix . 'admin.tiket.historyTiket')}}" method="GET">

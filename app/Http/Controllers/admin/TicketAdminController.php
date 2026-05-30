@@ -205,7 +205,8 @@ class TicketAdminController extends Controller
             $tiket->update([
                 'status' => 'Rejected',
                 'verification_status' => 'rejected',
-                'note' => $request->note
+                'rejected_at' => now(),
+                'reason_rejected' => $request->note
             ]);
 
             ActivityHelper::logUpdate(
@@ -395,7 +396,7 @@ class TicketAdminController extends Controller
             ->get();
 
         // Total Semua
-        $tiketTotal = (clone $query)->count();
+        $tiketTotal = (clone $query)->whereNotin('status', ['Closed', 'Rejected'])->count();
 
         // Total History
         $tiketTotalHistory = (clone $query)
