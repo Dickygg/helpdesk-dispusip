@@ -72,6 +72,11 @@ return [
             'icon' => 'bi bi-list-task'
         ],
         [
+            'title' => 'Data Riwayat Tiket Saya',
+            'route' => 'sa.tiket.history',
+            'icon' => 'bi bi-clock'
+        ],
+        [
             'title' => 'Divider',
             'divider' => true,
         ],
@@ -145,6 +150,11 @@ return [
             'title' => 'Buat Tiket',
             'route' => 'admin.tiket.create',
             'icon' => 'bi-ticket-detailed'
+        ],
+        [
+            'title' => 'Data Riwayat Tiket Saya',
+            'route' => 'sa.tiket.history',
+            'icon' => 'bi bi-clock'
         ],
         [
             'title' => 'Daftar Tiket Berjalan',

@@ -75,6 +75,7 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
     Route::get('super-admin/tiket', [TicketController::class, 'index'])->name('sa.tiket.index');
     Route::get('super-admin/tiket/create', [TicketController::class, 'create'])->name('sa.tiket.create');
     Route::post('super-admin/tiket', [TicketController::class, 'store'])->name('sa.tiket.store');
+    Route::get('super-admin/tiket/history', [TicketController::class, 'historyTicket'])->name('sa.tiket.history');
     Route::get('super-admin/tiket/{tiket}', [TicketController::class, 'show'])->name('sa.tiket.show');
     Route::post('super-admin/tiket/konfirmasi/{tiket}', [TicketController::class, 'konfirmasi'])->name('sa.tiket.konfirmasi');
     Route::post('super-admin/tiket/rejectedKonfirmasi/{tiket}', [TicketController::class, 'rejectedKonfirmasi'])->name('sa.tiket.rejectedKonfirmasi');
@@ -91,6 +92,7 @@ Route::middleware(['auth', 'role:admin helpdesk'])->group(function () {
     Route::get('admin/tiket/historyTiket', [TicketAdminController::class, 'historyTiket'])->name('admin.tiket.historyTiket');
     Route::resource('admin/tiket', TicketAdminController::class)->names('admin.tiket');
     Route::get('admin/tiket/proses/{tiket}', [TicketAdminController::class, 'SiteprosesTiket'])->name('admin.tiket.proses');
+    Route::get('admin/tiket/history', [TicketController::class, 'historyTicket'])->name('admin.tiket.history');
     Route::put('admin/tiket/rejected/{tiket}', [TicketAdminController::class, 'rejectVerificationAdmin'])->name('admin.tiket.rejected');
     Route::put('admin/tiket/verification/{tiket}', [TicketAdminController::class, 'VerificationAdmin'])->name('admin.tiket.verification');
     Route::post('admin/tiket/assignment/{tiket}', [AssigmentController::class, 'assignment'])->name('admin.tiket.assignment');
