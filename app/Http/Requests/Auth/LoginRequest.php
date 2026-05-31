@@ -29,10 +29,14 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
+        $input = $this->input('username');
+        // cekuser name lama
+        // $user = \App\Models\User::where($this->loginField, $this->input($this->loginField))->first();
 
-        // Cek username dulu
-        $user = \App\Models\User::where($this->loginField, $this->input($this->loginField))->first();
-
+        // Cek username 
+        $user = \App\Models\User::where('username', $input)
+            ->orWhere('nrk', $input)
+            ->first();
         if (! $user) {
             RateLimiter::hit($this->throttleKey());
 
@@ -41,17 +45,27 @@ class LoginRequest extends FormRequest
             ]);
         }
 
-        // Cek password
-        if (! Auth::attempt([
-            $this->loginField => $this->input($this->loginField),
-            'password'        => $this->input('password'),
-        ], $this->boolean('remember'))) {
+        // Cek password lama
+        // if (! Auth::attempt([
+        //     $this->loginField => $this->input($this->loginField),
+        //     'password'        => $this->input('password'),
+        // ], $this->boolean('remember'))) {
+        //     RateLimiter::hit($this->throttleKey());
+
+        //     throw ValidationException::withMessages([
+        //         'password' => 'Password yang Anda masukkan salah.',
+        //     ]);
+        // }
+
+        if (! \Illuminate\Support\Facades\Hash::check($this->input('password'), $user->password)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 'password' => 'Password yang Anda masukkan salah.',
             ]);
         }
+
+        Auth::login($user, $this->boolean('remember'));
 
         RateLimiter::clear($this->throttleKey());
     }

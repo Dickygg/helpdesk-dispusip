@@ -14,79 +14,118 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 
-<body class="bg-gradient-white">
+<style>
+    .login-banner {
+        min-height: 700px;
 
+        background-image:url('{{ asset("sb-admin/img/imageLogin.png") }}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
+
+<body class="bg-gradient-white">
     <div class="container">
         <div class="row justify-content-center mt-5">
-            <div class="col-lg-5">
-                <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
-                        <div class="row">
-                            <div class="col">
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <img src="{{ asset('sb-admin/img/Logo-DispusipHelpdesk.png') }}" alt="logo" class="ml-lg-2">
-                                        <h5 class="fw-bolder mt-3 mb-3" style="color: #0e4a65; font-weight:700;">LOGIN</h5>
-                                    </div>
+            <div class="col-md-12">
+                <div class="card o-hidden border-0 shadow-lg my-5" style="height: 75%;">
+                    <div class="row no-gutters">
+                        <!-- LEFT SIDE -->
+                        <div class="col-lg-6 d-none d-lg-block p-0 login-banner"></div>
+                        <!-- RIGHT SIDE -->
+                        <div class="col-lg-6">
+                            <div class="p-5">
+                                <div class="text-center">
+                                    <img src="{{ asset('sb-admin/img/Logo-DispusipHelpdesk.png') }}"
+                                        width="80" class="d-lg-none">
+                                    <h3 class="mt-4 font-weight-bold"
+                                        style="color:#0e4a65;">
+                                        Selamat Datang
+                                    </h3>
+                                    <p class="text-muted">
+                                        Silakan login untuk melanjutkan
+                                    </p>
+                                </div>
+                                <form class="user"
+                                    method="POST"
+                                    action="{{ route('login') }}">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label>NRK / Username</label>
 
-                                    {{-- Form action diubah ke route('login') --}}
-                                    <form class="user" method="POST" action="{{ route('login') }}">
-                                        @csrf
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text bg-white">
+                                                    <i class="bi bi-person"></i>
+                                                </span>
+                                            </div>
 
-                                        {{-- Username field --}}
-                                        <div class="form-group">
                                             <input
                                                 type="text"
-                                                class="form-control form-control-user @error('username') is-invalid @enderror"
-                                                style="border-radius: 0.35rem !important;"
-                                                id="username"
+                                                class="form-control @error('username') is-invalid @enderror"
                                                 name="username"
                                                 value="{{ old('username') }}"
-                                                placeholder="NRK/Username"
+                                                placeholder="Masukkan Username"
                                                 required
-                                                autofocus
-                                                autocomplete="username">
-                                            {{-- Tampilkan error username --}}
+                                                autofocus>
+
                                             @error('username')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
                                             @enderror
                                         </div>
+                                    </div>
 
-                                        {{-- Password field --}}
-                                        <div class="form-group">
+                                    <div class="form-group">
+                                        <label>Password</label>
+
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text bg-white">
+                                                    <i class="bi bi-lock"></i>
+                                                </span>
+                                            </div>
+
                                             <input
                                                 type="password"
-                                                class="form-control form-control-user @error('password') is-invalid @enderror"
-                                                style="border-radius: 0.35rem !important;"
-                                                id="password"
+                                                class="form-control @error('password') is-invalid @enderror"
                                                 name="password"
-                                                placeholder="Password"
-                                                required
-                                                autocomplete="current-password">
-                                            {{-- Tampilkan error password --}}
+                                                placeholder="Masukkan Password"
+                                                required>
+
                                             @error('password')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
                                             @enderror
                                         </div>
+                                    </div>
 
-                                        {{-- Remember Me --}}
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="remember" name="remember">
-                                                <label class="custom-control-label" for="remember">Ingat Saya</label>
-                                            </div>
-                                        </div>
+                                    <button type="submit"
+                                        class="btn btn-block text-white"
+                                        style="
+                                background:#0e4a65;
+                                height:50px;
+                                border-radius:12px;
+                                font-weight:600;">
 
-                                        <div class="row justify-content-center">
-                                            <div class="col-6">
-                                                <button type="submit" class="btn btn-md btn-dispusip w-100">Login</button>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                    </form>
+                                        <i class="bi bi-box-arrow-in-right mr-2"></i>
+                                        Login
+
+                                    </button>
+
+                                </form>
+
+                                <div class="text-center mt-5 text-muted">
+                                    © {{ date('Y') }} Dispusip Helpdesk
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
                 </div>
             </div>

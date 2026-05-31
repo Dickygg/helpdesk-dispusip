@@ -218,3 +218,75 @@ default => 'text-secondary',
 
 
 <!-- aaaa -->
+<div class="col-lg-5">
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-body p-0">
+            <div class="row">
+                <div class="col">
+                    <div class="p-5">
+                        <div class="text-center">
+                            <img src="{{ asset('sb-admin/img/Logo-DispusipHelpdesk.png') }}" alt="logo" class="ml-lg-2">
+                            <h5 class="fw-bolder mt-3 mb-3" style="color: #0e4a65; font-weight:700;">LOGIN</h5>
+                        </div>
+
+                        {{-- Form action diubah ke route('login') --}}
+                        <form class="user" method="POST" action="{{ route('login') }}">
+                            @csrf
+
+                            {{-- Username field --}}
+                            <div class="form-group">
+                                <input
+                                    type="text"
+                                    class="form-control form-control-user @error('username') is-invalid @enderror"
+                                    style="border-radius: 0.35rem !important;"
+                                    id="username"
+                                    name="username"
+                                    value="{{ old('username') }}"
+                                    placeholder="NRK/Username"
+                                    required
+                                    autofocus
+                                    autocomplete="username">
+                                {{-- Tampilkan error username --}}
+                                @error('username')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            {{-- Password field --}}
+                            <div class="form-group">
+                                <input
+                                    type="password"
+                                    class="form-control form-control-user @error('password') is-invalid @enderror"
+                                    style="border-radius: 0.35rem !important;"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Password"
+                                    required
+                                    autocomplete="current-password">
+                                {{-- Tampilkan error password --}}
+                                @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            {{-- Remember Me --}}
+                            <div class="form-group">
+                                <div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input" id="remember" name="remember">
+                                    <label class="custom-control-label" for="remember">Ingat Saya</label>
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-center">
+                                <div class="col-6">
+                                    <button type="submit" class="btn btn-md btn-dispusip w-100">Login</button>
+                                </div>
+                            </div>
+                            <hr>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
