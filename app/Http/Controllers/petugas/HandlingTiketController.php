@@ -204,7 +204,7 @@ class HandlingTiketController extends Controller
             if ($request->hasFile('file')) {
                 $filename = $data->id . '_' . time() . '.' . $request->file->getClientOriginalExtension();
                 $fullPath = $path . '/' . $filename;
-                $request->file->storeAs($path, $filename, 'public'); // ✅ simpan ke storage
+                $request->file->storeAs($path, $filename, 'public'); // simpan ke storage
             }
 
             //  simpan catatan + file ke assignment_attachments
@@ -366,11 +366,17 @@ class HandlingTiketController extends Controller
                 ]);
             })
             ->count();
-
+        $AssignHistoryTotalOverDeadline = (clone $query)
+            ->join('tickets as t_deadline', 't_deadline.id', '=', 'ticket_assignments.ticket_id')
+            ->whereNotNull('ticket_assignments.finished_at')
+            ->whereNotNull('t_deadline.due_date')
+            ->whereRaw('ticket_assignments.finished_at > t_deadline.due_date')
+            ->count('ticket_assignments.ticket_id');
         return [
             'assigntotal'       => $AssignHistoryTotal,
             'avg_work_duration' => "{$hours}j {$minutes}m",
-            'assignmounthtotal' => $AssignHistoryTotalMonth
+            'assignmounthtotal' => $AssignHistoryTotalMonth,
+            'historytotaloverdeadline' => $AssignHistoryTotalOverDeadline
         ];
     }
 }

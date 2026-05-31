@@ -193,6 +193,20 @@
         <div class="col-lg-3 col-md-4 col-sm-12 mb-0 mb-md-3">
             <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Resolved' ? 'active' : '' }}">
                 <div class="card-body d-flex align-items-center">
+                    <div class="bg-danger bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
+                        <i class="bi bi-clock text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary title-cardtiket">Terlambat diselesaikan</div>
+                        <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $getassignstats['historytotaloverdeadline'] }}</div>
+                        <div class="text-muted title-cardtiket">Tiket</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-12 mb-0 mb-md-3">
+            <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Resolved' ? 'active' : '' }}">
+                <div class="card-body d-flex align-items-center">
                     <div class="bg-info bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
                         <i class="bi bi-clock text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
                     </div>
