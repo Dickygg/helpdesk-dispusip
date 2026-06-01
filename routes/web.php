@@ -57,6 +57,9 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
 
     //Route Assigment super-admin
     Route::get('super-admin/admin/assigment/', [AssigmentController::class, 'index'])->name('sa.admin.assigment.index');
+    Route::get('super-admin/admin/assigment/history', [AssigmentController::class, 'historyAssignment'])->name('sa.admin.assigment.history');
+    Route::get('super-admin/assignment/show/{assignment}', [AssigmentController::class, 'show'])->name('sa.admin.assignment.show');
+
 
 
     // Tiket Admin — URL super-admin/admin/tiket

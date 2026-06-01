@@ -105,6 +105,11 @@ return [
             'route' => 'sa.admin.assigment.index',
             'icon' => 'bi-ticket-detailed'
         ],
+        [
+            'title' => 'Daftar Riwayat Assigment',
+            'route' => 'sa.admin.assigment.history',
+            'icon' => 'bi-ticket-detailed'
+        ],
 
     ],
 

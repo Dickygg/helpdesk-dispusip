@@ -1,6 +1,6 @@
 @extends('_layouts.app')
-@section('title', 'Daftar Assigment')
-@section('page-title', 'Daftar Assigment')
+@section('title', 'Daftar Riwayat Assigment')
+@section('page-title', 'Daftar Riwayat Assigment')
 @section('content')
 @push('styles')
 <style>
@@ -48,12 +48,6 @@
         transition: all 0.2s ease;
     }
 
-    .card-filter:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-        background-color: #0d6dfd51;
-    }
-
     .card-filter.active {
         background-color: #0d6dfd51;
     }
@@ -80,8 +74,8 @@
     }
 
     .status-assigned {
-        background: #EEF1F4;
-        color: #6C757D;
+        background: #cce1f5ff;
+        color: #4e87b8ff;
     }
 
     .status-progress {
@@ -100,6 +94,11 @@
     }
 
     .status-rejected {
+        background: #FDEBEC;
+        color: #DC3545;
+    }
+
+    .status-reopen {
         background: #FDEBEC;
         color: #DC3545;
     }
@@ -129,6 +128,27 @@
         color: #DC3545;
     }
 
+
+    .ticket-code {
+        color: #4f6df5;
+        font-weight: 700;
+    }
+
+    .badge-priority-high {
+        background: #ffe5e5;
+        color: #dc3545;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+        .assignment-item {
+            flex: 0 0 100%;
+        }
+    }
+
     @media (max-width:767.98px) {
         .colums-card-body {
             border-right: none;
@@ -136,7 +156,6 @@
     }
 </style>
 @endpush
-
 @php
 $prefix = match(true) {
 auth()->user()->hasRole('super admin') => 'sa.admin.',
@@ -144,17 +163,77 @@ auth()->user()->hasRole('admin helpdesk') => 'admin.',
 default => ''
 };
 @endphp
-
 <div class="container-fluid">
-    <!-- searchbar -->
-    <form action="{{ route($prefix . 'assigment.index')}}" method="GET">
+    <!-- card stats -->
+    <div class="row">
+        <!-- Total Assignment -->
+        <div class="col-lg-3 col-md-4 col-sm-12 mb-0 mb-md-3">
+            <div class="card border-0 shadow-sm rounded-4 card-filter">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
+                        <i class="bi bi-folder-fill text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary title-cardtiket">Total Assignment</div>
+                        <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $getassignstats['assigntotal'] }}</div>
+                        <div class="text-muted title-cardtiket">Assignment</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Bulan Ini -->
+        <div class="col-lg-3 col-md-4 col-sm-12 mb-0 mb-md-3">
+            <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Resolved' ? 'active' : '' }}">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
+                        <i class="bi bi-calendar-check text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary title-cardtiket">Diselesaikan</div>
+                        <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $getassignstats['assignmounthtotal'] }}</div>
+                        <div class="text-muted title-cardtiket">Bulan ini</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-12 mb-0 mb-md-3">
+            <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Resolved' ? 'active' : '' }}">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-danger bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
+                        <i class="bi bi-clock text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary title-cardtiket">Terlambat diselesaikan</div>
+                        <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $getassignstats['historytotaloverdeadline'] }}</div>
+                        <div class="text-muted title-cardtiket">Tiket</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-12 mb-0 mb-md-3">
+            <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Resolved' ? 'active' : '' }}">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-info bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
+                        <i class="bi bi-clock text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary title-cardtiket">Rata Pengerjaan</div>
+                        <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $getassignstats['avg_work_duration'] }}</div>
+                        <div class="text-muted title-cardtiket">Resolved</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- filter data -->
+    <form action="{{ route($prefix.'assigment.history')}}" method="GET">
         <div class="row">
             <div class="col-12">
-                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card border-0 shadow-sm rounded-4 mb-2">
                     <div class="card-body p-4">
                         <div class="row align-items-end g-3">
                             <!-- Tanggal Dari -->
-                            <div class="col-lg-4 col-md-6">
+                            <div class="col-lg-3 col-md-6">
                                 <label class="form-label fw-semibold text-secondary">
                                     Dari
                                 </label>
@@ -163,7 +242,7 @@ default => ''
                                     class="form-control rounded-3 shadow-sm border-0">
                             </div>
                             <!-- Tanggal Sampai -->
-                            <div class="col-lg-4 col-md-6">
+                            <div class="col-lg-3 col-md-6">
                                 <label class="form-label fw-semibold text-secondary">
                                     Sampai
                                 </label>
@@ -171,9 +250,8 @@ default => ''
                                     name="end_date"
                                     class="form-control rounded-3 shadow-sm border-0">
                             </div>
-                            <!-- Search -->
-                            <div class="col-lg-4 col-md-6">
-
+                            <!-- Search aplikasi-->
+                            <div class="col-lg-3 col-md-6">
                                 <label class="form-label fw-semibold text-secondary">
                                     Aplikasi
                                 </label>
@@ -186,24 +264,8 @@ default => ''
                                 @error('id_aplikasi')
                                 <small class="text-danger">{{ $message }}</small>
                                 @enderror
-
                             </div>
-                            <!-- petugas -->
-                            <div class="col-lg-4 col-md-6">
-                                <label class="form-label fw-semibold text-secondary">
-                                    Petugas
-                                </label>
-                                <select class="form-select form-control shadow-sm" name="id_petugas" id="id_petugas">
-                                    <option value="" selected>Semua Petugas</option>
-                                    @foreach($petugas as $s)
-                                    <option value="{{$s->id}}">{{$s->username}}</option>
-                                    @endforeach
-                                </select>
-                                @error('id_petugas')
-                                <small class="text-danger">{{ $message }}</small>
-                                @enderror
-                            </div>
-                            <div class="col-lg-4 col-md-6 mt-md-2">
+                            <div class="col-lg-3 col-md-6 mt-md-2">
                                 <label class="form-label fw-semibold text-secondary">
                                     Prioritas
                                 </label>
@@ -218,15 +280,15 @@ default => ''
                                 @enderror
                             </div>
                             <!-- Tombol -->
-                            <div class="col-lg-4 col-md-12 d-flex justify-content-end">
+                            <div class="col-lg-12 col-md-12 d-flex justify-content-end mt-md-2">
                                 <div class="d-grid gap-2">
                                     <button type="submit"
-                                        class="btn  btn-primary rounded-3 shadow-sm">
+                                        class="btn btn-primary rounded-3 shadow-sm">
                                         <i class="bi bi-funnel me-1"></i>
                                         Filter
                                     </button>
                                     <a href="#"
-                                        class="btn  btn-outline-success rounded-3 shadow-sm">
+                                        class="btn btn-outline-success rounded-3 shadow-sm">
                                         <i class="bi bi-download me-1"></i>
                                         Export PDF
                                     </a>
@@ -238,8 +300,7 @@ default => ''
             </div>
         </div>
     </form>
-
-    <!-- Main Data -->
+    <!-- data table-->
     <div class="row">
         <div class="col-12">
             <div class="card shadow-lg mb-4">
@@ -253,40 +314,26 @@ default => ''
                                 <tr>
                                     <th>No</th>
                                     <th>Kode Tiket</th>
-                                    <th>Petugas</th>
                                     <th>Assign Oleh</th>
                                     <th>Aplikasi</th>
                                     <th>Prioritas</th>
-                                    <th>Status</th>
-                                    <th>Deadline</th>
+                                    <th>Durasi Pengerjaan</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($data as $r)
                                 @php
-                                $statusstyle = match($r->ticket?->status) {
-                                'Open' => 'status-open',
-                                'Accept' => 'status-accept',
-                                'Assigned' => 'status-assigned',
-                                'In Progress' => 'status-progress',
-                                'Resolved' => 'status-resolved',
-                                'Closed' => 'status-closed',
-                                'Rejected' => 'status-rejected',
-                                default => ''
-                                };
-
                                 $pioritystyle = match($r->ticket?->priority->name ?? '') {
                                 'Normal' => 'priority-Normal',
                                 'Urgent' => 'priority-Urgent',
                                 'Emergency' => 'priority-Emergency',
-                                default => 'priority-Normal',
+                                default => 'priority-Normal'
                                 };
                                 @endphp
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $r->ticket?->ticket_code }}</td>
-                                    <td>{{ $r->technician?->username }}</td>
                                     <td>{{ $r->admin?->username }}</td>
                                     <td>{{ $r->ticket?->application->name }}</td>
                                     <td>
@@ -294,12 +341,17 @@ default => ''
                                             <i class="bi bi-flag-fill"></i> {{ $r->ticket?->priority->name ?? 'Belum Ditentukan' }}
                                         </span>
                                     </td>
-                                    <td>
-                                        <span class="badge-status {{ $statusstyle }}">
-                                            {{ $r->ticket?->status }}
-                                        </span>
+                                    @php
+                                    $menit = $r->work_duration ?? 0;
+                                    $jam = intdiv($menit, 60);
+                                    $sisa = $menit % 60;
+                                    @endphp
+                                    <td> @if($r->work_duration)
+                                        {{ $jam > 0 ? $jam . ' jam ' : '' }}{{ $sisa > 0 ? $sisa . ' menit' : '' }}
+                                        @else
+                                        -
+                                        @endif
                                     </td>
-                                    <td>{{ $r->ticket?->due_date ? $r->ticket?->due_date->format('d F Y, H:i') : '-'}}</td>
                                     <td class="text-center">
                                         <div class="dropdown">
                                             <button class="btn btn-sm btn-outline-primary rounded-3"
@@ -314,22 +366,9 @@ default => ''
                                                     <a class="dropdown-item"
                                                         href="{{route($prefix.'assignment.show', $r->id)}}">
                                                         <i class="bi bi-eye text-primary me-2"></i>
-                                                        Detail assigment
+                                                        Detail Assignment
                                                     </a>
                                                 </li>
-                                                <!-- Hapus -->
-                                                <!-- <li>
-                                                    <form action="#"
-                                                        method="POST"
-                                                        onsubmit="return confirm('Yakin ingin menghapus ticket ini?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="dropdown-item text-danger">
-                                                            <i class="bi bi-trash me-2"></i>
-                                                            Hapus Ticket
-                                                        </button>
-                                                    </form>
-                                                </li> -->
                                             </ul>
                                         </div>
                                     </td>
@@ -342,12 +381,28 @@ default => ''
             </div>
         </div>
     </div>
-
 </div>
-
-
-
-
 @push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        const slider = document.getElementById('assignmentSlider');
+
+        document.querySelector('.next').addEventListener('click', function() {
+            slider.scrollBy({
+                left: slider.offsetWidth,
+                behavior: 'smooth'
+            });
+        });
+
+        document.querySelector('.prev').addEventListener('click', function() {
+            slider.scrollBy({
+                left: -slider.offsetWidth,
+                behavior: 'smooth'
+            });
+        });
+
+    });
+</script>
 @endpush
 @endsection

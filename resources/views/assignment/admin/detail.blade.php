@@ -69,6 +69,14 @@ $statusStyle = match($data->ticket->status){
 default => 'btn-secondary',
 };
 @endphp
+
+@php
+$prefix = match(true) {
+auth()->user()->hasRole('super admin') => 'sa.admin.',
+auth()->user()->hasRole('admin helpdesk') => 'admin.',
+default => ''
+};
+@endphp
 <div id="section-print">
     <div class="container-fluid">
         <div class="card shadow mb-4">
@@ -89,7 +97,7 @@ default => 'btn-secondary',
                                         </div>
                                     </div>
                                     <div class="col d-flex justify-content-end" style="height: fit-content;">
-                                        <a href="{{route('assignment.petugas.index')}}" class="btn btn-outline-primary btn-sm"><i class="bi bi-arrow-left"></i> Kembali</a>
+                                        <a href="{{route($prefix.'assigment.history')}}" class="btn btn-outline-primary btn-sm"><i class="bi bi-arrow-left"></i> Kembali</a>
                                     </div>
                                 </div>
                             </div>
@@ -167,7 +175,7 @@ default => 'btn-secondary',
                                                 </div>
 
                                                 @elseif($data->ticket->status == 'Resolved' || $data->ticket->status == 'Closed')
-                                                <div class="p-3  bg-light rounded mt-2">
+                                                <div class="p-3  bg-light text-secondary rounded mt-2">
                                                     <p class="mb-0">{{ $data->ticket->note ?? '-' }}</p>
                                                     @if($data->Assignattachments?->file_path)
                                                     <a href="{{ Storage::url($data->Assignattachments->file_path) }}" target="_blank">
@@ -243,9 +251,6 @@ default => 'btn-secondary',
                                             </a>
                                             @empty
                                             @endforelse
-                                            <a href="{{route('assignment.petugas.prosesAssignment', $data->id)}}" class="mb-2 d-flex justify-content-center align-items-center btn btn-outline-primary btn-sm">
-                                                <i class="bi bi-tools" style="margin-right: 5px;"></i> kerjakan Sekarang
-                                            </a>
                                         </div>
                                     </div>
                                 </div>
