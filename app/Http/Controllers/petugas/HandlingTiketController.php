@@ -10,6 +10,7 @@ use App\Models\AssignmentAttachmentModel;
 use App\Models\TicketAssignmentModels;
 use App\Models\TicketModels;
 use App\Models\TicketPriorityModels;
+use App\Models\TicketsTypeModels;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -47,6 +48,11 @@ class HandlingTiketController extends Controller
                     'upcoming' => $q->whereHas('ticket', fn($q) => $q->whereBetween('due_date', [now(), now()->addHours(24)])),
                     default    => null
                 };
+            })
+            ->when($request->ticket_type_id, function ($q) use ($request) {
+                $q->whereHas('ticket', function ($q) use ($request) {
+                    $q->where('ticket_type_id', $request->ticket_type_id);
+                });
             });
 
         $data = $query->get();
@@ -63,12 +69,14 @@ class HandlingTiketController extends Controller
 
         $getassignstats = $this->gettotalAssign($request);
         $aplikasi = ApplicationModels::select('id', 'name')->get();
+        $tipetiket = TicketsTypeModels::select('id', 'name')->get();
 
         return view('assignment.petugas.index', [
             'getassignstats' => $getassignstats,
             'aplikasi'       => $aplikasi,
             'data'           => $data,
-            'deadline'       => $deadline
+            'deadline'       => $deadline,
+            'tipetiket' => $tipetiket
         ]);
     }
 
@@ -258,18 +266,25 @@ class HandlingTiketController extends Controller
                 $q->whereHas('ticket', function ($q) use ($request) {
                     $q->where('priority_id', $request->id_priority);
                 });
+            })
+            ->when($request->ticket_type_id, function ($q) use ($request) {
+                $q->whereHas('ticket', function ($q) use ($request) {
+                    $q->where('ticket_type_id', $request->ticket_type_id);
+                });
             });
 
         $data = $query->get();
         $aplikasi = ApplicationModels::select('id', 'name')->get();
         $prioritas = TicketPriorityModels::select('id', 'name')->get();
         $getstats = $this->gethistroystats($request);
+        $tipetiket = TicketsTypeModels::select('id', 'name')->get();
 
         return view('assignment.petugas.history', [
             'getassignstats' => $getstats,
             'aplikasi'       => $aplikasi,
             'data'           => $data,
-            'prioritas' => $prioritas
+            'prioritas' => $prioritas,
+            'tipetiket' => $tipetiket
         ]);
     }
 
@@ -291,6 +306,11 @@ class HandlingTiketController extends Controller
             ->when($request->id_aplikasi, function ($q) use ($request) {
                 $q->whereHas('ticket', function ($q) use ($request) {
                     $q->where('application_id', $request->id_aplikasi);
+                });
+            })
+            ->when($request->ticket_type_id, function ($q) use ($request) {
+                $q->whereHas('ticket', function ($q) use ($request) {
+                    $q->where('ticket_type_id', $request->ticket_type_id);
                 });
             });
 
@@ -347,6 +367,11 @@ class HandlingTiketController extends Controller
             ->when($request->id_aplikasi, function ($q) use ($request) {
                 $q->whereHas('ticket', function ($q) use ($request) {
                     $q->where('application_id', $request->id_aplikasi);
+                });
+            })
+            ->when($request->ticket_type_id, function ($q) use ($request) {
+                $q->whereHas('ticket', function ($q) use ($request) {
+                    $q->where('ticket_type_id', $request->ticket_type_id);
                 });
             });
 

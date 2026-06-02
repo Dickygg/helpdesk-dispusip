@@ -55,6 +55,11 @@ return [
             'icon' => 'bi bi-arrow-repeat'
         ],
         [
+            'title' => 'Data Daftar Tipe Tiket',
+            'route' => 'ticket-type.index',
+            'icon' => 'bi bi-collection'
+        ],
+        [
             'title' => 'Divider',
             'divider' => true,
         ],

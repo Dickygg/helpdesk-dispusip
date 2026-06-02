@@ -8,6 +8,7 @@ use App\Models\ApplicationModels;
 use App\Models\TicketAssignmentModels;
 use App\Models\TicketModels;
 use App\Models\TicketPriorityModels;
+use App\Models\TicketsTypeModels;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,6 +45,11 @@ class AssigmentController extends Controller
                     $q->where('priority_id', $request->id_priority);
                 });
             })
+            ->when($request->ticket_type_id, function ($q) use ($request) {
+                $q->whereHas('ticket', function ($q) use ($request) {
+                    $q->where('ticket_type_id', $request->ticket_type_id);
+                });
+            })
             ->orderBy('created_at', 'DESC')
             ->get();
 
@@ -53,12 +59,15 @@ class AssigmentController extends Controller
             ->role('petugas teknis')
             ->get();
         $prioritas = TicketPriorityModels::select('id', 'name')->get();
+        $tipetiket = TicketsTypeModels::select('id', 'name')->get();
 
         return view('assignment.admin.index', [
             'data' => $assignment,
             'aplikasi' => $aplikasi,
             'petugas' => $petugas,
-            'prioritas' => $prioritas
+            'prioritas' => $prioritas,
+            'tipetiket' => $tipetiket
+
         ]);
     }
 
@@ -79,22 +88,37 @@ class AssigmentController extends Controller
             ->when($request->end_date,   fn($q) => $q->whereDate('ticket_assignments.created_at', '<=', $request->end_date))
             // Filter aplikasi
             ->when($request->id_aplikasi, fn($q) => $q->whereHas('ticket', fn($q) => $q->where('application_id', $request->id_aplikasi)))
+            ->when($request->id_petugas, function ($q) use ($request) {
+                $q->where('user_id', $request->id_petugas);
+            })
             ->when($request->id_priority, function ($q) use ($request) {
                 $q->whereHas('ticket', function ($q) use ($request) {
                     $q->where('priority_id', $request->id_priority);
+                });
+            })
+            ->when($request->ticket_type_id, function ($q) use ($request) {
+                $q->whereHas('ticket', function ($q) use ($request) {
+                    $q->where('ticket_type_id', $request->ticket_type_id);
                 });
             });
 
         $data = $query->get();
         $aplikasi = ApplicationModels::select('id', 'name')->get();
         $prioritas = TicketPriorityModels::select('id', 'name')->get();
+        $tipetiket = TicketsTypeModels::select('id', 'name')->get();
+        $petugas = User::select('id', 'username')
+            ->role('petugas teknis')
+            ->get();
+
         $getstats = $this->gethistroystats($request);
 
         return view('assignment.admin.history', [
             'getassignstats' => $getstats,
             'aplikasi'       => $aplikasi,
             'data'           => $data,
-            'prioritas' => $prioritas
+            'tipetiket' => $tipetiket,
+            'prioritas' => $prioritas,
+            'petugas' => $petugas
         ]);
     }
 
@@ -160,9 +184,10 @@ class AssigmentController extends Controller
             'ticket.attachments',
             'ticket.priority',
             'ticket.application',
+            'ticket.tickettype',
             'technician:id,name',
             'admin:id,name',
-            'Assignattachments'
+            'Assignattachments',
         ])->findOrFail($id);
 
 
@@ -194,9 +219,17 @@ class AssigmentController extends Controller
             ->when($request->end_date, function ($q) use ($request) {
                 $q->whereDate('ticket_assignments.created_at', '<=', $request->end_date);
             })
+            ->when($request->id_petugas, function ($q) use ($request) {
+                $q->where('ticket_assignments.user_id', $request->id_petugas);
+            })
             ->when($request->id_aplikasi, function ($q) use ($request) {
                 $q->whereHas('ticket', function ($q) use ($request) {
                     $q->where('application_id', $request->id_aplikasi);
+                });
+            })
+            ->when($request->ticket_type_id, function ($q) use ($request) {
+                $q->whereHas('ticket', function ($q) use ($request) {
+                    $q->where('ticket_type_id', $request->ticket_type_id);
                 });
             });
 

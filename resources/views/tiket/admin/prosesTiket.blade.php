@@ -52,9 +52,9 @@ default => 'text-secondary',
 };
 
 $verificationStyle = match($tiket->verification_status) {
-'Emergency' => 'text-danger',
-'Urgent' => 'text-warning',
-'Normal' => 'text-success',
+'pending' => 'text-warning',
+'verified' => 'text-success',
+'rejected' => 'text-danger',
 default => 'text-secondary',
 };
 
@@ -124,8 +124,8 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 <hr>
                                 <div class="row d-flex" style="margin-bottom:0;">
                                     <div class="col-md-03 col-md-3 col-sm-6 colums-card-body">
-                                        <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-alarm"></i> Estimasi Selesai</div>
-                                        <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"> {{$tiket->due_date ? \Carbon\Carbon::parse($tiket->due_date)->format('d M Y'): '-'}}</div>
+                                        <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-collection"></i> Tipe Tiket</div>
+                                        <div class=" text-dark" style="font-size: 0.75rem; font-weight: bold;"> {{$tiket->tickettype?->name ?? 'Belum Ditentukan'}}</div>
                                     </div>
                                     <div class="col-md-03 col-md-3 col-sm-6 colums-card-body">
                                         <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-clock-history"></i> Terakhir Di Update</div>
@@ -540,6 +540,18 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                         @endforeach
                                     </select>
                                     @error('priority_id')
+                                    <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Tentukan Tipe Tiket<span class="text-danger">*</span></label>
+                                    <select class="form-select form-control" aria-label="Default select example" name="ticket_type_id" id="ticket_type_id">
+                                        <option value="" selected disabled>---- Pilih Tipe Tiket ----</option>
+                                        @foreach($tikettipe as $s)
+                                        <option value="{{$s->id}}">{{$s->name}}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('ticket_type_id')
                                     <small class="text-danger">{{ $message }}</small>
                                     @enderror
                                 </div>

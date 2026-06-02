@@ -90,17 +90,23 @@
         text-align: center;
     }
 
-    .priority-low {
+    .priority-default {
+        background: #9290eeff;
+        color: #ffffffff;
+        font-size: 0.85rem;
+    }
+
+    .priority-normal {
         background: #E8FFF3;
         color: #198754;
     }
 
-    .priority-medium {
+    .priority-urgent {
         background: #FFF8E1;
         color: #F59E0B;
     }
 
-    .priority-high {
+    .priority-emergency {
         background: #FDEBEC;
         color: #DC3545;
     }
@@ -313,8 +319,22 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 @enderror
 
                             </div>
+                            <div class="col-lg-3 col-md-6 mt-2">
+                                <label class="form-label fw-semibold text-secondary">
+                                    Tipe Tiket
+                                </label>
+                                <select class="form-select form-control" name="ticket_type_id" id="ticket_type_id">
+                                    <option value="" selected>Semua Tiket Tipe</option>
+                                    @foreach($tipetiket as $s)
+                                    <option value="{{$s->id}}">{{$s->name}}</option>
+                                    @endforeach
+                                </select>
+                                @error('id_aplikasi')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
                             <!-- Tombol -->
-                            <div class="col-lg-12 col-md-12 d-flex justify-content-end mt-3">
+                            <div class="col-lg col-md-12 d-flex justify-content-end mt-3">
                                 <div class="d-grid gap-2">
                                     <button type="submit"
                                         class="btn btn-primary rounded-3 shadow-sm">
@@ -348,7 +368,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 <tr>
                                     <th>No</th>
                                     <th>Kode Tiket</th>
-                                    <th>User</th>
+                                    <th>Tipe Tiket</th>
                                     <th>Judul</th>
                                     <th>Aplikasi</th>
                                     <th>Prioritas</th>
@@ -367,16 +387,16 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 };
 
                                 $pioritystyle = match($r->priority->name ?? '') {
-                                'Emergency' => 'text-danger',
-                                'Urgent' => 'text-warning',
-                                'Normal' => 'text-success',
-                                default => 'priority-normal'
+                                'Emergency' => 'priority-emergency',
+                                'Urgent' => 'priority-urgent',
+                                'Normal' => 'priority-normal',
+                                default => 'priority-default'
                                 };
                                 @endphp
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $r->ticket_code }}</td>
-                                    <td>{{ $r->user->name }}</td>
+                                    <td>{{ $r->tickettype?->name ?? 'Belum Ditentukan'}}</td>
                                     <td>{{ $r->title }}</td>
                                     <td>{{ $r->application->name }}</td>
                                     <td>
@@ -406,30 +426,6 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                                         <i class="bi bi-eye text-primary me-2"></i>
                                                         Detail Ticket
                                                     </a>
-                                                </li>
-                                                <!-- Proses -->
-                                                <li>
-                                                    <a class="dropdown-item"
-                                                        href="{{ route($prefix . 'admin.tiket.proses', $r->id) }}">
-                                                        <i class="bi bi-person-check text-info me-2"></i>
-                                                        Proses Tiket
-                                                    </a>
-                                                </li>
-                                                <!-- <li>
-                                                    <hr class="dropdown-divider">
-                                                </li> -->
-                                                <!-- Hapus -->
-                                                <!-- <li>
-                                                    <form action="{{ route($prefix . 'admin.tiket.destroy', $r->id) }}"
-                                                        method="POST"
-                                                        onsubmit="return confirm('Yakin ingin menghapus ticket ini?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="dropdown-item text-danger">
-                                                            <i class="bi bi-trash me-2"></i>
-                                                            Hapus Ticket
-                                                        </button>
-                                                    </form> -->
                                                 </li>
                                             </ul>
                                         </div>

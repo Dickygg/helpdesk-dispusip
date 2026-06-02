@@ -33,7 +33,8 @@ class TicketModels extends BaseModel
         'closed_at',
         'closed_by',
         'reason_rejected',
-        'rejected_at'
+        'rejected_at',
+        'ticket_type_id'
     ];
 
 
@@ -110,6 +111,14 @@ class TicketModels extends BaseModel
     public function attachments()
     {
         return $this->hasMany(AttachmentModels::class, 'ticket_id');
+    }
+    public function tickettype()
+    {
+        return $this->belongsTo(
+            TicketsTypeModels::class,
+            'ticket_type_id',
+            'id'
+        );
     }
 
     public function serviceUnit()

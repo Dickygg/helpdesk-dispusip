@@ -121,8 +121,8 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 <hr>
                                 <div class="row d-flex" style="margin-bottom:0;">
                                     <div class="col-md-03 col-md-3 col-sm-6 colums-card-body">
-                                        <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-alarm"></i> Estimasi Selesai</div>
-                                        <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"> {{ $tiket->due_date ? $tiket->due_date->format('d F Y, H:i') : '-' }}</div>
+                                        <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-collection"></i> Tipe Tiket</div>
+                                        <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"> {{ $tiket->tickettype?->name ?? 'Belum Ditentukan' }}</div>
                                     </div>
                                     <div class="col-md-03 col-md-3 col-sm-6 colums-card-body">
                                         <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-clock-history"></i> Terakhir Di Update</div>

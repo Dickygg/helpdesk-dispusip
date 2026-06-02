@@ -104,6 +104,11 @@
         color: #DC3545;
     }
 
+    .status-reopen {
+        background: #FDEBEC;
+        color: #DC3545;
+    }
+
     .badge-priority {
         padding: 6px 14px;
         border-radius: 30px;
@@ -217,8 +222,23 @@ default => ''
                                 <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
+                            <!-- tipe tiket -->
+                            <div class="col-lg-4 col-md-6 mt-2">
+                                <label class="form-label fw-semibold text-secondary">
+                                    Tipe Tiket
+                                </label>
+                                <select class="form-select form-control shadow-sm" name="ticket_type_id" id="ticket_type_id">
+                                    <option value="" selected>Semua Tiket Tipe</option>
+                                    @foreach($tipetiket as $s)
+                                    <option value="{{$s->id}}">{{$s->name}}</option>
+                                    @endforeach
+                                </select>
+                                @error('id_aplikasi')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
                             <!-- Tombol -->
-                            <div class="col-lg-4 col-md-12 d-flex justify-content-end">
+                            <div class="col-lg- col-md-12 d-flex justify-content-end mt-3">
                                 <div class="d-grid gap-2">
                                     <button type="submit"
                                         class="btn  btn-primary rounded-3 shadow-sm">
@@ -254,7 +274,7 @@ default => ''
                                     <th>No</th>
                                     <th>Kode Tiket</th>
                                     <th>Petugas</th>
-                                    <th>Assign Oleh</th>
+                                    <th>Ticket Tipe</th>
                                     <th>Aplikasi</th>
                                     <th>Prioritas</th>
                                     <th>Status</th>
@@ -273,6 +293,7 @@ default => ''
                                 'Resolved' => 'status-resolved',
                                 'Closed' => 'status-closed',
                                 'Rejected' => 'status-rejected',
+                                'Reopen' => 'status-reopen',
                                 default => ''
                                 };
 
@@ -287,8 +308,8 @@ default => ''
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $r->ticket?->ticket_code }}</td>
                                     <td>{{ $r->technician?->username }}</td>
-                                    <td>{{ $r->admin?->username }}</td>
-                                    <td>{{ $r->ticket?->application->name }}</td>
+                                    <td>{{ $r->ticket?->tickettype?->name}}</td>
+                                    <td>{{ $r->ticket?->application->name ?? '-'}}</td>
                                     <td>
                                         <span class="badge-priority {{ $pioritystyle }}">
                                             <i class="bi bi-flag-fill"></i> {{ $r->ticket?->priority->name ?? 'Belum Ditentukan' }}
@@ -299,7 +320,7 @@ default => ''
                                             {{ $r->ticket?->status }}
                                         </span>
                                     </td>
-                                    <td>{{ $r->ticket?->due_date ? $r->ticket?->due_date->format('d F Y, H:i') : '-'}}</td>
+                                    <td>{{ $r->ticket?->due_date ? $r->ticket?->due_date->format('d F Y') : '-'}}</td>
                                     <td class="text-center">
                                         <div class="dropdown">
                                             <button class="btn btn-sm btn-outline-primary rounded-3"

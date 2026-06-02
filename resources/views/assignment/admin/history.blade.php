@@ -113,6 +113,12 @@
         text-align: center;
     }
 
+    .priority-default {
+        background: #9290eeff;
+        color: #ffffffff;
+        font-size: 0.75rem;
+    }
+
     .priority-Normal {
         background: #E8FFF3;
         color: #198754;
@@ -233,7 +239,7 @@ default => ''
                     <div class="card-body p-4">
                         <div class="row align-items-end g-3">
                             <!-- Tanggal Dari -->
-                            <div class="col-lg-3 col-md-6">
+                            <div class="col-lg-4 col-md-6">
                                 <label class="form-label fw-semibold text-secondary">
                                     Dari
                                 </label>
@@ -242,7 +248,7 @@ default => ''
                                     class="form-control rounded-3 shadow-sm border-0">
                             </div>
                             <!-- Tanggal Sampai -->
-                            <div class="col-lg-3 col-md-6">
+                            <div class="col-lg-4 col-md-6">
                                 <label class="form-label fw-semibold text-secondary">
                                     Sampai
                                 </label>
@@ -251,7 +257,7 @@ default => ''
                                     class="form-control rounded-3 shadow-sm border-0">
                             </div>
                             <!-- Search aplikasi-->
-                            <div class="col-lg-3 col-md-6">
+                            <div class="col-lg-4 col-md-6">
                                 <label class="form-label fw-semibold text-secondary">
                                     Aplikasi
                                 </label>
@@ -265,7 +271,22 @@ default => ''
                                 <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
-                            <div class="col-lg-3 col-md-6 mt-md-2">
+                            <!-- petugas -->
+                            <div class="col-lg-4 col-md-6">
+                                <label class="form-label fw-semibold text-secondary">
+                                    Petugas
+                                </label>
+                                <select class="form-select form-control shadow-sm" name="id_petugas" id="id_petugas">
+                                    <option value="" selected>Semua Petugas</option>
+                                    @foreach($petugas as $s)
+                                    <option value="{{$s->id}}">{{$s->username}}</option>
+                                    @endforeach
+                                </select>
+                                @error('id_petugas')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                            <div class="col-lg-4 col-md-6 mt-md-2">
                                 <label class="form-label fw-semibold text-secondary">
                                     Prioritas
                                 </label>
@@ -279,8 +300,23 @@ default => ''
                                 <small class="text-danger">{{ $message }}</small>
                                 @enderror
                             </div>
+                            <!-- tipe tiket -->
+                            <div class="col-lg-4 col-md-6 mt-2">
+                                <label class="form-label fw-semibold text-secondary">
+                                    Tipe Tiket
+                                </label>
+                                <select class="form-select form-control" name="ticket_type_id" id="ticket_type_id">
+                                    <option value="" selected>Semua Tiket Tipe</option>
+                                    @foreach($tipetiket as $s)
+                                    <option value="{{$s->id}}">{{$s->name}}</option>
+                                    @endforeach
+                                </select>
+                                @error('id_aplikasi')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
                             <!-- Tombol -->
-                            <div class="col-lg-12 col-md-12 d-flex justify-content-end mt-md-2">
+                            <div class="col-lg col-md-12 d-flex justify-content-end mt-md-2">
                                 <div class="d-grid gap-2">
                                     <button type="submit"
                                         class="btn btn-primary rounded-3 shadow-sm">
@@ -317,6 +353,7 @@ default => ''
                                     <th>Assign Oleh</th>
                                     <th>Aplikasi</th>
                                     <th>Prioritas</th>
+                                    <th>Tipe Tiket</th>
                                     <th>Durasi Pengerjaan</th>
                                     <th class="text-center">Aksi</th>
                                 </tr>
@@ -328,7 +365,7 @@ default => ''
                                 'Normal' => 'priority-Normal',
                                 'Urgent' => 'priority-Urgent',
                                 'Emergency' => 'priority-Emergency',
-                                default => 'priority-Normal'
+                                default => 'priority-default'
                                 };
                                 @endphp
                                 <tr>
@@ -341,6 +378,7 @@ default => ''
                                             <i class="bi bi-flag-fill"></i> {{ $r->ticket?->priority->name ?? 'Belum Ditentukan' }}
                                         </span>
                                     </td>
+                                    <td>{{ $r->ticket?->tickettype->name ?? 'Belum Ditentukan' }}</td>
                                     @php
                                     $menit = $r->work_duration ?? 0;
                                     $jam = intdiv($menit, 60);

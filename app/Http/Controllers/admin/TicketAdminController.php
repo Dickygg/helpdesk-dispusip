@@ -8,6 +8,7 @@ use App\Models\ApplicationModels;
 use App\Models\TicketAssignmentModels;
 use App\Models\TicketModels;
 use App\Models\TicketPriorityModels;
+use App\Models\TicketsTypeModels;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +35,9 @@ class TicketAdminController extends Controller
             ->with(['priority' => function ($query) {
                 $query->select('id', 'name');
             }])
+            ->with(['tickettype' => function ($query) {
+                $query->select('id', 'name');
+            }])
             ->whereNotin('status', ['Closed', 'Rejected'])
             ->when($request->status, function ($query, $status) {
                 $query->where('status', $status);
@@ -47,6 +51,9 @@ class TicketAdminController extends Controller
             })
             ->when($request->id_aplikasi, function ($q) use ($request) {
                 $q->where('application_id', $request->id_aplikasi);
+            })
+            ->when($request->ticket_type_id, function ($q) use ($request) {
+                $q->where('ticket_type_id', $request->ticket_type_id);
             })
             ->when($request->deadline_filter == 'today', function ($query) {
                 $query->whereDate('due_date', today());
@@ -72,11 +79,13 @@ class TicketAdminController extends Controller
 
         $getTiketstats = $this->getTotalStatus($request);
         $aplikasi = ApplicationModels::select('id', 'name')->get();
+        $tipetiket = TicketsTypeModels::select('id', 'name')->get();
         $piority = TicketPriorityModels::select('id', 'name')->get();
         return view('tiket.admin.index', [
             'tickets' => $data,
             'aplikasi' => $aplikasi,
             'piority' => $piority,
+            'tipetiket' => $tipetiket,
             'tiketstats' => $getTiketstats['tiketstats'],      // langsung collection-nya kara tidak ingin di loop di view
             'tikettotal' => $getTiketstats['tikettotal']
         ]);
@@ -84,7 +93,7 @@ class TicketAdminController extends Controller
 
     public function show(string $id)
     {
-        $data = TicketModels::with(['application', 'priority', 'attachments', 'assignment.technician', 'assignment.Assignattachments'])
+        $data = TicketModels::with(['application', 'priority', 'attachments', 'assignment.technician', 'assignment.Assignattachments', 'tickettype'])
             ->where('id', $id)
             ->first();
 
@@ -104,7 +113,7 @@ class TicketAdminController extends Controller
     {
         abort_if(Auth::user()->cannot('tiket.admin.proses'), 403);
 
-        $data = TicketModels::with(['application', 'priority', 'attachments', 'assignment.technician'])
+        $data = TicketModels::with(['application', 'priority', 'attachments', 'assignment.technician', 'tickettype'])
             ->where('id', $id)
             ->first();
 
@@ -117,15 +126,18 @@ class TicketAdminController extends Controller
             ->orderBy('estimated_hours', 'desc')
             ->get();
 
-        $petugas = $petugas = User::select('id', 'username')
+        $petugas = User::select('id', 'username')
             ->role('petugas teknis')
             ->get();
+
+        $tipetiket = TicketsTypeModels::select('id', 'name')->get();
 
         return view('tiket.admin.prosesTiket', [
             'tiket' => $data,
             'logs' => $logs,
             'piority' => $piority,
-            'petugas' => $petugas
+            'petugas' => $petugas,
+            'tikettipe' => $tipetiket
         ]);
     }
 
@@ -134,11 +146,15 @@ class TicketAdminController extends Controller
         abort_if(Auth::user()->cannot('tiket.admin.verification'), 403);
 
         $rules = [
-            'priority_id' => 'required'
+            'priority_id'    => 'required|exists:ticket_priorities,id',
+            'ticket_type_id' => 'required|exists:ticket_types,id',
         ];
 
         $messages = [
-            'priority_id.required' => 'Mohon Tentukan Pioritas Tiket Terlebih Dahulu!'
+            'priority_id.required' => 'Mohon Tentukan Pioritas Tiket Terlebih Dahulu!',
+            'ticket_type_id.required' => 'Mohon Tentukan Tipe Tiket Terlebih Dahulu!',
+            'ticket_type_id.exists'   => 'Tipe tiket yang dipilih tidak valid.',
+            'priority_id.exists'      => 'Priority yang dipilih tidak valid.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -160,6 +176,7 @@ class TicketAdminController extends Controller
                 'status' => 'Accept',
                 'verification_status' => 'verified',
                 'priority_id' => $request->priority_id,
+                'ticket_type_id' => $request->ticket_type_id,
                 'admin_verified_at' => now()
             ]);
 
@@ -169,7 +186,7 @@ class TicketAdminController extends Controller
                 after: ['status' => $tiket->status],
             );
             DB::commit();
-            return redirect()->back()->with('success', 'Tiket telah Berhail Diverifikasi Dan Ditentukan Pioritas.');
+            return redirect()->back()->with('success', 'Tiket telah Berhail Diverifikasi.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error($e);
@@ -338,6 +355,9 @@ class TicketAdminController extends Controller
             ->with(['priority' => function ($query) {
                 $query->select('id', 'name');
             }])
+            ->with(['tickettype' => function ($query) {
+                $query->select('id', 'name');
+            }])
             ->whereIn('status', ['Closed', 'Rejected'])
             ->when($request->status, function ($query, $status) {
                 $query->where('status', $status);
@@ -355,16 +375,22 @@ class TicketAdminController extends Controller
             ->when($request->priority_id, function ($q) use ($request) {
                 $q->where('priority_id', $request->priority_id);
             })
+            ->when($request->ticket_type_id, function ($q) use ($request) {
+                $q->where('ticket_type_id', $request->ticket_type_id);
+            })
             ->orderBy('created_at', 'DESC')
             ->get();
 
         $getTiketstats = $this->getTotalStatus($request);
         $aplikasi = ApplicationModels::select('id', 'name')->get();
         $piority  = TicketPriorityModels::select('id', 'name')->get();
+        $tipetiket = TicketsTypeModels::select('id', 'name')->get();
+
         return view('tiket.admin.historyTiket', [
             'tickets' => $data,
             'aplikasi' => $aplikasi,
             'priority' => $piority,
+            'tipetiket' => $tipetiket,
             'tiketstats' => $getTiketstats['tiketstats'],      // langsung collection-nya kara tidak ingin di loop di view
             'tikettotal' => $getTiketstats['tikettotalhistory'],
         ]);
@@ -391,9 +417,11 @@ class TicketAdminController extends Controller
             ->when($request->end_date, function ($q) use ($request) {
                 $q->whereDate('created_at', '<=', $request->end_date);
             })
-
             ->when($request->id_aplikasi, function ($q) use ($request) {
                 $q->where('application_id', $request->id_aplikasi);
+            })
+            ->when($request->ticket_type_id, function ($q) use ($request) {
+                $q->where('ticket_type_id', $request->ticket_type_id);
             })
             ->when($request->priority_id, function ($q) use ($request) {
                 $q->where('priority_id', $request->priority_id);

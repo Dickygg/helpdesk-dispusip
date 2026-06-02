@@ -51,10 +51,10 @@ default => 'bg-secondary',
 };
 
 $verificationStyle = match($data->ticket->verification_status) {
-'Emergency' => 'text-danger',
-'Urgent' => 'text-warning',
-'Normal' => 'text-success',
-default => 'secondary',
+'pending' => 'text-warning',
+'verified' => 'text-success',
+'rejected' => 'text-danger',
+default => 'text-secondary',
 };
 
 $statusStyle = match($data->ticket->status){
@@ -120,8 +120,8 @@ default => 'btn-secondary',
                                 <hr>
                                 <div class="row d-flex" style="margin-bottom:0;">
                                     <div class="col-md-03 col-md-3 col-sm-6 colums-card-body">
-                                        <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-alarm"></i> Estimasi Selesai</div>
-                                        <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"> {{ $data->ticket->due_date ? $data->ticket->due_date->format('d F Y, H:i') : '-' }}</div>
+                                        <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-collection"></i> Tipe Tiket</div>
+                                        <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"> {{ $data->ticket?->tickettype?->name ?? 'Belum Ditentukan' }}</div>
                                     </div>
                                     <div class="col-md-03 col-md-3 col-sm-6 colums-card-body">
                                         <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-clock-history"></i> Terakhir Di Update</div>

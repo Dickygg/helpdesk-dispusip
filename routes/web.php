@@ -16,6 +16,7 @@ use App\Http\Controllers\petugas\HandlingTiketController;
 use App\Http\Controllers\SuperAdmin\ManagePermissionController;
 use App\Http\Controllers\SuperAdmin\ManageRoleController;
 use App\Http\Controllers\SuperAdmin\ManageUserRoleController;
+use App\Http\Controllers\TicketTypeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -42,6 +43,7 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
     Route::resource('application', ApplicationController::class)->names('application');
     Route::resource('priority', PiorityController::class)->names('piority');
     Route::resource('status', StatusController::class)->names('status');
+    Route::resource('ticket-type', TicketTypeController::class)->names('ticket-type');
 
     // Manajemen Akses
     Route::resource('manage/roles', ManageRoleController::class)

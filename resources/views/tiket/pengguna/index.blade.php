@@ -307,9 +307,13 @@ default => ''
                         </div>
                         <div class="card-footer bg-transparent">
                             <div class="row">
-                                <div class="col-md-9 colums-card-body">
+                                <div class="col-md-4 colums-card-body">
                                     <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-alarm"></i> Estimasi Selesai</div>
                                     <div class="text-dark" style="font-size: 0.75rem; font-weight: bold;"><i class="bi bi-hourglass-split"></i> {{ $tickets->due_date ? $tickets->due_date->format('d F Y, H:i') : '-' }}</div>
+                                </div>
+                                <div class="col-md-4 colums-card-body">
+                                    <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-collection"></i> Tipe Tiket</div>
+                                    <div class=" text-dark" style="font-size: 0.75rem; font-weight: bold;"> {{$tickets->tickettype?->name ?? 'Belum Ditentukan'}}</div>
                                 </div>
                                 <div class="col-md d-flex justify-content-md-end">
                                     <i class="btn btn-sm rounded-5 {{$statusStyle}}" style="cursor:default; height:fit-content;">{{$tickets['status']}}</i>

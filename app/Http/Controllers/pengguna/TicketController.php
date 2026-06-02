@@ -28,7 +28,7 @@ class TicketController extends Controller
     {
         $user = Auth::user();
         // dd($request->all());
-        $data = TicketModels::with(['application', 'priority', 'assignment'])
+        $data = TicketModels::with(['application', 'priority', 'assignment', 'tickettype'])
             ->where('user_id', $user->id)
             ->whereNotIn('status', ['Closed', 'Rejected'])
             ->when($request->status, function ($query, $status) {
@@ -39,6 +39,9 @@ class TicketController extends Controller
                     $query->where('ticket_code', 'like', '%' . $request->search . '%')
                         ->orWhere('title', 'like', '%' . $request->search . '%')
                         ->orWhereHas('application', function ($query) use ($request) {
+                            $query->where('name', 'like', '%' . $request->search . '%');
+                        })
+                        ->orWhereHas('tickettype', function ($query) use ($request) {
                             $query->where('name', 'like', '%' . $request->search . '%');
                         });
                 });
@@ -134,7 +137,13 @@ class TicketController extends Controller
                     "📅 Tanggal: {$tiket->created_at}\n"
             );
 
-            return redirect()->route('tiket.index')->with('success', 'Tiket berhasil dibuat!');
+            $role = $user->roles->first()->name; // ← ambil nama role dulu
+
+            return match ($role) {
+                'super admin' => redirect()->route('sa.tiket.index')->with('success', 'Tiket berhasil dibuat!'),
+                'admin'       => redirect()->route('admin.tiket.index')->with('success', 'Tiket berhasil dibuat!'),
+                default       => redirect()->route('tiket.index')->with('success', 'Tiket berhasil dibuat!'),
+            };
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Gagal buat tiket: ' . $e->getMessage());
@@ -147,7 +156,7 @@ class TicketController extends Controller
     {
         abort_if(Auth::user()->cannot('tiket.show'), 403);
 
-        $data = TicketModels::with(['application', 'priority', 'attachments', 'assignment.Assignattachments'])
+        $data = TicketModels::with(['application', 'priority', 'attachments', 'assignment.Assignattachments', 'tickettype'])
             ->where('id', $id)
             ->first();
 

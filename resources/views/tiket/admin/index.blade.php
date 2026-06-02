@@ -109,6 +109,16 @@
         color: #DC3545;
     }
 
+    .badge-priority-default {
+        padding: 5px 5px;
+        border-radius: 30px;
+        font-size: 0.70rem;
+        font-weight: 600;
+        display: inline-block;
+        /* min-width: 90px; */
+        text-align: center;
+    }
+
     .badge-priority {
         padding: 6px 14px;
         border-radius: 30px;
@@ -119,17 +129,23 @@
         text-align: center;
     }
 
-    .priority-Normal {
+    .priority-default {
+        background: #9290eeff;
+        color: #ffffffff;
+        font-size: 0.75rem;
+    }
+
+    .priority-normal {
         background: #E8FFF3;
         color: #198754;
     }
 
-    .priority-Urgent {
+    .priority-urgent {
         background: #FFF8E1;
         color: #F59E0B;
     }
 
-    .priority-Emergency {
+    .priority-emergency {
         background: #FDEBEC;
         color: #DC3545;
     }
@@ -393,8 +409,23 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 @enderror
 
                             </div>
+                            <!-- tipe tiket -->
+                            <div class="col-lg-3 col-md-6 mt-2">
+                                <label class="form-label fw-semibold text-secondary">
+                                    Tipe Tiket
+                                </label>
+                                <select class="form-select form-control" name="ticket_type_id" id="ticket_type_id">
+                                    <option value="" selected>Semua Tiket Tipe</option>
+                                    @foreach($tipetiket as $s)
+                                    <option value="{{$s->id}}">{{$s->name}}</option>
+                                    @endforeach
+                                </select>
+                                @error('id_aplikasi')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
                             <!-- Tombol -->
-                            <div class="col-lg-12 col-md-12 d-flex justify-content-end mt-md-2">
+                            <div class="col-lg col-md-12 d-flex justify-content-end mt-md-2">
                                 <div class="d-grid gap-2">
                                     <button type="submit"
                                         class="btn btn-primary rounded-3 shadow-sm">
@@ -430,6 +461,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                     <th>Kode Tiket</th>
                                     <th>User</th>
                                     <th>Judul</th>
+                                    <th>Tipe Ticket</th>
                                     <th>Aplikasi</th>
                                     <th>Prioritas</th>
                                     <th>Status</th>
@@ -453,20 +485,23 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 };
 
                                 $pioritystyle = match($r->priority->name ?? '') {
-                                'Normal' => 'priority-Normal',
-                                'Urgent' => 'priority-Urgent',
-                                'Emergency' => 'priority-Emergency',
-                                default => 'priority-Normal'
+                                'Normal' => 'badge-priority priority-normal',
+                                'Urgent' => 'badge-priority priority-urgent',
+                                'Emergency' => 'badge-priority priority-emergency',
+                                default => 'badge-priority-default priority-default'
                                 };
                                 @endphp
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $r->ticket_code }}</td>
                                     <td>{{ $r->user->name }}</td>
-                                    <td>{{ $r->title }}</td>
+                                    <td style="max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                        {{ $r->title }}
+                                    </td>
+                                    <td>{{ $r->tickettype?->name ?? 'Belum ditentukan' }}</td>
                                     <td>{{ $r->application->name }}</td>
                                     <td>
-                                        <span class="badge-priority {{ $pioritystyle }}">
+                                        <span class="{{ $pioritystyle }}">
                                             <i class="bi bi-flag-fill"></i> {{ $r->priority->name ?? 'Belum Ditentukan' }}
                                         </span>
                                     </td>
