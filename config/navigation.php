@@ -7,7 +7,7 @@ return [
         ],
         [
             'title' => 'Dashboard',
-            'route' => 'dashboard.super-admin',
+            'route' => 'sa.admin.dashboard',
             'icon' => 'fas fa-fw fa-home'
         ],
         [
@@ -124,7 +124,7 @@ return [
         ],
         [
             'title' => 'Dashboard',
-            'route' => 'dashboard.admin',  // ← diubah, sebelumnya salah pakai dashboard.super-admin
+            'route' => 'admin.dashboard',  // ← diubah, sebelumnya salah pakai dashboard.super-admin
             'icon' => 'fas fa-fw fa-home'
         ],
         [

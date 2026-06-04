@@ -36,7 +36,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->midd
 // Super Admin
 // -------------------------------------------------------
 Route::middleware(['auth', 'role:super admin'])->group(function () {
-    Route::get('/dashboard/super-admin', [AdminDashboardController::class, 'index'])->name('dashboard.super-admin');
+    Route::get('/dashboard/super-admin', [AdminDashboardController::class, 'index'])->name('sa.admin.dashboard');
 
     // Data Master
     Route::resource('roles', RolesController::class)->names('roles');
@@ -91,7 +91,7 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
 // Admin Helpdesk
 // -------------------------------------------------------
 Route::middleware(['auth', 'role:admin helpdesk'])->group(function () {
-    Route::get('/dashboard/admin', [AdminDashboardController::class, 'index'])->name('dashboard.admin');
+    Route::get('/dashboard/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
     // Tiket Admin
     Route::get('admin/tiket/historyTiket', [TicketAdminController::class, 'historyTiket'])->name('admin.tiket.historyTiket');

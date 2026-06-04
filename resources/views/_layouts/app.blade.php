@@ -45,7 +45,7 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">@yield('page-title', 'Dashboard')</h1>
+                        <h1 style="font-size: 1.3rem; font-weight: bold;">@yield('page-title', 'Dashboard')</h1>
                     </div>
 
                     @yield('content')
@@ -141,6 +141,7 @@
 
     <!-- 5. Custom scripts for all pages-->
     <script src="{{ asset('sb-admin/js/sb-admin-2.min.js') }}"></script>
+    <script src="{{ asset('sb-admin/js/chart.umd.js') }}"></script>
 
     <!-- 6. SweetAlert2 (Optional) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
