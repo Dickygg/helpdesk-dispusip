@@ -38,7 +38,7 @@ class TicketAdminController extends Controller
             ->with(['tickettype' => function ($query) {
                 $query->select('id', 'name');
             }])
-            ->whereNotin('status', ['Closed', 'Rejected'])
+            ->whereNotin('status', ['Closed', 'Rejected', 'Cancel'])
             ->when($request->status, function ($query, $status) {
                 $query->where('status', $status);
             })
@@ -358,7 +358,7 @@ class TicketAdminController extends Controller
             ->with(['tickettype' => function ($query) {
                 $query->select('id', 'name');
             }])
-            ->whereIn('status', ['Closed', 'Rejected'])
+            ->whereIn('status', ['Closed', 'Rejected', 'Cancel'])
             ->when($request->status, function ($query, $status) {
                 $query->where('status', $status);
             })
@@ -434,11 +434,11 @@ class TicketAdminController extends Controller
             ->get();
 
         // Total Semua
-        $tiketTotal = (clone $query)->whereNotin('status', ['Closed', 'Rejected'])->count();
+        $tiketTotal = (clone $query)->whereNotin('status', ['Closed', 'Rejected', 'Cancel'])->count();
 
         // Total History
         $tiketTotalHistory = (clone $query)
-            ->whereIn('status', ['Closed', 'Rejected'])
+            ->whereIn('status', ['Closed', 'Rejected', 'Cancel'])
             ->count();
 
         return [

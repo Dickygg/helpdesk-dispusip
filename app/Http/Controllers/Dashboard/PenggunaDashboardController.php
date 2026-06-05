@@ -13,6 +13,6 @@ class PenggunaDashboardController extends Controller
     {
         abort_if(Auth::user()->cannot('dashboard.pengguna'), 403);
 
-        return view('testlayout');
+        return view('dashboard.pengguna.index');
     }
 }

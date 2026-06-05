@@ -107,11 +107,7 @@ default => ''
 
 @push('scripts')
 <!-- Trigger otomatis saat halaman dibuka -->
-<script>
-    $(document).ready(function() {
-        $('#infoModal').modal('show');
-    });
-</script>
+
 
 @if ($errors->any())
 <script>

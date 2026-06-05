@@ -222,7 +222,7 @@ class AdminDashboardController extends Controller
             ->with(['application' => function ($query) {
                 $query->select('id', 'name');
             }])
-            ->whereNotin('status', ['Closed', 'Rejected'])
+            ->whereNotin('status', ['Closed', 'Rejected', 'Cancel'])
             ->orderBy('created_at', 'DESC')
             ->limit(5)
             ->get();

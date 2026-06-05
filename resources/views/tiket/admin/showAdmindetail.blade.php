@@ -66,6 +66,7 @@ $statusStyle = match($tiket->status){
 'Closed' => 'btn-secondary',
 'Rejected' => 'btn-danger',
 'Reopen' => 'btn-danger',
+'Cancel' => 'btn-warning',
 default => 'btn-secondary',
 };
 

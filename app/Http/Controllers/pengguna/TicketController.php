@@ -30,7 +30,7 @@ class TicketController extends Controller
         // dd($request->all());
         $data = TicketModels::with(['application', 'priority', 'assignment', 'tickettype'])
             ->where('user_id', $user->id)
-            ->whereNotIn('status', ['Closed', 'Rejected'])
+            ->whereNotIn('status', ['Closed', 'Rejected', 'Cancel'])
             ->when($request->status, function ($query, $status) {
                 $query->where('status', $status);
             })
@@ -204,6 +204,11 @@ class TicketController extends Controller
 
     public function rejectedKonfirmasi(Request $request, string $id)
     {
+        $prefix = match (true) {
+            Auth::user()->hasRole('super admin') => 'sa.',
+            Auth::user()->hasRole('admin helpdesk') => 'admin.',
+            default => ''
+        };
         $data = TicketModels::findOrFail($id);
 
         $request->validate([
@@ -231,12 +236,12 @@ class TicketController extends Controller
                     "⚡ Code Tiket: {$data->ticket_code}\n" .
                     "📢 Pemberitahuan: Pengguna Menolak Konfrimasi Tiket.!.\n"
             );
-            return redirect()->route('tiket.index')->with('success', 'Tiket berhasil ditolak!');
+            return redirect()->route($prefix . 'tiket.index')->with('success', 'Tiket berhasil ditolak!');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error($e);
             dd($e);
-            return redirect()->route('tiket.index')->with('error', 'Oops, Gagal Mengubah Status Konfirmasi!');
+            return redirect()->route($prefix . 'tiket.index')->with('error', 'Oops, Gagal Mengubah Status Konfirmasi!');
         }
     }
 
@@ -246,7 +251,7 @@ class TicketController extends Controller
         $user = Auth::user();
         $data = TicketModels::with(['application', 'priority', 'assignment'])
             ->where('user_id', $user->id)
-            ->whereIn('status', ['Closed', 'Rejected'])
+            ->whereIn('status', ['Closed', 'Rejected', 'Cancel'])
             ->when($request->status, function ($query, $status) {
                 $query->where('status', $status);
             })
@@ -267,5 +272,47 @@ class TicketController extends Controller
         return view('tiket.pengguna.history', [
             'tikets' => $data,
         ]);
+    }
+
+    public function cancelTicket(string $id)
+    {
+        $prefix = match (true) {
+            Auth::user()->hasRole('super admin') => 'sa.',
+            Auth::user()->hasRole('admin helpdesk') => 'admin.',
+            default => ''
+        };
+        $tiket = TicketModels::findOrFail($id);
+
+        if (in_array($tiket->status, ['Rejected', 'Closed', 'Cancel'])) {
+            return redirect()->back()->with('error', 'Oops, Tiket Sudah Ditutup!.');
+        } elseif ($tiket->status !== 'Open') {
+            return redirect()->back()->with('error', 'Oops, Tiket Sudah Mulai Dikerjakan!.');
+        }
+
+        $oldStatus = $tiket->status;
+
+        DB::beginTransaction();
+        try {
+            $tiket->update([
+                'status' => 'Cancel'
+            ]);
+            ActivityHelper::logUpdate(
+                $tiket,
+                before: ['status' => $oldStatus],
+                after: ['status' => $tiket->status],
+            );
+            DB::commit();
+            sendTelegram(
+                "📢 *Pemberitahuan Tiket*\n" .
+                    "⚡ Code Tiket: {$tiket->ticket_code}\n" .
+                    "📢 Pemberitahuan: Pengguna Membatalkan Tiket.!.\n"
+            );
+            return redirect()->route($prefix . 'tiket.index')->with('success', 'Berhasil Mengcancel Tiket!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e);
+            dd($e);
+            return redirect()->route($prefix . 'tiket.index')->with('error', 'Oops, Gagal Mengubah Status Konfirmasi!');
+        }
     }
 }

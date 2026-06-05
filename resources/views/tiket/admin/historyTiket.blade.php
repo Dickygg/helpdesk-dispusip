@@ -80,6 +80,11 @@
         color: #DC3545;
     }
 
+    .status-cancel {
+        background: #FFF4E5;
+        color: #F59E0B;
+    }
+
     .badge-priority {
         padding: 6px 14px;
         border-radius: 30px;
@@ -383,6 +388,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 $statusstyle = match($r->status) {
                                 'Closed' => 'status-closed',
                                 'Rejected' => 'status-rejected',
+                                'Cancel' => 'status-cancel',
                                 default => ''
                                 };
 

@@ -75,6 +75,7 @@ $statusStyle = match($tiket->status){
 'Closed' => 'btn-secondary',
 'Rejected' => 'btn-danger',
 'Reopen' => 'btn-danger',
+'Cancel' => 'btn-warning',
 default => 'btn-secondary',
 };
 
@@ -227,7 +228,7 @@ default => 'btn-secondary',
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="border-start ps-3" id="noteSection" style="display: none; flex: 1; min-width: 220px;">
-                                                            <form action="{{ route('tiket.rejectedKonfirmasi', $tiket->id) }}" method="POST">
+                                                            <form action="{{ route($prefix.'tiket.rejectedKonfirmasi', $tiket->id) }}" method="POST">
                                                                 @csrf
 
                                                                 <div class="text-primary" style="font-size: 0.85rem; font-weight: bold;">*Catatan Penolakan</div>
@@ -325,6 +326,9 @@ default => 'btn-secondary',
                                             </a>
                                             @empty
                                             @endforelse
+                                            <a href="{{ route($prefix.'tiket.cancelTicket', $tiket->id) }}"" class=" mb-2 d-flex justify-content-center align-items-center btn btn-outline-danger btn-sm">
+                                                <i class="bi bi-trash" style="margin-right: 5px;"></i> Batalkan Tiket
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

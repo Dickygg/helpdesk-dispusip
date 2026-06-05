@@ -679,169 +679,186 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
             </div>
         </div>
     </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered m-0 mx-auto" role="document"
+        style="width: fit-content; max-width: 95vw;">
+        <div class="modal-content border-0 bg-transparent shadow-none p-0">
+            <img src="{{ asset('storage/alur_tiket.png') }}"
+                alt="poster"
+                style="width: 70vw; max-width: 500px; max-height: 80vh; object-fit: contain; border-radius: 8px; display: block;">
+        </div>
+    </div>
+</div>
 
 
+@push('scripts')
+@if ($errors->any())
+<script>
+    $(document).ready(function() {
+        $('#pioritybaruModal').modal('show');
+    });
+</script>
+@endif
 
-    @push('scripts')
-    @if ($errors->any())
-    <script>
-        $(document).ready(function() {
-            $('#pioritybaruModal').modal('show');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.progress-bar[data-width]').forEach(function(bar) {
+            const target = bar.getAttribute('data-width');
+            setTimeout(() => bar.style.width = target + '%', 100);
         });
-    </script>
-    @endif
+    });
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.progress-bar[data-width]').forEach(function(bar) {
-                const target = bar.getAttribute('data-width');
-                setTimeout(() => bar.style.width = target + '%', 100);
-            });
-        });
+    document.addEventListener('DOMContentLoaded', function() {
 
-        document.addEventListener('DOMContentLoaded', function() {
-
-            const ctx = document.getElementById('ticketChart');
-
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: @json($chartData['labels']),
-                    datasets: [{
-                        label: 'Jumlah Tiket',
-                        data: @json($chartData['data']),
-
-                        borderColor: '#4e73df',
-                        backgroundColor: '#4e73df',
-
-                        borderWidth: 2,
-
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-
-                        tension: 0.3,
-                        fill: false,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
-                    }
-                }
-            });
-
-        });
-
-        var ctx = document.getElementById("priorityChart");
+        const ctx = document.getElementById('ticketChart');
 
         new Chart(ctx, {
-            type: 'doughnut',
+            type: 'line',
             data: {
-
+                labels: @json($chartData['labels']),
                 datasets: [{
-                    data: @json($priorityChart['data']),
-                    backgroundColor: [
-                        '#e74a3b', // Emergency
-                        '#f6c23e', // Urgent
-                        '#36b9cc', // Normal
-                    ]
+                    label: 'Jumlah Tiket',
+                    data: @json($chartData['data']),
+
+                    borderColor: '#4e73df',
+                    backgroundColor: '#4e73df',
+
+                    borderWidth: 2,
+
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+
+                    tension: 0.3,
+                    fill: false,
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '70%',
-                legend: {
-                    display: false
-                }
-            }
-        });
 
-        const typeCtx = document.getElementById('typetikett').getContext('2d');
-        new Chart(typeCtx, {
-            type: 'doughnut',
-            data: {
-
-                datasets: [{
-                    data: @json($typetikett['data']),
-                    backgroundColor: ['#e74a3b', '#f6c23e', '#36b9cc', '#1cc88a', '#858796', '#5a5c69'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                maintainAspectRatio: false,
-                responsive: true,
-                cutout: '70%',
-                legend: {
-                    display: false
-                }
-            }
-        });
-
-        const applicationCtx = document.getElementById('applicationChart');
-
-        new Chart(applicationCtx, {
-            type: 'doughnut',
-            data: {
-                labels: @json($applicationChart['labels']),
-                datasets: [{
-                    data: @json($applicationChart['data']),
-                    backgroundColor: [
-                        '#4e73df',
-                        '#1cc88a',
-                        '#36b9cc',
-                        '#f6c23e',
-                        '#e74a3b',
-                        '#858796',
-                        '#5a5c69'
-                    ],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                cutout: '70%',
                 plugins: {
                     legend: {
                         display: false
                     }
+                },
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
                 }
             }
         });
 
-        function updateGreeting() {
-            const jam = new Date().getHours();
-            let greeting;
+    });
 
-            if (jam >= 5 && jam < 11) {
-                greeting = 'Selamat Pagi 🌤️';
-            } else if (jam >= 11 && jam < 15) {
-                greeting = 'Selamat Siang ☀️';
-            } else if (jam >= 15 && jam < 18) {
-                greeting = 'Selamat Sore 🌇';
-            } else {
-                greeting = 'Selamat Malam 🌙';
+    var ctx = document.getElementById("priorityChart");
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+
+            datasets: [{
+                data: @json($priorityChart['data']),
+                backgroundColor: [
+                    '#e74a3b', // Emergency
+                    '#f6c23e', // Urgent
+                    '#36b9cc', // Normal
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            legend: {
+                display: false
             }
+        }
+    });
 
-            document.getElementById('greeting').innerText = greeting;
+    const typeCtx = document.getElementById('typetikett').getContext('2d');
+    new Chart(typeCtx, {
+        type: 'doughnut',
+        data: {
+
+            datasets: [{
+                data: @json($typetikett['data']),
+                backgroundColor: ['#e74a3b', '#f6c23e', '#36b9cc', '#1cc88a', '#858796', '#5a5c69'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+            cutout: '70%',
+            legend: {
+                display: false
+            }
+        }
+    });
+
+    const applicationCtx = document.getElementById('applicationChart');
+
+    new Chart(applicationCtx, {
+        type: 'doughnut',
+        data: {
+            labels: @json($applicationChart['labels']),
+            datasets: [{
+                data: @json($applicationChart['data']),
+                backgroundColor: [
+                    '#4e73df',
+                    '#1cc88a',
+                    '#36b9cc',
+                    '#f6c23e',
+                    '#e74a3b',
+                    '#858796',
+                    '#5a5c69'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    function updateGreeting() {
+        const jam = new Date().getHours();
+        let greeting;
+
+        if (jam >= 5 && jam < 11) {
+            greeting = 'Selamat Pagi 🌤️';
+        } else if (jam >= 11 && jam < 15) {
+            greeting = 'Selamat Siang ☀️';
+        } else if (jam >= 15 && jam < 18) {
+            greeting = 'Selamat Sore 🌇';
+        } else {
+            greeting = 'Selamat Malam 🌙';
         }
 
-        updateGreeting();
-        setInterval(updateGreeting, 3600000); // update tiap 1 menit
-    </script>
-    @endpush
-    @endsection
+        document.getElementById('greeting').innerText = greeting;
+    }
+
+    updateGreeting();
+    setInterval(updateGreeting, 3600000); // update tiap 1 menit
+
+
+
+    $(document).ready(function() {
+        $('#infoModal').modal('show');
+    });
+</script>
+@endpush
+@endsection

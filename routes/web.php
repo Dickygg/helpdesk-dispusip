@@ -86,6 +86,7 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
     Route::get('super-admin/tiket/{tiket}', [TicketController::class, 'show'])->name('sa.tiket.show');
     Route::post('super-admin/tiket/konfirmasi/{tiket}', [TicketController::class, 'konfirmasi'])->name('sa.tiket.konfirmasi');
     Route::post('super-admin/tiket/rejectedKonfirmasi/{tiket}', [TicketController::class, 'rejectedKonfirmasi'])->name('sa.tiket.rejectedKonfirmasi');
+    Route::get('super-admin/tiket/canceltiket/{tiket}', [TicketController::class, 'cancelTicket'])->name('sa.tiket.cancelTicket');
 });
 
 
@@ -106,6 +107,8 @@ Route::middleware(['auth', 'role:admin helpdesk'])->group(function () {
     Route::get('admin/tiket/create', [TicketController::class, 'create'])->name('admin.tiket.create');
     Route::put('admin/tiket/updatePiority/{tiket}', [TicketAdminController::class, 'updatePiorityTiket'])->name('admin.tiket.updatePiority');
     Route::get('admin/tiket/closeTiket/{tiket}', [TicketAdminController::class, 'closeTiket'])->name('admin.tiket.closeTiket');
+    Route::get('admin/tiket/canceltiket/{tiket}', [TicketController::class, 'cancelTicket'])->name('admin.tiket.cancelTicket');
+
 
     //Route Assigment admin
     Route::get('admin/admin/assigment/', [AssigmentController::class, 'index'])->name('admin.assigment.index');
@@ -139,6 +142,7 @@ Route::middleware(['auth', 'role:pengguna'])->group(function () {
     Route::post('/tiket', [TicketController::class, 'store'])->name('tiket.store');
     Route::post('/tiket/konfirmasi/{tiket}', [TicketController::class, 'konfirmasi'])->name('tiket.konfirmasi');
     Route::post('/tiket/rejectedKonfirmasi/{tiket}', [TicketController::class, 'rejectedKonfirmasi'])->name('tiket.rejectedKonfirmasi');
+    Route::get('/tiket/canceltiket/{tiket}', [TicketController::class, 'cancelTicket'])->name('tiket.cancelTicket');
 });
 
 require __DIR__ . '/auth.php';
