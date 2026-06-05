@@ -25,8 +25,8 @@ class AuthenticatedSessionController extends Controller
         $role = strtolower(Auth::user()->role?->roles_name ?? '');
 
         return redirect(match (true) {
-            $role === 'super admin'    => route('dashboard.super-admin'),
-            $role === 'admin helpdesk' => route('dashboard.admin'),
+            $role === 'super admin'    => route('sa.admin.dashboard'),
+            $role === 'admin helpdesk' => route('admin.dashboard'),
             $role === 'petugas teknis' => route('dashboard.petugas'),
             $role === 'pengguna'       => route('dashboard.pengguna'),
             default                    => route('login'),

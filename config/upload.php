@@ -8,7 +8,8 @@ return  [
             'website' => 'website',
             'e-office' => 'e-office',
             'sosial-media' => 'sosial-media',
-            'assignment' => 'assignment'
+            'spp app' => 'spp app',
+            'assignment' => 'assignment',
         ],
         'accept_html' => [
             'image' => 'image/png,image/jpeg,image/jpg,image/webp',

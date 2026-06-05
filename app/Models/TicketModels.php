@@ -60,22 +60,17 @@ class TicketModels extends BaseModel
 
     public static function generateCode()
     {
-        $today = now()->format('Ymd');
+        return \DB::transaction(function () {
+            $today = now()->format('Ymd');
 
-        do {
-            $lastNumber = self::where('ticket_code', 'like', 'APK-' . $today . '-%')
+            $lastNumber = self::lockForUpdate()
                 ->selectRaw('MAX(CAST(RIGHT(ticket_code, 4) AS UNSIGNED)) as max_number')
-                ->value('max_number');
+                ->value('max_number'); // ← tidak filter by tanggal
 
             $number = $lastNumber ? $lastNumber + 1 : 1;
 
-            $code = 'APK-' . $today . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
-
-            // cek apakah sudah ada
-            $exists = self::where('ticket_code', $code)->exists();
-        } while ($exists);
-
-        return $code;
+            return 'APK-' . $today . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
+        });
     }
 
     public function user()

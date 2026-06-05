@@ -1,7 +1,7 @@
 @extends('_layouts.app')
 
-@section('title', 'Daftar Pioritas')
-@section('page-title', 'Daftar Pioritas')
+@section('title', 'Daftar Tingkat Prioritas')
+@section('page-title', 'Daftar Tingkat Prioritas')
 
 @section('content')
 <div class="container-fluid">
@@ -18,7 +18,7 @@
     <div class="card shadow mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="m-0 font-weight-bold text-primary ">Dispusip<span class="text-info">Helpdesk.</span></h6>
-            <a href="" class="btn btn-primary" data-toggle="modal" data-target="#pioritybaruModal" class="btn btn-primary btn-sm float-right">Tambah Data Pioritas</a>
+            <a href="" class="btn btn-primary" data-toggle="modal" data-target="#pioritybaruModal" class="btn btn-primary btn-sm float-right">Tambah Data Tingkat Prioritas</a>
 
         </div>
         <div class="card-body">
@@ -27,7 +27,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Nama Pioritas</th>
+                            <th>Nama Tingkat Prioritas</th>
                             <th>Estimasi Perkerjaan (JAM)</th>
                             <th class="text-center">Aksi</th>
                         </tr>
@@ -69,7 +69,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title"
-                    id="pioritybaruModalLabel">Tambah Daftar Pioritas</h5>
+                    id="pioritybaruModalLabel">Tambah Daftar Tingkat Prioritas</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -80,7 +80,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <input type="text" class="form-control form-control-user @error('name') is-invalid @enderror" value="{{ @old('name') }}" id="name" name="name"
-                            placeholder="Masukan Nama Pioritas">
+                            placeholder="Masukan Nama Tingkat Prioritas">
                         @error('name')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror

@@ -42,7 +42,7 @@ class ManagePermissionController extends Controller
             ->log("Membuat permission baru: {$permission->name}");
 
         return redirect()->route('manage.permissions.index')
-            ->with('success', "Permission '{$permission->name}' berhasil dibuat.");
+            ->with('success', "Permission berhasil dibuat.");
     }
 
     public function destroy(Permission $permission)

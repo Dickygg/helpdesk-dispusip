@@ -532,6 +532,92 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                 </div>
             </div>
         </div>
+        <div class="col-12 col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="m-0 text-primary" style="font-size: 0.9rem; font-weight: bold;">
+                        Presentase Tiket Berdasarkan Aplikasi
+                    </h6>
+                </div>
+
+                <div class="card-body">
+                    <div class="d-flex align-items-center flex-column flex-md-row">
+
+                        {{-- Chart --}}
+                        <div style="position: relative; width: 160px; height: 160px; flex-shrink: 0;">
+                            <canvas id="applicationChart"></canvas>
+
+                            <div style="position: absolute;
+                                top: 50%;
+                                left: 50%;
+                                transform: translate(-50%, -50%);
+                                text-align: center;
+                                pointer-events: none;">
+
+                                <div style="font-size: 1.2rem; font-weight: 700; line-height: 1.2;">
+                                    {{ array_sum($applicationChart['data']) }}
+                                </div>
+
+                                <div style="font-size: 0.7rem; color: #6c757d;">
+                                    Total
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Legenda --}}
+                        <div class="small ml-md-3 mt-3 mt-md-0" style="flex:1; width:100%;">
+
+                            @php
+                            $total = array_sum($applicationChart['data']);
+
+                            $colors = [
+                            '#4e73df',
+                            '#1cc88a',
+                            '#36b9cc',
+                            '#f6c23e',
+                            '#e74a3b',
+                            '#858796',
+                            '#5a5c69'
+                            ];
+                            @endphp
+
+                            @foreach($applicationChart['labels'] as $index => $label)
+
+                            @php
+                            $count = $applicationChart['data'][$index];
+                            $percent = $total > 0 ? round(($count / $total) * 100, 1) : 0;
+                            $color = $colors[$index] ?? '#adb5bd';
+                            @endphp
+
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+
+                                <div class="d-flex align-items-center">
+                                    <span style="
+                                    display:inline-block;
+                                    width:12px;
+                                    height:12px;
+                                    border-radius:2px;
+                                    background:{{ $color }};
+                                    margin-right:8px;">
+                                    </span>
+
+                                    <span>{{ $label }}</span>
+                                </div>
+
+                                <span class="text-muted ml-2">
+                                    {{ $count }} ({{ $percent }}%)
+                                </span>
+
+                            </div>
+
+                            @endforeach
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="col-12 col-md-7">
@@ -568,8 +654,9 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                         <div class="d-flex align-items-center">
 
                                             <div class="progress flex-grow-1 mr-2" style="height:8px;">
-                                                <div class="progress-bar bg-success"
-                                                    style="width: {{ $a->sla_percent }}%">
+                                                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated bg-success"
+                                                    style="width: 0%; transition: width 1s ease-in-out;"
+                                                    data-width="{{ $a->sla_percent }}">
                                                 </div>
                                             </div>
 
@@ -605,6 +692,13 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
     @endif
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.progress-bar[data-width]').forEach(function(bar) {
+                const target = bar.getAttribute('data-width');
+                setTimeout(() => bar.style.width = target + '%', 100);
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
 
             const ctx = document.getElementById('ticketChart');
@@ -668,8 +762,9 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                 }]
             },
             options: {
+                responsive: true,
                 maintainAspectRatio: false,
-                cutoutPercentage: 70,
+                cutout: '70%',
                 legend: {
                     display: false
                 }
@@ -684,17 +779,49 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                 datasets: [{
                     data: @json($typetikett['data']),
                     backgroundColor: ['#e74a3b', '#f6c23e', '#36b9cc', '#1cc88a', '#858796', '#5a5c69'],
+                    borderWidth: 0
                 }]
             },
             options: {
                 maintainAspectRatio: false,
-                cutoutPercentage: 70,
+                responsive: true,
+                cutout: '70%',
                 legend: {
                     display: false
                 }
             }
         });
 
+        const applicationCtx = document.getElementById('applicationChart');
+
+        new Chart(applicationCtx, {
+            type: 'doughnut',
+            data: {
+                labels: @json($applicationChart['labels']),
+                datasets: [{
+                    data: @json($applicationChart['data']),
+                    backgroundColor: [
+                        '#4e73df',
+                        '#1cc88a',
+                        '#36b9cc',
+                        '#f6c23e',
+                        '#e74a3b',
+                        '#858796',
+                        '#5a5c69'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
 
         function updateGreeting() {
             const jam = new Date().getHours();

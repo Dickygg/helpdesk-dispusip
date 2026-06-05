@@ -26,6 +26,7 @@ class AdminDashboardController extends Controller
         $newtiket = $this->getNewTicket($request);
         $deadlineticket = $this->getDeadlineTicket($request);
         $assignmentStats = $this->getTechnicianPerformance($request);
+        $ticketapplication = $this->getApplicationChart($request);
         return view('dashboard.admin.index', [
             'tiketstats' => $getstatusstats['statysStats'],
             'tikettotal' => $getstatusstats['total'],
@@ -35,7 +36,8 @@ class AdminDashboardController extends Controller
             'sla' => $sla,
             'newtiket' => $newtiket['data'],
             'deadlinetiket' => $deadlineticket['data'],
-            'assignmentstats' => $assignmentStats
+            'assignmentstats' => $assignmentStats,
+            'applicationChart' => $ticketapplication
         ]);
     }
 
@@ -301,5 +303,32 @@ class AdminDashboardController extends Controller
             });
 
         return $data;
+    }
+
+    private function getApplicationChart(Request $request)
+    {
+        $data = TicketModels::query()
+            ->join('applications', 'tickets.application_id', '=', 'applications.id')
+
+            ->when($request->start_date, function ($q) use ($request) {
+                $q->whereDate('tickets.created_at', '>=', $request->start_date);
+            })
+
+            ->when($request->end_date, function ($q) use ($request) {
+                $q->whereDate('tickets.created_at', '<=', $request->end_date);
+            })
+
+            ->select(
+                'applications.name',
+                DB::raw('COUNT(tickets.id) as total')
+            )
+            ->groupBy('applications.id', 'applications.name')
+            ->orderByDesc('total')
+            ->get();
+
+        return [
+            'labels' => $data->pluck('name')->toArray(),
+            'data'   => $data->pluck('total')->toArray(),
+        ];
     }
 }

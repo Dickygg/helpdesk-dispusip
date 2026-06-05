@@ -22,7 +22,7 @@ class TicketTypeController extends Controller
 
     public function store(Request $request)
     {
-        // abort_if(Auth::user()->cannot('status.store'), 403);
+        abort_if(Auth::user()->cannot('ticket-type.store'), 403);
         $rules = [
             'name' => 'required|max:25|min:3',
             'description' => 'required'
@@ -62,7 +62,7 @@ class TicketTypeController extends Controller
 
     public function edit(string $id)
     {
-        abort_if(Auth::user()->cannot('status.edit'), 403);
+        // abort_if(Auth::user()->cannot('ticket-type.edit'), 403);
 
         $data = TicketsTypeModels::findOrFail($id);
         if (!$data) {
@@ -76,7 +76,7 @@ class TicketTypeController extends Controller
 
     public function update(Request $request, string $id)
     {
-        // abort_if(Auth::user()->cannot('status.update'), 403);
+        abort_if(Auth::user()->cannot('ticket-type.update'), 403);
 
         $data = TicketsTypeModels::findOrFail($id);
         if (!$data) {
@@ -117,7 +117,7 @@ class TicketTypeController extends Controller
 
     public function destroy(string $id)
     {
-        // abort_if(Auth::user()->cannot('status.destroy'), 403);
+        abort_if(Auth::user()->cannot('ticket-type.destroy'), 403);
 
         $data = TicketsTypeModels::findOrfail($id);
 

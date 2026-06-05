@@ -8,6 +8,7 @@ use App\Http\Controllers\Dashboard\PetugasDashboardController;
 use App\Http\Controllers\Dashboard\PenggunaDashboardController;
 use App\Http\Controllers\Dashboard\SuperAdminDashboardController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\ManageUserController;
 use App\Http\Controllers\PiorityController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\StatusController;
@@ -44,6 +45,7 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
     Route::resource('priority', PiorityController::class)->names('piority');
     Route::resource('status', StatusController::class)->names('status');
     Route::resource('ticket-type', TicketTypeController::class)->names('ticket-type');
+    Route::resource('users', ManageUserController::class)->names('users');
 
     // Manajemen Akses
     Route::resource('manage/roles', ManageRoleController::class)

@@ -33,6 +33,11 @@ return [
             'icon'  => 'fas fa-users-cog'
         ],
         [
+            'title' => 'Users',
+            'route' => 'users.index',
+            'icon' => 'bi bi-people'
+        ],
+        [
             'title' => 'Divider',
             'divider' => true,
         ],
@@ -48,11 +53,6 @@ return [
             'title' => 'Data Daftar Prioritas',
             'route' => 'piority.index',
             'icon' => 'bi bi-exclamation-square'
-        ],
-        [
-            'title' => 'Data Daftar Status',
-            'route' => 'status.index',
-            'icon' => 'bi bi-arrow-repeat'
         ],
         [
             'title' => 'Data Daftar Tipe Tiket',
@@ -144,11 +144,7 @@ return [
             'route' => 'piority.index',
             'icon' => 'bi bi-exclamation-square'
         ],
-        [
-            'title' => 'Data Daftar Status',
-            'route' => 'status.index',
-            'icon' => 'bi bi-arrow-repeat'
-        ],
+
         [
             'title' => 'Divider',
             'divider' => true,
