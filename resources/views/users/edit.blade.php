@@ -105,34 +105,6 @@
                                     @enderror
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">
-                                        Role
-                                        <span class="text-danger">*</span>
-                                    </label>
-
-                                    <select
-                                        name="role"
-                                        class="form-control @error('role') is-invalid @enderror">
-
-                                        <option value="">
-                                            Pilih Role
-                                        </option>
-
-                                        @foreach($roles as $role)
-                                        <option
-                                            value="{{ $role }}"
-                                            {{ $user->hasRole($role) ? 'selected' : '' }}>
-                                            {{ ucwords($role) }}
-                                        </option>
-                                        @endforeach
-
-                                    </select>
-
-                                    @error('role')
-                                    <small class="text-danger">{{ $message }}</small>
-                                    @enderror
-                                </div>
 
                                 <hr>
 
@@ -174,7 +146,7 @@
 
                     <div class="card-footer text-end">
 
-                        <a href="{{ route('users.index') }}"
+                        <a href="{{ route('manage.user-roles.index') }}"
                             class="btn btn-secondary">
 
                             Kembali

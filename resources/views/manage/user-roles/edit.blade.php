@@ -58,6 +58,9 @@
             <a href="{{ route('manage.user-roles.index') }}" class="btn btn-secondary">
                 <i class="fas fa-times"></i> Batal
             </a>
+            <a href="{{ route('users.edit',$user->id) }}" class="btn btn-warning">
+                <i class="fas fa-users"></i> Ubah Data User
+            </a>
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i> Update Role
             </button>

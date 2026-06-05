@@ -5,8 +5,12 @@
 
 @section('content')
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 d-flex justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">Daftar User & Role</h6>
+        <a href="{{route('users.create')}}"
+            class="btn btn-primary btn-sm">
+            Tambah Pengguna
+        </a>
     </div>
     <div class="card-body">
         <div class="table-responsive">

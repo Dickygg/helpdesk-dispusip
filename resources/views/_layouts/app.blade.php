@@ -21,6 +21,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
     <link rel="stylesheet" href="{{ asset('aos-master/dist/aos.css') }}">
+    <link rel="icon" type="image/png"
+        href="{{ asset('sb-admin/img/favicon.png') }}">
     @stack('styles')
 </head>
 

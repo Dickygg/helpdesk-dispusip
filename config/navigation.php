@@ -33,11 +33,6 @@ return [
             'icon'  => 'fas fa-users-cog'
         ],
         [
-            'title' => 'Users',
-            'route' => 'users.index',
-            'icon' => 'bi bi-people'
-        ],
-        [
             'title' => 'Divider',
             'divider' => true,
         ],

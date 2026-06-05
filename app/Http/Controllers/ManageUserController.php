@@ -58,7 +58,7 @@ class ManageUserController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('users.index')
+                ->route('manage.user-roles.index')
                 ->with('success', 'Pengguna berhasil ditambahkan');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -99,7 +99,6 @@ class ManageUserController extends Controller
                 'email',
                 'unique:users,email,' . $user->id
             ],
-            'role' => ['required'],
         ]);
 
         $user->update([
@@ -115,10 +114,9 @@ class ManageUserController extends Controller
             ]);
         }
 
-        $user->syncRoles([$request->role]);
 
         return redirect()
-            ->route('users.index')
+            ->route('manage.user-roles.index')
             ->with('success', 'Pengguna berhasil diperbarui');
     }
 
@@ -128,7 +126,7 @@ class ManageUserController extends Controller
         $user->delete();
 
         return redirect()
-            ->route('users.index')
+            ->route('manage.user-roles.index')
             ->with('success', 'Pengguna berhasil dihapus');
     }
 }

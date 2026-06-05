@@ -89,11 +89,9 @@
                                 name="role"
                                 class="form-control @error('role') is-invalid @enderror">
                                 <option value="">Pilih Role</option>
-                                @foreach($roles as $role)
-                                <option value="{{ $role }}" {{ old('role') == $role ? 'selected' : '' }}>
-                                    {{ ucwords($role) }}
-                                </option>
-                                @endforeach
+                                <option value="admin helpdesk">Admin Helpdesk</option>
+                                <option value="petugas teknis">Petugas Teknis</option>
+                                <option value="pengguna">Pengguna</option>
                             </select>
                             @error('role')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -128,7 +126,7 @@
 
             <div class="card-footer text-right">
 
-                <a href="{{ route('users.index') }}" class="btn btn-secondary">
+                <a href="{{ route('manage.user-roles.index') }}" class="btn btn-secondary">
                     Kembali
                 </a>
 
