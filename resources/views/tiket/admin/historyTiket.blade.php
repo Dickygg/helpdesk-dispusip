@@ -242,13 +242,13 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                         <div>
                             <div class="text-secondary title-cardtiket">Closed</div>
                             <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $tiketstats->firstWhere('status', 'Closed')->total ?? 0 }}</div>
-                            <div class="text-muted title-cardtiket">Tiket Baru</div>
+                            <div class="text-muted title-cardtiket">Tiket</div>
                         </div>
                     </div>
                 </div>
             </a>
         </div>
-        <!-- Accept -->
+        <!-- Cancel -->
         <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
             <a href="{{ route($prefix . 'admin.tiket.historyTiket', array_merge(request()->query(), ['status' => 'Rejected'])) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Rejected' ? 'active' : '' }}">
@@ -259,7 +259,24 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                         <div>
                             <div class="text-secondary title-cardtiket" style="white-space: nowrap;">Rejected</div>
                             <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $tiketstats->firstWhere('status', 'Rejected')->total ?? 0 }}</div>
-                            <div class="text-muted title-cardtiket">Diverifikasi</div>
+                            <div class="text-muted title-cardtiket">Tiket</div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <!-- Cancel -->
+        <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
+            <a href="{{ route($prefix . 'admin.tiket.historyTiket', array_merge(request()->query(), ['status' => 'Cancel'])) }}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Cancel' ? 'active' : '' }}">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-10 p-2 shadow-sm" style="width: 55px; height:55px; border-radius:20px; margin-right:7px;">
+                            <i class="bi bi-x-circle-fill text-white text-light d-flex justify-content-center align-items-center" style="font-size: 1.7rem; margin-top: 5px;"></i>
+                        </div>
+                        <div>
+                            <div class="text-secondary title-cardtiket" style="white-space: nowrap;">Cancel</div>
+                            <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $tiketstats->firstWhere('status', 'Cancel')->total ?? 0 }}</div>
+                            <div class="text-muted title-cardtiket">Tiket</div>
                         </div>
                     </div>
                 </div>

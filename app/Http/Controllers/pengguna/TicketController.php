@@ -181,13 +181,13 @@ class TicketController extends Controller
             $data->update([
                 'user_confirmed_at' => now()
             ]);
+            DB::commit();
             $data->refresh();
             ActivityHelper::logUpdate(
                 $data,
                 before: ['Tiket' => 'Pengguna Belum Konfirmasi'],
                 after: ['Tiket' => 'Pengguna Sudah Konfirmasi'],
             );
-            DB::commit();
             sendTelegram(
                 "📢 *Pemberitahuan Tiket*\n" .
                     "⚡ Code Tiket: {$data->ticket_code}\n" .

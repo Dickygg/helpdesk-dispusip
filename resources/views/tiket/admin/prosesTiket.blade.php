@@ -373,7 +373,16 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Waktu Pengerjaan</span>
                                                 <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
-                                                    {{ $tiket->assignment?->work_duration ? $tiket->assignment?->work_duration . ' Menit' : '-' }}
+                                                    @php
+                                                    $menit = $tiket->assignment?->work_duration ?? 0;
+                                                    $jam = intdiv($menit, 60);
+                                                    $sisa = $menit % 60;
+                                                    @endphp
+                                                    @if($tiket->assignment?->work_duration)
+                                                    {{ $jam > 0 ? $jam . ' jam ' : '' }}{{ $sisa > 0 ? $sisa . ' menit' : '' }}
+                                                    @else
+                                                    -
+                                                    @endif
                                                 </span>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center">
@@ -385,6 +394,9 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                                     Pengguna Sudah Konfirmasi
                                                     @endif
                                                 </span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-danger" style="font-size: 0.78rem; font-weight: bold;">Tiket akan otomatis diKonfirmasi dalam 3 hari jika tidak ada Aktivitas dari Pemilik Tiket.</span>
                                             </div>
                                         </div>
 

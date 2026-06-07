@@ -223,7 +223,16 @@ default => ''
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Waktu Pengerjaan</span>
                                                 <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
-                                                    {{ $data->work_duration ? $data->work_duration . ' Menit' : '-' }}
+                                                    @php
+                                                    $menit = $data->work_duration ?? 0;
+                                                    $jam = intdiv($menit, 60);
+                                                    $sisa = $menit % 60;
+                                                    @endphp
+                                                    @if($data->work_duration)
+                                                    {{ $jam > 0 ? $jam . ' jam ' : '' }}{{ $sisa > 0 ? $sisa . ' menit' : '' }}
+                                                    @else
+                                                    -
+                                                    @endif
                                                 </span>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center">
@@ -235,6 +244,9 @@ default => ''
                                                     Pengguna Sudah Konfirmasi
                                                     @endif
                                                 </span>
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-danger" style="font-size: 0.78rem; font-weight: bold;">Tiket akan otomatis diKonfirmasi dalam 3 hari jika tidak ada Aktivitas dari Pemilik Tiket.</span>
                                             </div>
                                         </div>
 
