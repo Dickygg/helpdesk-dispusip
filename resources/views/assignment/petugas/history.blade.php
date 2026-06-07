@@ -295,7 +295,7 @@
                                         <i class="bi bi-funnel me-1"></i>
                                         Filter
                                     </button>
-                                    <a href="#"
+                                    <a href="{{route('assignment.petugas.exporthistory',request()->query())}}"
                                         class="btn btn-outline-primary rounded-3 shadow-sm">
                                         <i class="bi bi-download me-1"></i>
                                         Export PDF
@@ -351,16 +351,7 @@
                                         </span>
                                     </td>
                                     <td>{{ $r->ticket?->tickettype->name }}</td>
-                                    @php
-                                    $menit = $r->work_duration ?? 0;
-                                    $jam = intdiv($menit, 60);
-                                    $sisa = $menit % 60;
-                                    @endphp
-                                    <td> @if($r->work_duration)
-                                        {{ $jam > 0 ? $jam . ' jam ' : '' }}{{ $sisa > 0 ? $sisa . ' menit' : '' }}
-                                        @else
-                                        -
-                                        @endif
+                                    <td> {{$r->formattedWorkDuration() }}
                                     </td>
                                     <td class="text-center">
                                         <div class="dropdown">

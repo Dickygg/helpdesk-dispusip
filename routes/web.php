@@ -62,12 +62,20 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
     //Route Assigment super-admin
     Route::get('super-admin/admin/assigment/', [AssigmentController::class, 'index'])->name('sa.admin.assigment.index');
     Route::get('super-admin/admin/assigment/history', [AssigmentController::class, 'historyAssignment'])->name('sa.admin.assigment.history');
+    Route::get('super-admin/admin/assignment/export', [AssigmentController::class, 'export'])
+        ->name('sa.admin.assignment.export');
+    Route::get('super-admin/admin/assignment/exporthistory', [AssigmentController::class, 'exporthistory'])
+        ->name('sa.admin.assignment.exporthistory');
     Route::get('super-admin/assignment/show/{assignment}', [AssigmentController::class, 'show'])->name('sa.admin.assignment.show');
 
 
 
     // Tiket Admin — URL super-admin/admin/tiket
     Route::get('super-admin/tiket/historyTiket', [TicketAdminController::class, 'historyTiket'])->name('sa.admin.tiket.historyTiket');
+    Route::get('super-admin/admin/tiket/export', [TicketAdminController::class, 'export'])
+        ->name('sa.admin.tiket.export');
+    Route::get('super-admin/admin/tiket/exporthistory', [TicketAdminController::class, 'exporthistory'])
+        ->name('sa.admin.tiket.exporthistory');
     Route::resource('super-admin/admin/tiket', TicketAdminController::class)->names('sa.admin.tiket');
     Route::get('super-admin/admin/tiket/proses/{tiket}', [TicketAdminController::class, 'SiteprosesTiket'])->name('sa.admin.tiket.proses');
     Route::put('super-admin/admin/tiket/rejected/{tiket}', [TicketAdminController::class, 'rejectVerificationAdmin'])->name('sa.admin.tiket.rejected');
@@ -75,6 +83,7 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
     Route::post('super-admin/admin/tiket/assignment/{tiket}', [AssigmentController::class, 'assignment'])->name('sa.admin.tiket.assignment');
     Route::put('super-admin/admin/tiket/updatePiority/{tiket}', [TicketAdminController::class, 'updatePiorityTiket'])->name('sa.admin.tiket.updatePiority');
     Route::get('super-admin/admin/tiket/closeTiket/{tiket}', [TicketAdminController::class, 'closeTiket'])->name('sa.admin.tiket.closeTiket');
+
 
 
 
@@ -98,6 +107,10 @@ Route::middleware(['auth', 'role:admin helpdesk'])->group(function () {
 
     // Tiket Admin
     Route::get('admin/tiket/historyTiket', [TicketAdminController::class, 'historyTiket'])->name('admin.tiket.historyTiket');
+    Route::get('admin/tiket/export', [TicketAdminController::class, 'export'])
+        ->name('admin.tiket.export');
+    Route::get('admin/tiket/exporthistory', [TicketAdminController::class, 'exporthistory'])
+        ->name('admin.tiket.exporthistory');
     Route::resource('admin/tiket', TicketAdminController::class)->names('admin.tiket');
     Route::get('admin/tiket/proses/{tiket}', [TicketAdminController::class, 'SiteprosesTiket'])->name('admin.tiket.proses');
     Route::get('admin/tiket/history', [TicketController::class, 'historyTicket'])->name('admin.tiket.history');
@@ -110,8 +123,15 @@ Route::middleware(['auth', 'role:admin helpdesk'])->group(function () {
     Route::get('admin/tiket/canceltiket/{tiket}', [TicketController::class, 'cancelTicket'])->name('admin.tiket.cancelTicket');
 
 
+
     //Route Assigment admin
     Route::get('admin/admin/assigment/', [AssigmentController::class, 'index'])->name('admin.assigment.index');
+    Route::get('admin/assigment/history', [AssigmentController::class, 'historyAssignment'])->name('admin.assigment.history');
+    Route::get('admin/assignment/export', [AssigmentController::class, 'export'])
+        ->name('admin.assignment.export');
+    Route::get('admin/assignment/exporthistory', [AssigmentController::class, 'exporthistory'])
+        ->name('admin.assignment.exporthistory');
+    Route::get('assignment/show/{assignment}', [AssigmentController::class, 'show'])->name('admin.assignment.show');
 });
 
 // -------------------------------------------------------
@@ -122,6 +142,8 @@ Route::middleware(['auth', 'role:petugas teknis'])->group(function () {
 
     // handling petugas route
     Route::get('/assignment/petugas/', [HandlingTiketController::class, 'index'])->name('assignment.petugas.index');
+    Route::get('/assignment/petugas/export', [HandlingTiketController::class, 'export'])->name('assignment.petugas.export');
+    Route::get('/assignment/petugas/exporthistory', [HandlingTiketController::class, 'exporthistory'])->name('assignment.petugas.exporthistory');
     Route::get('/assignment/petugas/show/{assignment}', [HandlingTiketController::class, 'show'])->name('assignment.petugas.show');
     Route::get('/assignment/petugas/prosesAssignment/{assignment}', [HandlingTiketController::class, 'prosesAssignment'])->name('assignment.petugas.prosesAssignment');
     Route::get('/assignment/petugas/histroyAssignment', [HandlingTiketController::class, 'historyAssignment'])->name('assignment.petugas.history');

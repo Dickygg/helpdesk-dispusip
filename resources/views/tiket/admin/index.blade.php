@@ -432,8 +432,8 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                         <i class="bi bi-funnel me-1"></i>
                                         Filter
                                     </button>
-                                    <a href="#"
-                                        class="btn btn-outline-primary rounded-3 shadow-sm">
+                                    <a href="{{ route($prefix .'admin.tiket.export', request()->query()) }}"
+                                        class="btn btn-outline-success rounded-3 shadow-sm">
                                         <i class="bi bi-download me-1"></i>
                                         Export PDF
                                     </a>

@@ -42,6 +42,7 @@ class TicketModels extends BaseModel
         'due_date' => 'datetime',
         'rejected_at'  => 'datetime',
         'closed_at' => 'datetime',
+        'user_confirmed_at' => 'datetime'
     ];
 
     public function getActivitylogOptions(): LogOptions

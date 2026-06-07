@@ -245,7 +245,7 @@ default => ''
                                         <i class="bi bi-funnel me-1"></i>
                                         Filter
                                     </button>
-                                    <a href="#"
+                                    <a href="{{route($prefix.'assignment.export' , request()->query())}}"
                                         class="btn  btn-outline-success rounded-3 shadow-sm">
                                         <i class="bi bi-download me-1"></i>
                                         Export PDF

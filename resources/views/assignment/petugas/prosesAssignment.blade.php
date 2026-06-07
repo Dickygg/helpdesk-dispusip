@@ -288,16 +288,7 @@ default => 'btn-secondary',
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Waktu Pengerjaan</span>
                                                 <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
-                                                    @php
-                                                    $menit = $data->work_duration ?? 0;
-                                                    $jam = intdiv($menit, 60);
-                                                    $sisa = $menit % 60;
-                                                    @endphp
-                                                    @if($data->work_duration)
-                                                    {{ $jam > 0 ? $jam . ' jam ' : '' }}{{ $sisa > 0 ? $sisa . ' menit' : '' }}
-                                                    @else
-                                                    -
-                                                    @endif
+                                                    {{$data->formattedWorkDuration() }}
                                                 </span>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center">

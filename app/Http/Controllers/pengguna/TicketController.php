@@ -26,29 +26,9 @@ class TicketController extends Controller
 
     public function index(Request $request)
     {
-        $user = Auth::user();
+        $id = Auth::id();
         // dd($request->all());
-        $data = TicketModels::with(['application', 'priority', 'assignment', 'tickettype'])
-            ->where('user_id', $user->id)
-            ->whereNotIn('status', ['Closed', 'Rejected', 'Cancel'])
-            ->when($request->status, function ($query, $status) {
-                $query->where('status', $status);
-            })
-            ->when($request->search, function ($q) use ($request) {
-                $q->where(function ($query) use ($request) { // ← bungkus dengan where()
-                    $query->where('ticket_code', 'like', '%' . $request->search . '%')
-                        ->orWhere('title', 'like', '%' . $request->search . '%')
-                        ->orWhereHas('application', function ($query) use ($request) {
-                            $query->where('name', 'like', '%' . $request->search . '%');
-                        })
-                        ->orWhereHas('tickettype', function ($query) use ($request) {
-                            $query->where('name', 'like', '%' . $request->search . '%');
-                        });
-                });
-            })
-            ->orderBy('created_at', 'DESC')
-            ->paginate(4)
-            ->appends($request->query());
+        $data = $this->getdata($request, $id);
 
 
         return view('tiket.pengguna.index', [
@@ -179,7 +159,8 @@ class TicketController extends Controller
         DB::beginTransaction();
         try {
             $data->update([
-                'user_confirmed_at' => now()
+                'user_confirmed_at' => now(),
+                'reason_rejected' => '-'
             ]);
             DB::commit();
             $data->refresh();
@@ -245,7 +226,6 @@ class TicketController extends Controller
         }
     }
 
-    // riwayat tiket section
     public function historyTicket(Request $request)
     {
         $user = Auth::user();
@@ -314,5 +294,30 @@ class TicketController extends Controller
             dd($e);
             return redirect()->route($prefix . 'tiket.index')->with('error', 'Oops, Gagal Mengubah Status Konfirmasi!');
         }
+    }
+
+    private function getdata(Request $request, string $id)
+    {
+        return TicketModels::with(['application', 'priority', 'assignment', 'tickettype'])
+            ->where('user_id', $id)
+            ->whereNotIn('status', ['Closed', 'Rejected', 'Cancel'])
+            ->when($request->status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->when($request->search, function ($q) use ($request) {
+                $q->where(function ($query) use ($request) { // ← bungkus dengan where()
+                    $query->where('ticket_code', 'like', '%' . $request->search . '%')
+                        ->orWhere('title', 'like', '%' . $request->search . '%')
+                        ->orWhereHas('application', function ($query) use ($request) {
+                            $query->where('name', 'like', '%' . $request->search . '%');
+                        })
+                        ->orWhereHas('tickettype', function ($query) use ($request) {
+                            $query->where('name', 'like', '%' . $request->search . '%');
+                        });
+                });
+            })
+            ->orderBy('created_at', 'DESC')
+            ->paginate(4)
+            ->appends($request->query());
     }
 }

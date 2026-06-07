@@ -28,6 +28,21 @@ class TicketAssignmentModels extends BaseModel
         'finish_at'  => 'datetime',
         'assigned_at' => 'datetime',
     ];
+    public function formattedWorkDuration(): string
+    {
+        $menit = $this->work_duration;
+
+        if (!$menit) return '-';
+
+        $jam  = intdiv($menit, 60);
+        $sisa = $menit % 60;
+
+        $result = '';
+        if ($jam > 0)  $result .= $jam . ' jam ';
+        if ($sisa > 0) $result .= $sisa . ' menit';
+
+        return trim($result) ?: '-';
+    }
 
     public function ticket()
     {

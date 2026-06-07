@@ -285,21 +285,7 @@ default => 'btn-secondary',
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Waktu Pengerjaan</span>
                                                 <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold">
-                                                    @if($tiket->assignment?->work_duration)
-                                                    @php
-                                                    $totalMenit = $tiket->assignment->work_duration;
-                                                    $jam = floor($totalMenit / 60);
-                                                    $menit = $totalMenit % 60;
-                                                    @endphp
-
-                                                    @if($jam > 0)
-                                                    {{ $jam }} Jam {{ $menit }} Menit
-                                                    @else
-                                                    {{ $menit }} Menit
-                                                    @endif
-                                                    @else
-                                                    -
-                                                    @endif</span>
+                                                    {{ $menit = $tiket->assignment?->formattedWorkDuration() ?? 0;}}</span>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Pengguna Konfrimasi</span>

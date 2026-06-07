@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Exports\GenericExport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Helpres\ActivityHelper;
 use App\Http\Controllers\Controller;
 use App\Models\ApplicationModels;
@@ -24,59 +26,7 @@ class TicketAdminController extends Controller
 
     public function index(Request $request)
     {
-        // 'application', 'priority', 
-
-        $data = TicketModels::with(['user' => function ($query) {
-            $query->select('id', 'name');
-        }])
-            ->with(['application' => function ($query) {
-                $query->select('id', 'name');
-            }])
-            ->with(['priority' => function ($query) {
-                $query->select('id', 'name');
-            }])
-            ->with(['tickettype' => function ($query) {
-                $query->select('id', 'name');
-            }])
-            ->whereNotin('status', ['Closed', 'Rejected', 'Cancel'])
-            ->when($request->status, function ($query, $status) {
-                $query->where('status', $status);
-            })
-            ->when($request->start_date, function ($q) use ($request) {
-                $q->whereDate('created_at', '>=', $request->start_date);
-            })
-
-            ->when($request->end_date, function ($q) use ($request) {
-                $q->whereDate('created_at', '<=', $request->end_date);
-            })
-            ->when($request->id_aplikasi, function ($q) use ($request) {
-                $q->where('application_id', $request->id_aplikasi);
-            })
-            ->when($request->ticket_type_id, function ($q) use ($request) {
-                $q->where('ticket_type_id', $request->ticket_type_id);
-            })
-            ->when($request->deadline_filter == 'today', function ($query) {
-                $query->whereDate('due_date', today());
-            })
-            ->when($request->deadline_filter == 'week', function ($query) {
-                $query->whereBetween('due_date', [
-                    now(),
-                    now()->endOfWeek()
-                ]);
-            })
-            ->when($request->deadline_filter == 'overdue', function ($query) {
-                $query->where('due_date', '<', now());
-            })
-            ->when($request->deadline_filter == 'upcoming', function ($query) {
-                $query->whereBetween('due_time', [
-                    now(),
-                    now()->addHours(2)
-                ]);
-            })
-            ->orderBy('created_at', 'DESC')
-            ->get();
-
-
+        $data = $this->Getdata($request);
         $getTiketstats = $this->getTotalStatus($request);
         $aplikasi = ApplicationModels::select('id', 'name')->get();
         $tipetiket = TicketsTypeModels::select('id', 'name')->get();
@@ -346,7 +296,125 @@ class TicketAdminController extends Controller
     public function historyTiket(Request $request)
     {
 
-        $data = TicketModels::with(['user' => function ($query) {
+        $data = $this->getdataHistory($request);
+        $getTiketstats = $this->getTotalStatus($request);
+        $aplikasi = ApplicationModels::select('id', 'name')->get();
+        $piority  = TicketPriorityModels::select('id', 'name')->get();
+        $tipetiket = TicketsTypeModels::select('id', 'name')->get();
+
+        return view('tiket.admin.historyTiket', [
+            'tickets' => $data,
+            'aplikasi' => $aplikasi,
+            'priority' => $piority,
+            'tipetiket' => $tipetiket,
+            'tiketstats' => $getTiketstats['tiketstats'],      // langsung collection-nya kara tidak ingin di loop di view
+            'tikettotal' => $getTiketstats['tikettotalhistory'],
+        ]);
+    }
+
+    public function export(Request $request)
+    {
+        $tickets = $this->Getdata($request);
+        $data = $tickets->map(function ($ticket) {
+            return [
+                'Kode Tiket' => $ticket->ticket_code,
+                'Judul' => $ticket->title,
+                'Pengguna' => $ticket->user?->name,
+                'Aplikasi' => $ticket->application?->name,
+                'Prioritas' => $ticket->priority?->name,
+                'Tipe Tiket' => $ticket->tickettype?->name,
+                'Status' => $ticket->status,
+                'Tanggal' => $ticket->created_at->format('d-m-Y '),
+            ];
+        });
+
+        return Excel::download(
+            new GenericExport($data),
+            $this->generateFileName($request)
+        );
+    }
+
+    public function exporthistory(Request $request)
+    {
+        $tickets = $this->getdataHistory($request);
+        $data = $tickets->map(function ($ticket) {
+            return [
+                'Kode Tiket' => $ticket->ticket_code,
+                'Judul' => $ticket->title,
+                'Pengguna' => $ticket->user?->name,
+                'Aplikasi' => $ticket->application?->name,
+                'Prioritas' => $ticket->priority?->name,
+                'Tipe Tiket' => $ticket->tickettype?->name,
+                'Status' => $ticket->status,
+                'Ditutup Tanggal' => $ticket->closed_at?->format('d-m-Y '),
+                'Durasi Pengerjaan' => $ticket->assignment?->formattedWorkDuration() ?? '-',
+                'Alasan Penolakan' => $ticket->reason_rejected,
+                'Ditolak Pada' => $ticket->rejected_at?->format('d-m-Y')
+            ];
+        });
+
+        return Excel::download(
+            new GenericExport($data),
+            'History-' . $this->generateFileName($request)
+        );
+    }
+
+    private function Getdata(Request $request)
+    {
+        return TicketModels::with(['user' => function ($query) {
+            $query->select('id', 'name');
+        }])
+            ->with(['application' => function ($query) {
+                $query->select('id', 'name');
+            }])
+            ->with(['priority' => function ($query) {
+                $query->select('id', 'name');
+            }])
+            ->with(['tickettype' => function ($query) {
+                $query->select('id', 'name');
+            }])
+            ->whereNotin('status', ['Closed', 'Rejected', 'Cancel'])
+            ->when($request->status, function ($query, $status) {
+                $query->where('status', $status);
+            })
+            ->when($request->start_date, function ($q) use ($request) {
+                $q->whereDate('created_at', '>=', $request->start_date);
+            })
+
+            ->when($request->end_date, function ($q) use ($request) {
+                $q->whereDate('created_at', '<=', $request->end_date);
+            })
+            ->when($request->id_aplikasi, function ($q) use ($request) {
+                $q->where('application_id', $request->id_aplikasi);
+            })
+            ->when($request->ticket_type_id, function ($q) use ($request) {
+                $q->where('ticket_type_id', $request->ticket_type_id);
+            })
+            ->when($request->deadline_filter == 'today', function ($query) {
+                $query->whereDate('due_date', today());
+            })
+            ->when($request->deadline_filter == 'week', function ($query) {
+                $query->whereBetween('due_date', [
+                    now(),
+                    now()->endOfWeek()
+                ]);
+            })
+            ->when($request->deadline_filter == 'overdue', function ($query) {
+                $query->where('due_date', '<', now());
+            })
+            ->when($request->deadline_filter == 'upcoming', function ($query) {
+                $query->whereBetween('due_time', [
+                    now(),
+                    now()->addHours(2)
+                ]);
+            })
+            ->orderBy('created_at', 'DESC')
+            ->get();
+    }
+
+    private function getdataHistory(Request $request)
+    {
+        return TicketModels::with(['user' => function ($query) {
             $query->select('id', 'name');
         }])
             ->with(['application' => function ($query) {
@@ -380,20 +448,53 @@ class TicketAdminController extends Controller
             })
             ->orderBy('created_at', 'DESC')
             ->get();
+    }
 
-        $getTiketstats = $this->getTotalStatus($request);
-        $aplikasi = ApplicationModels::select('id', 'name')->get();
-        $piority  = TicketPriorityModels::select('id', 'name')->get();
-        $tipetiket = TicketsTypeModels::select('id', 'name')->get();
+    private function generateFileName(Request $request)
+    {
+        $filename = 'Data-Tiket';
 
-        return view('tiket.admin.historyTiket', [
-            'tickets' => $data,
-            'aplikasi' => $aplikasi,
-            'priority' => $piority,
-            'tipetiket' => $tipetiket,
-            'tiketstats' => $getTiketstats['tiketstats'],      // langsung collection-nya kara tidak ingin di loop di view
-            'tikettotal' => $getTiketstats['tikettotalhistory'],
-        ]);
+        // Status
+        if ($request->filled('status')) {
+            $filename .= '-' . $request->status;
+        }
+
+        // Aplikasi
+        if ($request->filled('id_aplikasi')) {
+            $app = ApplicationModels::find($request->id_aplikasi);
+
+            if ($app) {
+                $filename .= '-' . str_replace(' ', '-', $app->name);
+            }
+        }
+
+        // Tipe Tiket
+        if ($request->filled('ticket_type_id')) {
+            $type = TicketsTypeModels::find($request->ticket_type_id);
+
+            if ($type) {
+                $filename .= '-' . str_replace(' ', '-', $type->name);
+            }
+        }
+
+        // Deadline Filter
+        if ($request->filled('deadline_filter')) {
+            $filename .= '-' . ucfirst($request->deadline_filter);
+        }
+
+        // Rentang Tanggal
+        if ($request->filled('start_date')) {
+            $filename .= '-' . $request->start_date;
+        }
+
+        if ($request->filled('end_date')) {
+            $filename .= '_sd_' . $request->end_date;
+        }
+
+        // Timestamp export
+        $filename .= '-' . now()->format('Ymd-His');
+
+        return $filename . '.xlsx';
     }
 
     private function cekUserverified(TicketModels $tiket)

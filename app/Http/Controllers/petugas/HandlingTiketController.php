@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\petugas;
 
+use App\Exports\GenericExport;
 use App\Helpres\ActivityHelper;
 use App\Http\Controllers\admin\AssigmentController;
 use App\Http\Controllers\Controller;
@@ -17,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Activitylog\Models\Activity;
 
 class HandlingTiketController extends Controller
@@ -24,39 +26,7 @@ class HandlingTiketController extends Controller
     public function index(Request $request)
     {
         $user = Auth::id();
-
-        $query = TicketAssignmentModels::with([
-            'ticket',
-            'technician:id,username',
-            'admin:id,username'
-        ])
-            ->where('ticket_assignments.user_id', $user)
-            ->whereHas('ticket', function ($q) {
-                $q->whereNotIn('status', ['Closed']);
-            })
-            // Filter tanggal
-            ->when($request->start_date, fn($q) => $q->whereDate('ticket_assignments.created_at', '>=', $request->start_date))
-            ->when($request->end_date,   fn($q) => $q->whereDate('ticket_assignments.created_at', '<=', $request->end_date))
-            // Filter aplikasi
-            ->when($request->id_aplikasi, fn($q) => $q->whereHas('ticket', fn($q) => $q->where('application_id', $request->id_aplikasi)))
-            // Filter deadline
-            ->when($request->deadline_filter, function ($q) use ($request) {
-                match ($request->deadline_filter) {
-                    'today'    => $q->whereHas('ticket', fn($q) => $q->whereDate('due_date', today())),
-                    'week'     => $q->whereHas('ticket', fn($q) => $q->whereBetween('due_date', [now(), now()->endOfWeek()])),
-                    'overdue'  => $q->whereHas('ticket', fn($q) => $q->where('due_date', '<', now())),
-                    'upcoming' => $q->whereHas('ticket', fn($q) => $q->whereBetween('due_date', [now(), now()->addHours(24)])),
-                    default    => null
-                };
-            })
-            ->when($request->ticket_type_id, function ($q) use ($request) {
-                $q->whereHas('ticket', function ($q) use ($request) {
-                    $q->where('ticket_type_id', $request->ticket_type_id);
-                });
-            });
-
-        $data = $query->get();
-
+        $data = $this->getdata($request, $user);
         $deadline = TicketAssignmentModels::with(['ticket', 'technician', 'admin'])
             ->where('user_id', $user)
             ->wherehas('ticket', function ($q) {
@@ -242,13 +212,113 @@ class HandlingTiketController extends Controller
         }
     }
 
-    // site riwayat assigntment
     public function historyAssignment(Request $request)
     {
         abort_if(Auth::user()->cannot('assignment.history'), 403);
 
         $user = Auth::id();
-        $query = TicketAssignmentModels::with([
+
+
+        $data = $this->getdatahistory($request, $user);
+        $aplikasi = ApplicationModels::select('id', 'name')->get();
+        $prioritas = TicketPriorityModels::select('id', 'name')->get();
+        $getstats = $this->gethistroystats($request);
+        $tipetiket = TicketsTypeModels::select('id', 'name')->get();
+
+        return view('assignment.petugas.history', [
+            'getassignstats' => $getstats,
+            'aplikasi'       => $aplikasi,
+            'data'           => $data,
+            'prioritas' => $prioritas,
+            'tipetiket' => $tipetiket
+        ]);
+    }
+
+    public function export(Request $request)
+    {
+        $user = Auth::id();
+        $assignment = $this->getdata($request, $user);
+        $data = $assignment->map(function ($assignment) {
+            return [
+                'Kode Tiket' => $assignment->ticket?->ticket_code,
+                'Diassign Oleh' => $assignment->admin?->name,
+                'Tipe Tiket' => $assignment->ticket?->tickettype?->name,
+                'Aplikasi' => $assignment->ticket?->application?->name,
+                'Prioritas' => $assignment->ticket?->priority?->name,
+                'Status' => $assignment->ticket?->status,
+                'Durasi Pengerjaan' => $assignment->formattedWorkDuration() ?? '-',
+                'Pengguna Konfirmasi' => $assignment->ticket?->user_confirmed_at?->format('d-m-Y'),
+                'Deadline' => $assignment->ticket?->due_date?->format('d-m-Y '),
+            ];
+        });
+
+        return Excel::download(
+            new GenericExport($data),
+            Auth::user()->name . '-' . $this->generateFileName($request)
+        );
+    }
+    public function exporthistory(Request $request)
+    {
+        $user = Auth::id();
+        $assignment = $this->getdatahistory($request, $user);
+        $data = $assignment->map(function ($assignment) {
+            return [
+                'Kode Tiket' => $assignment->ticket?->ticket_code,
+                'Diassign Oleh' => $assignment->admin?->name,
+                'Tipe Tiket' => $assignment->ticket?->tickettype?->name,
+                'Aplikasi' => $assignment->ticket?->application?->name,
+                'Prioritas' => $assignment->ticket?->priority?->name,
+                'Status' => $assignment->ticket?->status,
+                'Durasi Pengerjaan' => $assignment->formattedWorkDuration() ?? '-',
+                'Pengguna Konfirmasi' => $assignment->ticket?->user_confirmed_at?->format('d-m-Y'),
+                'Deadline' => $assignment->ticket?->due_date?->format('d-m-Y '),
+                'Ditutup Pada' => $assignment->ticket?->closed_at?->format('d-m-Y')
+            ];
+        });
+
+        return Excel::download(
+            new GenericExport($data),
+            'History-' . Auth::user()->name . '-' . $this->generateFileName($request)
+        );
+    }
+
+    private function getdata(Request $request, string $user)
+    {
+        return TicketAssignmentModels::with([
+            'ticket',
+            'technician:id,username',
+            'admin:id,username'
+        ])
+            ->where('ticket_assignments.user_id', $user)
+            ->whereHas('ticket', function ($q) {
+                $q->whereNotIn('status', ['Closed']);
+            })
+            // Filter tanggal
+            ->when($request->start_date, fn($q) => $q->whereDate('ticket_assignments.created_at', '>=', $request->start_date))
+            ->when($request->end_date,   fn($q) => $q->whereDate('ticket_assignments.created_at', '<=', $request->end_date))
+            // Filter aplikasi
+            ->when($request->id_aplikasi, fn($q) => $q->whereHas('ticket', fn($q) => $q->where('application_id', $request->id_aplikasi)))
+            // Filter deadline
+            ->when($request->deadline_filter, function ($q) use ($request) {
+                match ($request->deadline_filter) {
+                    'today'    => $q->whereHas('ticket', fn($q) => $q->whereDate('due_date', today())),
+                    'week'     => $q->whereHas('ticket', fn($q) => $q->whereBetween('due_date', [now(), now()->endOfWeek()])),
+                    'overdue'  => $q->whereHas('ticket', fn($q) => $q->where('due_date', '<', now())),
+                    'upcoming' => $q->whereHas('ticket', fn($q) => $q->whereBetween('due_date', [now(), now()->addHours(24)])),
+                    default    => null
+                };
+            })
+            ->when($request->ticket_type_id, function ($q) use ($request) {
+                $q->whereHas('ticket', function ($q) use ($request) {
+                    $q->where('ticket_type_id', $request->ticket_type_id);
+                });
+            })
+            ->get();
+    }
+
+    private function getdatahistory(Request $request, string $user)
+    {
+        return TicketAssignmentModels::with([
             'ticket',
             'technician:id,username',
             'admin:id,username'
@@ -271,21 +341,60 @@ class HandlingTiketController extends Controller
                 $q->whereHas('ticket', function ($q) use ($request) {
                     $q->where('ticket_type_id', $request->ticket_type_id);
                 });
-            });
+            })
+            ->get();
+    }
 
-        $data = $query->get();
-        $aplikasi = ApplicationModels::select('id', 'name')->get();
-        $prioritas = TicketPriorityModels::select('id', 'name')->get();
-        $getstats = $this->gethistroystats($request);
-        $tipetiket = TicketsTypeModels::select('id', 'name')->get();
+    private function generateFileName(Request $request)
+    {
 
-        return view('assignment.petugas.history', [
-            'getassignstats' => $getstats,
-            'aplikasi'       => $aplikasi,
-            'data'           => $data,
-            'prioritas' => $prioritas,
-            'tipetiket' => $tipetiket
-        ]);
+        $filename = 'Data-Assignment';
+
+        // Status
+        if ($request->filled('status')) {
+            $filename .= '-' . $request->status;
+        }
+
+        // Aplikasi
+        if ($request->filled('id_aplikasi')) {
+            $app = ApplicationModels::find($request->id_aplikasi);
+
+            if ($app) {
+                $filename .= '-' . str_replace(' ', '-', $app->name);
+            }
+        }
+
+        // Tipe Tiket
+        if ($request->filled('ticket_type_id')) {
+            $type = TicketsTypeModels::find($request->ticket_type_id);
+
+            if ($type) {
+                $filename .= '-' . str_replace(' ', '-', $type->name);
+            }
+        }
+
+        // Deadline Filter
+        if ($request->filled('deadline_filter')) {
+            $filename .= '-' . ucfirst($request->deadline_filter);
+        }
+
+        // Rentang Tanggal
+        if ($request->filled('start_date')) {
+            $filename .= '-' . $request->start_date;
+        }
+
+        if ($request->filled('end_date')) {
+            $filename .= '_sd_' . $request->end_date;
+        }
+        if ($request->filled('id_priority')) {
+            $priority = TicketPriorityModels::find($request->id_priority);
+            $filename .= '-' . $priority->name;
+        }
+
+        // Timestamp export
+        $filename .= '-' . now()->format('Ymd-His');
+
+        return $filename . '.xlsx';
     }
 
     private function gettotalAssign(Request $request)

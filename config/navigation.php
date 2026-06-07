@@ -127,24 +127,6 @@ return [
             'divider' => true,
         ],
         [
-            'heading' => 'Data Master',
-        ],
-        [
-            'title' => 'Data Daftar Aplikasi',
-            'route' => 'application.index',
-            'icon' => 'bi bi-menu-app'
-        ],
-        [
-            'title' => 'Data Daftar Prioritas',
-            'route' => 'piority.index',
-            'icon' => 'bi bi-exclamation-square'
-        ],
-
-        [
-            'title' => 'Divider',
-            'divider' => true,
-        ],
-        [
             'heading' => 'Data Tiket (Admin)'
         ],
         [
@@ -177,6 +159,11 @@ return [
         [
             'title' => 'Daftar Assignment',
             'route' => 'admin.assigment.index',
+            'icon' => 'bi-ticket-detailed'
+        ],
+        [
+            'title' => 'Daftar Riwayat Assigment',
+            'route' => 'sa.admin.assigment.history',
             'icon' => 'bi-ticket-detailed'
         ],
 

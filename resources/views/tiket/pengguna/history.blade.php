@@ -313,21 +313,8 @@ default => ''
                                     <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-stopwatch"></i> Durasi Pengerjaan</div>
                                     <div class="d-flex align-items-center gap-1" style="font-size: 0.8rem;">
                                         <i class="bi bi-clock-history" style="margin-right: 3px;"></i>
-                                        <span class="text-secondary fw-bold" style="font-size: 0.75rem; font-weight:bolder;"> @if($tickets->assignment?->work_duration)
-                                            @php
-                                            $totalMenit = $tickets->assignment->work_duration;
-                                            $jam = floor($totalMenit / 60);
-                                            $menit = $totalMenit % 60;
-                                            @endphp
-
-                                            @if($jam > 0)
-                                            {{ $jam }} Jam {{ $menit }} Menit
-                                            @else
-                                            {{ $menit }} Menit
-                                            @endif
-                                            @else
-                                            -
-                                            @endif</span>
+                                        <span class="text-secondary fw-bold" style="font-size: 0.75rem; font-weight:bolder;">
+                                            {{$menit = $tickets->assignment?->formattedWorkDuration() ?? 0;}}</span>
                                     </div>
                                 </div>
                             </div>
