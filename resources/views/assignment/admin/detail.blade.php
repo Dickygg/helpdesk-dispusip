@@ -218,7 +218,7 @@ default => ''
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Ditugaskan Oleh</span>
-                                                <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold;">Admin</span>
+                                                <span class="text-dark fw-bold" style="font-size: 0.78rem; font-weight: bold;">{{$data->admin?->name}}</span>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center mb-2">
                                                 <span class="text-muted" style="font-size: 0.78rem; font-weight: bold;">Waktu Pengerjaan</span>
