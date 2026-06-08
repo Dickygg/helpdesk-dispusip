@@ -57,7 +57,7 @@ default => ''
                                     @enderror
                                 </div>
                                 <div class="mt-4 text-end">
-                                    <button type="submit" class="btn btn-primary px-4">Simpan Data</button>
+                                    <button type="submit" class="btn btn-primary px-4">Buat Tiket!</button>
                                 </div>
                             </div>
                             <div class="col-md-6">

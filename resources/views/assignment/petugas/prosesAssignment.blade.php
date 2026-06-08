@@ -324,7 +324,7 @@ default => 'btn-secondary',
                                             <form action="{{ route('assignment.petugas.startWork', $data->id) }}" method="POST">
                                                 @csrf
                                                 <button type="submit" class="d-flex justify-content-center align-items-center btn btn-outline-primary btn-sm w-100">
-                                                    <i class="bi bi-tools" style="margin-right: 5px;"></i> Kerjakan Sekarang
+                                                    <i class="bi bi-tools" style="margin-right: 5px;"></i> Mulai Pengerjaan!
                                                 </button>
                                             </form>
                                             @else

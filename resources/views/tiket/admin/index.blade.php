@@ -459,7 +459,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 <tr>
                                     <th>No</th>
                                     <th>Kode Tiket</th>
-                                    <th>User</th>
+                                    <th>Pemohon</th>
                                     <th>Judul</th>
                                     <th>Tipe Ticket</th>
                                     <th>Aplikasi</th>

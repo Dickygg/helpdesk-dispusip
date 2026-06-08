@@ -8,16 +8,19 @@
 
 <p>
     Nomor Tiket:
-    <b>{{ $ticket->kode_tiket }}</b>
+    <b>{{ $ticket->ticket_code }}</b>
 </p>
 
 <p>
     Judul:
-    <b>{{ $ticket->judul }}</b>
+    <b>{{ $ticket->title }}</b>
 </p>
 
 <p>
     Silakan login ke sistem Helpdesk untuk melakukan pengecekan hasil pekerjaan dan memberikan feedback.
+</p>
+<p style="color:red;">
+    Tiket Akan Dikonfirmasi Otomatis Jika Tidak Ada Feedback Dalam 3 Hari!
 </p>
 
 <p>
