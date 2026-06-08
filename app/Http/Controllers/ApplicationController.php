@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GenericExport;
 use App\Models\ApplicationModels;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ApplicationController extends Controller
 {
@@ -22,6 +24,22 @@ class ApplicationController extends Controller
         return view('application.index', [
             'data' => $data
         ]);
+    }
+
+    public function export()
+    {
+        $application = ApplicationModels::select('id', 'name', 'description')->get();
+        $data = $application->map(function ($application) {
+            return [
+                'Daftar Aplikasi' => $application->name,
+                'Deskripsi' => $application->description,
+            ];
+        });
+
+        return Excel::download(
+            new GenericExport($data),
+            'Daftar Daftar Aplikasi.xlsx'
+        );
     }
 
     /**

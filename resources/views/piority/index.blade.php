@@ -7,9 +7,7 @@
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <div>
-            <a href="" data-toggle="modal" data-target="#printModal" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                    class="fas fa-download fa-sm text-white-50"></i> Generate PDF</a>
-            <a href="" data-toggle="modal" data-target="#excelModal" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i
+            <a href="{{route('priority.export')}}" class="d-none d-sm-inline-block btn btn-sm btn-success shadow-sm"><i
                     class="fas fa-download fa-sm text-white-50"></i> Generate Excel</a>
 
         </div>

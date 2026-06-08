@@ -57,6 +57,10 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->midd
 Route::middleware(['auth', 'role:super admin'])->group(function () {
     Route::get('/dashboard/super-admin', [AdminDashboardController::class, 'index'])->name('sa.admin.dashboard');
 
+    Route::get('ticket-type/export', [TicketTypeController::class, 'export'])->name('ticket-type.export');
+    Route::get('priority/export', [PiorityController::class, 'export'])->name('priority.export');
+    Route::get('application/export', [ApplicationController::class, 'export'])->name('application.export');
+
     // Data Master
     Route::resource('roles', RolesController::class)->names('roles');
     Route::resource('application', ApplicationController::class)->names('application');

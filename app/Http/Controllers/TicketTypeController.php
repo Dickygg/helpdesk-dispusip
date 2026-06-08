@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GenericExport;
 use App\Models\TicketsTypeModels;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TicketTypeController extends Controller
 {
@@ -18,6 +20,22 @@ class TicketTypeController extends Controller
         return view('tiket_type.index', [
             'data' => $data
         ]);
+    }
+
+    public function export()
+    {
+        $tikettipe = TicketsTypeModels::select('id', 'name', 'description')->orderBy('created_at', 'ASC')->get();
+        $data = $tikettipe->map(function ($tikettipe) {
+            return [
+                'Tipe TIket' => $tikettipe->name,
+                'Deskripsi' => $tikettipe->description,
+            ];
+        });
+
+        return Excel::download(
+            new GenericExport($data),
+            'Daftar Tipe Tiket.xlsx'
+        );
     }
 
     public function store(Request $request)

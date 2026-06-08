@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GenericExport;
 use App\Models\TicketPriorityModels;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PiorityController extends Controller
 {
@@ -24,6 +26,21 @@ class PiorityController extends Controller
         ]);
     }
 
+    public function export()
+    {
+        $priority = TicketPriorityModels::select('id', 'name', 'estimated_hours')->orderBy('estimated_hours', 'ASC')->get();
+        $data = $priority->map(function ($priority) {
+            return [
+                'Tingkat Prioritas' => $priority->name,
+                'Estimasi Pengerjaan' => $priority->estimated_hours,
+            ];
+        });
+
+        return Excel::download(
+            new GenericExport($data),
+            'Daftar Tingkat Prioritas.xlsx'
+        );
+    }
     /**
      * Show the form for creating a new resource.
      */

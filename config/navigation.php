@@ -199,7 +199,7 @@ return [
         ],
         [
             'title' => 'Dashboard',
-            'route' => 'dashboard.petugas',  // ← diubah, sebelumnya pakai testlayout
+            'route' => 'dashboard.petugas',
             'icon' => 'fas fa-fw fa-home'
         ],
         [
