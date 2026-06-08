@@ -6,6 +6,7 @@ use App\Exports\GenericExport;
 use App\Helpres\ActivityHelper;
 use App\Http\Controllers\admin\AssigmentController;
 use App\Http\Controllers\Controller;
+use App\Mail\TicketCompletedMail;
 use App\Models\ApplicationModels;
 use App\Models\AssignmentAttachmentModel;
 use App\Models\TicketAssignmentModels;
@@ -17,6 +18,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Activitylog\Models\Activity;
@@ -203,6 +205,8 @@ class HandlingTiketController extends Controller
             );
 
             DB::commit();
+            Mail::to($data->ticket?->user?->email)
+                ->send(new TicketCompletedMail($data->ticket));
             return redirect()->back()->with('success', 'Berhasil Menyelesaikan Tiket, Menunggu Pengguna Konfirmasi!.');
         } catch (\Exception $e) {
             DB::rollBack();
