@@ -110,6 +110,18 @@ return [
             'route' => 'sa.admin.assigment.history',
             'icon' => 'bi-ticket-detailed'
         ],
+        [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
+            'heading' => 'Setting'
+        ],
+        [
+            'title' => 'Profile Saya',
+            'route' => 'profile.index',
+            'icon' => 'bi bi-person-badge'
+        ],
 
     ],
 
@@ -166,6 +178,18 @@ return [
             'route' => 'sa.admin.assigment.history',
             'icon' => 'bi-ticket-detailed'
         ],
+        [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
+            'heading' => 'Setting'
+        ],
+        [
+            'title' => 'Profile Saya',
+            'route' => 'profile.index',
+            'icon' => 'bi bi-person-badge'
+        ],
 
     ],
 
@@ -194,6 +218,18 @@ return [
             'title' => 'Data Riwayat Assigment',
             'route' => 'assignment.petugas.history',
             'icon' => 'bi bi-clock'
+        ],
+        [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
+            'heading' => 'Setting'
+        ],
+        [
+            'title' => 'Profile Saya',
+            'route' => 'profile.index',
+            'icon' => 'bi bi-person-badge'
         ],
     ],
 
@@ -227,6 +263,18 @@ return [
             'title' => 'Data Riwayat Tiket',
             'route' => 'tiket.history',
             'icon' => 'bi bi-clock'
+        ],
+        [
+            'title' => 'Divider',
+            'divider' => true,
+        ],
+        [
+            'heading' => 'Setting'
+        ],
+        [
+            'title' => 'Profile Saya',
+            'route' => 'profile.index',
+            'icon' => 'bi bi-person-badge'
         ],
     ],
 ];

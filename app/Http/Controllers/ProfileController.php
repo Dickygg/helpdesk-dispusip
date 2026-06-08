@@ -2,59 +2,123 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): View
+    public function index()
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        return view('profile.index');
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request)
     {
-        $request->user()->fill($request->validated());
+        $request->validate([
+            'name'     => 'required|max:255',
+            'nrk'      => 'nullable|max:30',
+            'username' => 'required|max:200|unique:users,username,' . Auth::id(),
+            'email'    => 'required|email|unique:users,email,' . Auth::id(),
+        ]);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        DB::beginTransaction();
+
+        try {
+
+            $user = Auth::user();
+
+            $user->update([
+                'name'     => $request->name,
+                'nrk'      => $request->nrk,
+                'username' => $request->username,
+                'email'    => $request->email,
+            ]);
+
+            DB::commit();
+
+            return redirect()
+                ->back()
+                ->with('success', 'Profile berhasil diperbarui');
+        } catch (Exception $e) {
+
+            DB::rollBack();
+
+            Log::error('Gagal update profile', [
+                'user_id' => Auth::id(),
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->with('error', 'Terjadi kesalahan saat update profile');
         }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
+    public function updatePassword(Request $request)
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+        $request->validate([
+            'current_password' => 'required',
+            'password'         => 'required|min:8|confirmed',
+        ], [
+            'current_password.required' => 'Password lama wajib diisi.',
+            'password.required' => 'Password baru wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak sesuai.',
         ]);
 
-        $user = $request->user();
+        DB::beginTransaction();
 
-        Auth::logout();
+        try {
 
-        $user->delete();
+            $user = Auth::user();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+            if (!Hash::check(
+                $request->current_password,
+                $user->password
+            )) {
+                return back()->with(
+                    'error',
+                    'Password lama tidak sesuai'
+                );
+            }
+            // Cek password baru sama dengan password sekarang
+            if (Hash::check($request->password, $user->password)) {
 
-        return Redirect::to('/');
+                DB::rollBack();
+
+                return back()->with(
+                    'error',
+                    'Password baru tidak boleh sama dengan password saat ini'
+                );
+            }
+
+            $user->update([
+                'password' => Hash::make($request->password)
+            ]);
+
+            DB::commit();
+
+            return redirect()
+                ->back()
+                ->with('success', 'Password berhasil diubah');
+        } catch (Exception $e) {
+
+            DB::rollBack();
+
+            Log::error('Gagal update password', [
+                'user_id' => Auth::id(),
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+            ]);
+
+            return redirect()
+                ->back()
+                ->with('error', 'Terjadi kesalahan saat update password');
+        }
     }
 }

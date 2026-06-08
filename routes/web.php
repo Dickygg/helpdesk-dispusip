@@ -14,6 +14,7 @@ use App\Http\Controllers\RolesController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\pengguna\TicketController;
 use App\Http\Controllers\petugas\HandlingTiketController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperAdmin\ManagePermissionController;
 use App\Http\Controllers\SuperAdmin\ManageRoleController;
 use App\Http\Controllers\SuperAdmin\ManageUserRoleController;
@@ -23,6 +24,23 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+// -------------------------------------------------------
+// Profile
+// -------------------------------------------------------
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/profile', [ProfileController::class, 'index'])
+        ->name('profile.index');
+
+    Route::put('/profile/update', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::put('/profile/update-password', [ProfileController::class, 'updatePassword'])
+        ->name('profile.update-password');
+});
+
+
 
 // -------------------------------------------------------
 // Auth
