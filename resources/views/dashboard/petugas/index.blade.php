@@ -510,6 +510,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-12 col-lg-4">
                 <div class="card shadow border-0 mb-4">
                     <div class="card-header bg-white py-3">

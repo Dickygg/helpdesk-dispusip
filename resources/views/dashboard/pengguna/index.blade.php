@@ -97,12 +97,74 @@
         background: #FDEBEC;
         color: #DC3545;
     }
+
+    .badge-status {
+        padding: 5px 10px;
+        border-radius: 30px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        display: inline-block;
+        min-width: 75px;
+        text-align: center;
+        letter-spacing: 0.3px;
+    }
+
+    .status-open {
+        background: #E8F1FF;
+        color: #0D6EFD;
+    }
+
+    .status-accept {
+        background: #E7F8F0;
+        color: #198754;
+    }
+
+    .status-assigned {
+        background: #EEF1F4;
+        color: #6C757D;
+    }
+
+    .status-progress {
+        background: #FFF4E5;
+        color: #F59E0B;
+    }
+
+    .status-resolved {
+        background: #E8FFF3;
+        color: #20C997;
+    }
+
+    .status-closed {
+        background: #E9ECEF;
+        color: #495057;
+    }
+
+    .status-rejected {
+        background: #FDEBEC;
+        color: #DC3545;
+    }
+
+    .status-reopen {
+        background: #FDEBEC;
+        color: #DC3545;
+    }
+
+    @media (min-width: 992px) {
+        .card-logs {
+            height: 445px;
+        }
+
+        .card-ticket {
+            height: 445px;
+        }
+
+    }
 </style>
 @endpush
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="card border-0 shadow-lg mb-4" style=" border-radius:20px;background: linear-gradient(135deg, #0b3778ff, #0e211aff); color:white;">
+            <div class="card border-0 shadow-lg mb-3" style=" border-radius:20px;background: linear-gradient(135deg, #0b3778ff, #0e211aff); color:white;">
                 <div class="card-body p-4">
                     <div class="row d-flex justify-content-between align-items-start">
                         <div class="col-12 col-md-10">
@@ -170,6 +232,278 @@
                                 </strong>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Total Ticket -->
+        <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-2">
+
+            <div class="card border-0 shadow-sm rounded-4 card-filter">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
+                        <i class="bi bi-folder-fill text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary title-cardtiket">Total Ticket</div>
+                        <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $tikettotal }}</div>
+                        <div class="text-muted title-cardtiket">Semua tiket</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- Open -->
+        <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-2">
+
+            <div class="card border-0 shadow-sm rounded-4 card-filter">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-primary bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
+                        <i class="bi bi-archive-fill text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary title-cardtiket">Open</div>
+                        <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $tiketstats['Open'] ?? 0 }}</div>
+                        <div class="text-muted title-cardtiket">Tiket Baru</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- In Progress -->
+        <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-2">
+            <div class="card border-0 shadow-sm rounded-4 card-filter">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-warning bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
+                        <i class="bi bi-arrow-repeat text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary title-cardtiket">Progres</div>
+                        <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $tiketstats['In Progress'] ?? 0 }}</div>
+                        <div class="text-muted title-cardtiket">Dikerjakan</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Closed -->
+        <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-2">
+            <div class="card border-0 shadow-sm rounded-4 card-filter">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-success bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
+                        <i class="bi bi-check-circle-fill text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary title-cardtiket" style="white-space: nowrap;">Closed</div>
+                        <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $tiketstats['Closed'] ?? 0 }}</div>
+                        <div class="text-muted title-cardtiket">Tiket Selesai</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Assigned -->
+        <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-2">
+            <div class="card border-0 shadow-sm rounded-4 card-filter">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-danger bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
+                        <i class="bi bi-person-fill-check text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
+                    </div>
+                    <div>
+                        <div class="text-secondary title-cardtiket">Rejected</div>
+                        <div class="fw-bold" style="font-size: 0.95rem; font-weight: bold;">{{ $tiketstats['Rejected'] ?? 0 }}</div>
+                        <div class="text-muted title-cardtiket">Tiket</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-0 mt-md-2">
+        <div class="col-12 col-lg-6">
+            <div class="card shadow mb-2">
+                <div class="card-header bg-white py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-activity"></i> Aktivitas Terbaru Tiket
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+
+                    <div class="row d-flex justify-content-center">
+                        <div class="col">
+                            @forelse($recentActivity as $activity)
+                            @php
+                            $event = $activity->event ?? '';
+
+                            $config = match(true) {
+                            str_contains($event, 'Created') || str_contains($activity->description, 'Dibuat')
+                            => ['dot' => '#4e73df'],
+                            str_contains($event, 'Updated') || str_contains($event, 'updated')
+                            => ['dot' => '#36b9cc'],
+                            str_contains($event, 'Assigned')
+                            => ['dot' => '#36b9cc'],
+                            str_contains($event, 'Mulai Penanganan')
+                            => ['dot' => '#f6c23e'],
+                            str_contains($event, 'Selesai Penanganan')
+                            => ['dot' => '#1cc88a'],
+                            str_contains($event, 'Konfirmasi Pengguna') || str_contains($event, 'Konfirmasi Otomatis')
+                            => ['dot' => '#1cc88a'],
+                            str_contains($event, 'Tolak Konfirmasi')
+                            => ['dot' => '#e74a3b'],
+                            str_contains($event, 'Verifikasi Tiket')
+                            => ['dot' => '#36b9cc'],
+                            str_contains($event, 'Menolak Tiket')
+                            => ['dot' => '#e74a3b'],
+                            default
+                            => ['dot' => '#858796'],
+                            };
+
+                            $ticketCode = $activity->subject?->ticket_code ?? '-';
+                            @endphp
+
+                            <div class="d-flex align-items-start px-3 py-3 border-bottom">
+
+                                {{-- Icon --}}
+                                <div class="mr-3 mt-1" style="flex-shrink:0;">
+                                    <div style="width: 12px;height: 12px;border-radius: 50%;background-color: {{ $config['dot'] }}; margin-top: 4px;"></div>
+                                </div>
+
+                                {{-- Content --}}
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <p class="mb-0" style="font-size: 0.875rem; font-weight: 600;">
+                                                {{ $activity->description }}
+                                            </p>
+                                            @if($ticketCode !== '-')
+                                            <span class="text-primary" style="font-size: 0.8rem;">
+                                                {{ $ticketCode }}
+                                            </span>
+                                            @endif
+
+                                            @if($activity->properties->has('note'))
+                                            <p class="mb-0 text-muted" style="font-size: 0.78rem;">
+                                                Catatan: {{ $activity->properties['note'] }}
+                                            </p>
+                                            @endif
+
+                                            @if($activity->properties->has('reason_rejected'))
+                                            <p class="mb-0 text-muted" style="font-size: 0.78rem;">
+                                                Alasan: {{ $activity->properties['reason_rejected'] }}
+                                            </p>
+                                            @endif
+                                        </div>
+                                        <small class="text-muted ml-2" style="white-space:nowrap; font-size: 0.75rem;">
+                                            {{ $activity->created_at->diffForHumans() }}
+                                        </small>
+                                    </div>
+                                </div>
+
+                            </div>
+                            @empty
+                            <div class="text-center text-muted py-4" style="font-size: 0.875rem;">
+                                <i class="bi bi-inbox" style="font-size: 1.5rem;"></i>
+                                <p class="mt-2 mb-0">Belum ada aktivitas</p>
+                            </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="card shadow border-0 mb-2">
+                <div class="card-header bg-white py-3">
+                    <h6 class="m-0 text-primary" style="font-size: 0.9rem; font-weight: bold;">
+                        <i class="bi bi-list-task"></i> Tiket Terbaru
+                    </h6>
+                </div>
+
+                <div class="card-body py-4 card-ticket">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Kode Tiket</th>
+                                    <th>Aplikasi</th>
+                                    <th>Status</th>
+                                    <th>Dibuat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($newtiket as $t)
+                                @php
+                                $statusstyle = match($t->status) {
+                                'Open' => 'status-open',
+                                'Accept' => 'status-accept',
+                                'Assigned' => 'status-assigned',
+                                'In Progress' => 'status-progress',
+                                'Resolved' => 'status-resolved',
+                                'Closed' => 'status-closed',
+                                'Rejected' => 'status-rejected',
+                                'Reopen' => 'status-reopen',
+                                default => ''
+                                };
+                                @endphp
+                                <tr>
+                                    <td class="text-primary" style="font-size: 0.85rem; font-weight: bold;">
+                                        {{$t->ticket_code}}
+                                    </td>
+                                    <td style="font-size: 0.85rem; font-weight: bold;">{{$t->application?->name}}</td>
+                                    <td>
+                                        <span class="badge-status {{ $statusstyle }}">
+                                            {{ $t->status }}
+                                        </span>
+                                    </td>
+                                    <td style="font-size: 0.85rem; font-weight: bold;">{{ $t->created_at->format('d M Y') }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <a href="{{route('tiket.index')}}" class="text-primary " style="font-size: 0.7rem; font-weight: bold;">Lihat Semua -></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="bi bi-lightning-charge-fill"></i> Aksi Cepat
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4 text-center">
+                            <a href="{{ route('tiket.create') }}" class="text-decoration-none">
+                                <div class="p-3 rounded" style="background:#EBF4FF; cursor:pointer;">
+                                    <i class="bi bi-plus-circle-fill" style="font-size:1.8rem; color:#4e73df;"></i>
+                                    <p class="mb-0 mt-2" style="font-size:0.8rem; color:#4e73df; font-weight:600;">Buat Tiket</p>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-4 text-center">
+                            <a href="{{ route('tiket.index') }}" class="text-decoration-none">
+                                <div class="p-3 rounded" style="background:#E8F8F1; cursor:pointer;">
+                                    <i class="bi bi-list-check" style="font-size:1.8rem; color:#1cc88a;"></i>
+                                    <p class="mb-0 mt-2" style="font-size:0.8rem; color:#1cc88a; font-weight:600;">Semua Tiket</p>
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="col-4 text-center">
+                            <a href="{{ route('tiket.history') }}" class="text-decoration-none">
+                                <div class="p-3 rounded" style="background:#FEF9EC; cursor:pointer;">
+                                    <i class="bi bi-clock-history" style="font-size:1.8rem; color:#f6c23e;"></i>
+                                    <p class="mb-0 mt-2" style="font-size:0.8rem; color:#f6c23e; font-weight:600;">Riwayat Tiket</p>
+                                </div>
+                            </a>
+                        </div>
+
                     </div>
                 </div>
             </div>

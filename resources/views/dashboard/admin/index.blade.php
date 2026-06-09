@@ -97,6 +97,17 @@
         background: #FDEBEC;
         color: #DC3545;
     }
+
+    @media (min-width: 992px) {
+        .card-newtiket {
+            height: 430px;
+        }
+
+        .card-deadline {
+            height: 430px;
+        }
+
+    }
 </style>
 @endpush
 @php
@@ -275,7 +286,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                     </h6>
                 </div>
 
-                <div class="card-body py-4 tiket">
+                <div class="card-body py-4 tiket card-newtiket">
                     <div class="table-responsive">
                         <table class="table table-bordered" width="100%" cellspacing="0">
                             <thead>
@@ -311,7 +322,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                         <i class="bi bi-alarm"></i> Tiket Deadline
                     </h6>
                 </div>
-                <div class="card-body py-4">
+                <div class="card-body py-4 card-deadline">
                     <div class="table-responsive">
                         <table class="table table-bordered" width="100%" cellspacing="0">
                             <thead>
