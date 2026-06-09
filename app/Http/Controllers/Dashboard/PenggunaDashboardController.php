@@ -19,13 +19,47 @@ class PenggunaDashboardController extends Controller
         $user = Auth::id();
         $getstatusstats = $this->getstastStatus($request, $user);
         $getdatanew = $this->getdata($request, $user);
+        $getchartdata = $this->getTicketChartData($request, $user);
         $recentActivity = $this->getRecentActivity();
         return view('dashboard.pengguna.index', [
             'recentActivity' => $recentActivity,
             'tiketstats' => $getstatusstats['statysStats'],
             'tikettotal' => $getstatusstats['total'],
             'newtiket' => $getdatanew,
+            'chartData' => $getchartdata
         ]);
+    }
+
+    private function getTicketChartData(Request $request, string $user)
+    {
+        $query = TicketModels::query()
+            ->where('tickets.user_id', $user)
+            ->when($request->start_date, function ($q) use ($request) {
+                $q->whereDate('created_at', '>=', $request->start_date);
+            })
+
+            ->when($request->end_date, function ($q) use ($request) {
+                $q->whereDate('created_at', '<=', $request->end_date);
+            });
+
+        $tickets = (clone $query)
+            ->selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('total', 'month');
+
+        $labels = [];
+        $data = [];
+
+        for ($i = 1; $i <= 12; $i++) {
+            $labels[] = \Carbon\Carbon::create()->month($i)->translatedFormat('M');
+            $data[] = $tickets[$i] ?? 0;
+        }
+
+        return [
+            'labels' => $labels,
+            'data' => $data,
+        ];
     }
 
     private function getRecentActivity()

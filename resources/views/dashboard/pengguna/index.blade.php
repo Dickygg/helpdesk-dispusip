@@ -318,11 +318,11 @@
             </div>
         </div>
     </div>
-    <div class="row mt-0 mt-md-2">
+    <div class="row mt-2 mt-md">
         <div class="col-12 col-lg-6">
             <div class="card shadow mb-2">
                 <div class="card-header bg-white py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
+                    <h6 class="m-0 font-weight-bold text-primary" style="font-size: 0.9rem; font-weight: bold;">
                         <i class="bi bi-activity"></i> Aktivitas Terbaru Tiket
                     </h6>
                 </div>
@@ -468,10 +468,26 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-12">
+        <!-- Chart Tiket perbulan -->
+        <div class="col-12 col-lg-7">
             <div class="card shadow mb-4">
                 <div class="card-header bg-white py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
+                    <h6 class="m-0 text-primary" style="font-size: 0.9rem; font-weight: bold;">
+                        <i class="bi bi-bar-chart-line-fill"></i> Statistik Tiket per Bulan
+                    </h6>
+                </div>
+
+                <div class="card-body">
+                    <div style="height:200px;">
+                        <canvas id="ticketChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="m-0 font-weight-bold text-primary" style="font-size: 0.9rem; font-weight: bold;">
                         <i class="bi bi-lightning-charge-fill"></i> Aksi Cepat
                     </h6>
                 </div>
@@ -550,6 +566,53 @@
 
     $(document).ready(function() {
         $('#infoModal').modal('show');
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+        const ctx = document.getElementById('ticketChart');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: @json($chartData['labels']),
+                datasets: [{
+                    label: 'Jumlah Tiket',
+                    data: @json($chartData['data']),
+
+                    borderColor: '#4e73df',
+                    backgroundColor: '#4e73df',
+
+                    borderWidth: 2,
+
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+
+                    tension: 0.3,
+                    fill: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+
     });
 </script>
 @endpush
