@@ -1,6 +1,6 @@
 @extends('_layouts.app')
-@section('title', 'Daftar Assignmen')
-@section('page-title', 'Daftar Assignmen')
+@section('title', 'Daftar Assignmen Berjalan')
+@section('page-title', 'Daftar Berjalan')
 @section('content')
 @push('styles')
 <style>
@@ -250,7 +250,7 @@
         <!-- Selesai -->
         <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-3">
             <a href="{{ route('assignment.petugas.index', array_merge(request()->query(), ['condition' => 'Resolved'])) }}" class="text-decoration-none">
-                <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Resolved' ? 'active' : '' }}">
+                <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('condition') == 'Resolved' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
                         <div class="bg-success bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
                             <i class="bi bi-check-circle-fill text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>

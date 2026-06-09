@@ -210,7 +210,7 @@ return [
             'heading' => 'Data Tiket'
         ],
         [
-            'title' => 'Data Assigment Masuk',
+            'title' => 'Data Assigment Berjalan',
             'route' => 'assignment.petugas.index',
             'icon' => 'bi bi-send'
         ],

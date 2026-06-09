@@ -45,10 +45,9 @@ class AutoConfirmTicket extends Command
                     'user_confirmed_at' => now()
                 ]);
                 DB::commit();
-                ActivityHelper::logUpdate(
+                ActivityHelper::logkonfrimasiotomatis(
                     $t,
-                    before: ['Tiket' => 'Pengguna Belum Konfirmasi'],
-                    after: ['Tiket' => 'Otomatis Konfirmasi'],
+
                 );
                 sendTelegram(
                     "📢 *Pemberitahuan Tiket*\n" .

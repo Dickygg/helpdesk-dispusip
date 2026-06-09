@@ -39,8 +39,6 @@ class ManageRoleController extends Controller
             $role->syncPermissions($request->permissions);
         }
 
-        activity()->causedBy(auth()->user())
-            ->log("Membuat role baru: {$role->name}");
 
         return redirect()->route('manage.roles.index')
             ->with('success', "Role '{$role->name}' berhasil dibuat.");
@@ -65,8 +63,6 @@ class ManageRoleController extends Controller
         $role->update(['name' => $request->name]);
         $role->syncPermissions($request->permissions ?? []);
 
-        activity()->causedBy(auth()->user())
-            ->log("Update role: {$oldName} → {$role->name}");
 
         return redirect()->route('manage.roles.index')
             ->with('success', "Role berhasil diperbarui.");
@@ -82,8 +78,6 @@ class ManageRoleController extends Controller
                 ->with('error', "Role default tidak bisa dihapus.");
         }
 
-        activity()->causedBy(auth()->user())
-            ->log("Menghapus role: {$role->name}");
 
         $role->delete();
 

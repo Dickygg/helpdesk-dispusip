@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\TicketAssignmentModels;
 use App\Models\TicketModels;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Models\Activity;
 
 class AdminDashboardController extends Controller
 {
@@ -16,7 +18,9 @@ class AdminDashboardController extends Controller
     public function index(Request $request)
     {
         abort_if(Auth::user()->cannot('dashboard.admin'), 403);
-
+        $logs = Activity::with('subject')
+            ->latest()
+            ->paginate(5);
 
         $getstatusstats = $this->getstastStatus($request);
         $chartData = $this->getTicketChartData($request);
@@ -37,7 +41,8 @@ class AdminDashboardController extends Controller
             'newtiket' => $newtiket['data'],
             'deadlinetiket' => $deadlineticket['data'],
             'assignmentstats' => $assignmentStats,
-            'applicationChart' => $ticketapplication
+            'applicationChart' => $ticketapplication,
+            'logs' => $logs
         ]);
     }
 

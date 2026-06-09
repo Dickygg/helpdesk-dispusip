@@ -37,10 +37,6 @@ class ManageUserRoleController extends Controller
         $user->syncRoles($request->roles);
         $newRoles = $user->getRoleNames()->implode(', ');
 
-        activity()->causedBy(auth()->user())
-            ->performedOn($user)
-            ->log("Update role user {$user->name}: [{$oldRoles}] → [{$newRoles}]");
-
         return redirect()->route('manage.user-roles.index')
             ->with('success', "Role '{$user->name}' berhasil diperbarui.");
     }

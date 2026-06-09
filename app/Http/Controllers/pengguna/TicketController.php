@@ -164,10 +164,8 @@ class TicketController extends Controller
             ]);
             DB::commit();
             $data->refresh();
-            ActivityHelper::logUpdate(
-                $data,
-                before: ['Tiket' => 'Pengguna Belum Konfirmasi'],
-                after: ['Tiket' => 'Pengguna Sudah Konfirmasi'],
+            ActivityHelper::logkonfrimasipengguna(
+                $data
             );
             sendTelegram(
                 "📢 *Pemberitahuan Tiket*\n" .
@@ -206,10 +204,11 @@ class TicketController extends Controller
                 'status' => 'Reopen'
             ]);
 
-            ActivityHelper::logUpdate(
+            ActivityHelper::logrejectkonfrimasipengguna(
                 $data,
-                before: ['Tiket' => 'Pengguna Belum Konfirmasi'],
-                after: ['Tiket' => 'Pengguna Menolak Konfirmasi'],
+                [
+                    'reason_rejected' => $request->reason_rejected
+                ]
             );
             DB::commit();
             sendTelegram(
@@ -276,7 +275,7 @@ class TicketController extends Controller
             $tiket->update([
                 'status' => 'Cancel'
             ]);
-            ActivityHelper::logUpdate(
+            ActivityHelper::logStatusChange(
                 $tiket,
                 before: ['status' => $oldStatus],
                 after: ['status' => $tiket->status],

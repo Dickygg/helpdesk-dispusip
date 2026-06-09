@@ -20,7 +20,6 @@ class TicketAssignmentModels extends BaseModel
         'started_at',
         'finished_at',
         'work_duration',
-        'status',
         'note',
     ];
     protected $casts = [

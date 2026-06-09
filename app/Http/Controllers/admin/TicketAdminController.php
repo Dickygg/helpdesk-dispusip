@@ -118,7 +118,6 @@ class TicketAdminController extends Controller
         if (!$tiket) {
             abort(404);
         }
-        $oldStatus = $tiket->status;
 
         DB::beginTransaction();
         try {
@@ -130,10 +129,13 @@ class TicketAdminController extends Controller
                 'admin_verified_at' => now()
             ]);
 
-            ActivityHelper::logUpdate(
+            $tiket->refresh();
+            ActivityHelper::logverifikasi(
                 $tiket,
-                before: ['status' => $oldStatus],
-                after: ['status' => $tiket->status],
+                [
+                    'Tingkat-Prioritas' => $tiket->priority?->name,
+                    'Tipe-Tiket'    => $tiket->tickettype?->name,
+                ]
             );
             DB::commit();
             return redirect()->back()->with('success', 'Tiket telah Berhail Diverifikasi.');
@@ -178,10 +180,11 @@ class TicketAdminController extends Controller
                 'reason_rejected' => $request->note
             ]);
 
-            ActivityHelper::logUpdate(
+            ActivityHelper::logrejectsverifikasi(
                 $tiket,
-                before: ['status' => $oldStatus],
-                after: ['status' => $tiket->status],
+                [
+                    'reason_rejected' => $request->note
+                ]
             );
             DB::commit();
             return redirect()->back()->with('succes', 'Tiket telah ditolak.');
@@ -279,10 +282,8 @@ class TicketAdminController extends Controller
                 'closed_at' => now(),
                 'closed_by' => $user
             ]);
-            ActivityHelper::logUpdate(
-                $tiket,
-                before: ['status' => $oldStatus],
-                after: ['status' => $tiket->status],
+            ActivityHelper::logclosedtiket(
+                $tiket
             );
             DB::commit();
             return redirect()->back()->with('success', 'Tiket Berhasil DiClosed!.');

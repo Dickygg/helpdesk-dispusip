@@ -266,12 +266,12 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="cold-12 col-md-5">
+    <div class="row mt-2 mt-lg-0">
+        <div class="col-12 col-lg-5">
             <div class="card shadow border-0 mb-4">
                 <div class="card-header bg-white py-3">
                     <h6 class="m-0 text-primary" style="font-size: 0.9rem; font-weight: bold;">
-                        Tiket Masuk Terbaru
+                        <i class="bi bi-list-task"></i> Tiket Masuk Terbaru
                     </h6>
                 </div>
 
@@ -299,16 +299,16 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                         </table>
                     </div>
                     <div style="margin-top: 28px;">
-                        <a href="route($prefix.'admin.tiket.index')" class="text-primary " style="font-size: 0.7rem; font-weight: bold;">Lihat Semua -></a>
+                        <a href="{{route($prefix.'admin.tiket.index')}}" class="text-primary " style="font-size: 0.7rem; font-weight: bold;">Lihat Semua -></a>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="cold-12 col-md-7">
+        <div class="col-12 col-lg-7">
             <div class="card shadow border-0 mb-4">
                 <div class="card-header bg-white py-3">
                     <h6 class="m-0 text-danger" style="font-size: 0.9rem; font-weight: bold;">
-                        Tiket Deadline
+                        <i class="bi bi-alarm"></i> Tiket Deadline
                     </h6>
                 </div>
                 <div class="card-body py-4">
@@ -348,18 +348,18 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                             </tbody>
                         </table>
                     </div>
-                    <a href="route($prefix.'admin.tiket.index')" class="text-primary" style="font-size: 0.7rem; font-weight: bold;">Lihat Semua -></a>
+                    <a href="{{route($prefix.'admin.tiket.index')}}" class="text-primary" style="font-size: 0.7rem; font-weight: bold;">Lihat Semua -></a>
                 </div>
             </div>
         </div>
     </div>
     <div class="row ">
         <!-- Chart Tiket perbulan -->
-        <div class="col-12 col-md-7">
+        <div class="col-12 col-lg-7">
             <div class="card shadow mb-4">
                 <div class="card-header bg-white py-3">
                     <h6 class="m-0 text-primary" style="font-size: 0.9rem; font-weight: bold;">
-                        Statistik Tiket per Bulan
+                        <i class="bi bi-bar-chart-line-fill"></i> Statistik Tiket per Bulan
                     </h6>
                 </div>
 
@@ -371,11 +371,11 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
             </div>
         </div>
         <!-- presentase Tipe Tiket Masuk -->
-        <div class="col-12 col-md-5">
+        <div class="col-12 col-lg-5">
             <div class="card shadow mb-4">
                 <div class="card-header  bg-white py-3">
                     <h6 class="m-0 text-primary" style="font-size: 0.9rem; font-weight: bold;">
-                        Presentase Tipe Tiket Masuk
+                        <i class="bi bi-bar-chart-line-fill"></i> Presentase Tipe Tiket Masuk
                     </h6>
                 </div>
                 <div class="card-body d-sm-flex flex-sm-column">
@@ -418,11 +418,11 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
     <div class="row">
 
         <!-- presentase tingkat Prioritas -->
-        <div class="col-12 col-md-4">
-            <div class="card shadow mb-4">
+        <div class="col-12 col-lg-4">
+            <div class="card shadow mb-2">
                 <div class="card-header bg-white py-3">
                     <h6 class="m-0 text-primary" style="font-size: 0.9rem; font-weight: bold;">
-                        Presentase Tingkat Prioritas
+                        <i class="bi bi-bar-chart-line-fill"></i> Presentase Tingkat Prioritas
                     </h6>
                 </div>
                 <div class="card-body">
@@ -462,11 +462,11 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
             </div>
         </div>
         <!-- presentase penyelesiaan -->
-        <div class="col-12 col-md-4">
-            <div class="card shadow border-0 mb-4">
+        <div class="col-12 col-lg-4">
+            <div class="card shadow border-0 mb-2">
                 <div class="card-header bg-white py-3">
                     <h6 class="m-0 text-primary" style="font-size: 0.9rem; font-weight: bold;">
-                        Presentase Penyelesaian
+                        <i class="bi bi-bar-chart-line-fill"></i> Presentase Penyelesaian
                     </h6>
                 </div>
 
@@ -532,11 +532,11 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                 </div>
             </div>
         </div>
-        <div class="col-12 col-md-4">
-            <div class="card shadow mb-4">
+        <div class="col-12 col-lg-4">
+            <div class="card shadow mb-2">
                 <div class="card-header bg-white py-3">
                     <h6 class="m-0 text-primary" style="font-size: 0.9rem; font-weight: bold;">
-                        Presentase Tiket Berdasarkan Aplikasi
+                        <i class="bi bi-bar-chart-line-fill"></i> Presentase Tiket Berdasarkan Aplikasi
                     </h6>
                 </div>
 
@@ -620,11 +620,53 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
         </div>
     </div>
     <div class="row">
-        <div class="col-12 col-md-7">
+
+        <div class="col-12">
+            <div class="card shadow border-0 mb-2">
+                <div class="card-header bg-white py-3">
+                    <h6 class="m-0 text-primary" style="font-size: 0.9rem; font-weight: bold;">
+                        <i class="bi bi-activity"></i> Aktivitas Terbaru
+                    </h6>
+                </div>
+
+                <div class="card-body py-4 tiket">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Deskripsi</th>
+                                    <th>Action</th>
+                                    <th>User</th>
+                                    <th>Tiket ID</th>
+                                    <th>Waktu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($logs as $log)
+                                <tr>
+                                    <td>{{ $log->description }}</td>
+                                    <td>{{ $log->event }}</td>
+                                    <td>{{ $log->causer->name ?? '-' }}</td>
+                                    <td>{{ $log->subject->ticket_code ?? '-' }}</td>
+                                    <td>{{ $log->created_at->diffForHumans() }}</td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">Belum ada aktivitas</td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                        {{ $logs->links('pagination::bootstrap-5') }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-8">
             <div class="card shadow border-0 mb-4">
                 <div class="card-header bg-white  py-3">
                     <h6 class="m-0 text-primary" style="font-size: 0.9rem; font-weight: bold;">
-                        Performa Petugas
+                        <i class="bi bi-award-fill"></i> Performa Petugas
                     </h6>
                 </div>
                 <div class="card-body py-4">
@@ -632,10 +674,10 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                         <table class="table table-bordered text-center" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>Petugas</th>
-                                    <th>Total Pengerjaan</th>
-                                    <th>Presentase Waktu Pengerjaan</th>
-                                    <th>Presentase Tepat Waktu</th>
+                                    <th style="font-size: 0.95rem; font-weight: bold;">Petugas</th>
+                                    <th style="font-size: 0.95rem; font-weight: bold;">Total Pengerjaan</th>
+                                    <th style="font-size: 0.95rem; font-weight: bold;">Presentase Waktu Pengerjaan</th>
+                                    <th style="font-size: 0.95rem; font-weight: bold;">Presentase Tepat Waktu</th>
                                 </tr>
                             </thead>
                             <tbody>

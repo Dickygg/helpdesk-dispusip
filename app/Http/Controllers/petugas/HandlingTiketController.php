@@ -32,7 +32,7 @@ class HandlingTiketController extends Controller
         $deadline = TicketAssignmentModels::with(['ticket', 'technician', 'admin'])
             ->where('user_id', $user)
             ->wherehas('ticket', function ($q) {
-                $q->whereIn('status', ['In Progress', 'Assign', 'Reopen']);
+                $q->whereIn('status', ['In Progress', 'Assigned', 'Reopen']);
             })
             ->whereHas('ticket', function ($q) {
                 $q->whereDate('due_date', '<=', today());
@@ -107,7 +107,7 @@ class HandlingTiketController extends Controller
         abort_if(Auth::user()->cannot('assignment.StartWork'), 403);
 
         $data = TicketAssignmentModels::with('ticket')->findOrFail($id);
-        $oldStatus = $data->ticket->status;
+        $oldStatus = $data->ticket?->status;
         DB::beginTransaction();
         try {
             $data->update([
@@ -118,10 +118,8 @@ class HandlingTiketController extends Controller
             ]);
 
             $tiket = TicketModels::findOrFail($data->ticket->id);
-            ActivityHelper::logUpdate(
+            ActivityHelper::logstartwork(
                 $tiket,
-                before: ['status' => $oldStatus],
-                after: ['status' => $tiket->status],
             );
             DB::commit();
             return redirect()->back()->with('success', 'Berhasil Mengubah Status Menjadi In Progress, Segera Selesai Kan Assignment!.');
@@ -198,10 +196,11 @@ class HandlingTiketController extends Controller
 
             $data->ticket->refresh();
 
-            ActivityHelper::logUpdate(
+            ActivityHelper::logfinishwork(
                 $data->ticket,
-                before: ['status' => $oldStatus],
-                after: ['status' => 'Resolved'],
+                [
+                    'note' => $request->note,
+                ]
             );
 
             DB::commit();
@@ -317,6 +316,20 @@ class HandlingTiketController extends Controller
                     $q->where('ticket_type_id', $request->ticket_type_id);
                 });
             })
+            ->when($request->condition, function ($q) use ($request) {
+                match ($request->condition) {
+                    'Resolved'    => $q->whereHas('ticket', fn($q) => $q->where('status', 'Resolved')),
+                    'In Progress' => $q->whereHas('ticket', fn($q) => $q->where('status', 'In Progress')),
+                    'Reopen'      => $q->whereHas('ticket', fn($q) => $q->where('status', 'Reopen')),
+                    'upcoming'    => $q->whereHas('ticket', fn($q) =>
+                    $q->whereBetween('due_date', [now(), now()->addHours(24)])),
+                    'overDuetime' => $q->whereHas('ticket', fn($q) =>
+                    $q->where('due_date', '<', now())
+                        ->whereNotIn('status', ['Closed'])),
+                    default       => null,
+                };
+            })
+            ->orderBy('assigned_at', 'DESC')
             ->get();
     }
 
@@ -446,7 +459,7 @@ class HandlingTiketController extends Controller
             ->count();
         $AssignTotal = (clone $query)->count();
 
-        $selesai  = $AssignStats->firstWhere('status', 'Closed');
+        $selesai  = $AssignStats->firstWhere('status', 'Resolved');
         $diproses = $AssignStats->firstWhere('status', 'In Progress');
         $Reopen = $AssignStats->firstWhere('status', 'Reopen');
 

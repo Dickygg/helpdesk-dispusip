@@ -1,7 +1,7 @@
 @extends('_layouts.app')
 
-@section('title', 'Dashboard Admin')
-@section('page-title', 'Dashboard Admin')
+@section('title', 'Dashboard Pengguna')
+@section('page-title', 'Dashboard Pengguna')
 
 @section('content')
 @push('styles')
@@ -169,12 +169,6 @@
                                     {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
                                 </strong>
                             </div>
-                            <!-- <div class="mt-3 text-white-50 d-flex justify-content-center">
-                                <a href="#" class="btn btn-outline-light btn-sm">
-                                    <i class="fas fa-sync-alt"></i>
-                                    Refresh Data
-                                </a>
-                            </div> -->
                         </div>
                     </div>
                 </div>

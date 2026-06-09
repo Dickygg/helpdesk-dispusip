@@ -38,9 +38,6 @@ class ManagePermissionController extends Controller
         // Reset cache Spatie setelah tambah permission
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        activity()->causedBy(auth()->user())
-            ->log("Membuat permission baru: {$permission->name}");
-
         return redirect()->route('manage.permissions.index')
             ->with('success', "Permission berhasil dibuat.");
     }
@@ -48,8 +45,6 @@ class ManagePermissionController extends Controller
     public function destroy(Permission $permission)
     {
         abort_if(Auth::user()->cannot('manage.permissions.destroy'), 403);
-        activity()->causedBy(auth()->user())
-            ->log("Menghapus permission: {$permission->name}");
 
         $permission->delete();
 
