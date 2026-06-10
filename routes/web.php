@@ -127,22 +127,30 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
 Route::middleware(['auth', 'role:admin helpdesk'])->group(function () {
     Route::get('/dashboard/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
+    Route::get('admin/tiket/data', [TicketController::class, 'index'])->name('admin.tiket.data');
+    Route::post('admin/tiket', [TicketController::class, 'store'])->name('admin.tiket.store');
+    Route::get('admin/tiket/history', [TicketController::class, 'historyTicket'])->name('admin.tiket.history');
+    Route::get('admin/tiket/canceltiket/{tiket}', [TicketController::class, 'cancelTicket'])->name('admin.tiket.cancelTicket');
+    Route::get('admin/tiket/create', [TicketController::class, 'create'])->name('admin.tiket.create');
+    Route::post('admin/tiket/konfirmasi/{tiket}', [TicketController::class, 'konfirmasi'])->name('admin.tiket.konfirmasi');
+    Route::post('admin/tiket/rejectedKonfirmasi/{tiket}', [TicketController::class, 'rejectedKonfirmasi'])->name('admin.tiket.rejectedKonfirmasi');
+    Route::get('admin/tiket/canceltiket/{tiket}', [TicketController::class, 'cancelTicket'])->name('admin.tiket.cancelTicket');
+
     // Tiket Admin
     Route::get('admin/tiket/historyTiket', [TicketAdminController::class, 'historyTiket'])->name('admin.tiket.historyTiket');
     Route::get('admin/tiket/export', [TicketAdminController::class, 'export'])
         ->name('admin.tiket.export');
     Route::get('admin/tiket/exporthistory', [TicketAdminController::class, 'exporthistory'])
         ->name('admin.tiket.exporthistory');
-    Route::resource('admin/tiket', TicketAdminController::class)->names('admin.tiket');
+    Route::resource('admin/tiket', TicketAdminController::class)->names('admin.tiket')->except(['create', 'store']);
     Route::get('admin/tiket/proses/{tiket}', [TicketAdminController::class, 'SiteprosesTiket'])->name('admin.tiket.proses');
-    Route::get('admin/tiket/history', [TicketController::class, 'historyTicket'])->name('admin.tiket.history');
     Route::put('admin/tiket/rejected/{tiket}', [TicketAdminController::class, 'rejectVerificationAdmin'])->name('admin.tiket.rejected');
     Route::put('admin/tiket/verification/{tiket}', [TicketAdminController::class, 'VerificationAdmin'])->name('admin.tiket.verification');
     Route::post('admin/tiket/assignment/{tiket}', [AssigmentController::class, 'assignment'])->name('admin.tiket.assignment');
-    Route::get('admin/tiket/create', [TicketController::class, 'create'])->name('admin.tiket.create');
     Route::put('admin/tiket/updatePiority/{tiket}', [TicketAdminController::class, 'updatePiorityTiket'])->name('admin.tiket.updatePiority');
     Route::get('admin/tiket/closeTiket/{tiket}', [TicketAdminController::class, 'closeTiket'])->name('admin.tiket.closeTiket');
-    Route::get('admin/tiket/canceltiket/{tiket}', [TicketController::class, 'cancelTicket'])->name('admin.tiket.cancelTicket');
+
+    Route::get('admin/tiket/{tiket}', [TicketController::class, 'show'])->name('admin.tiket.show');
 
 
 

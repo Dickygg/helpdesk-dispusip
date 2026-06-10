@@ -44,6 +44,12 @@ auth()->user()->hasRole('admin helpdesk') => 'admin.',
 default => ''
 };
 
+$backs = match(true) {
+auth()->user()->hasRole('super admin') => 'sa.tiket.index',
+auth()->user()->hasRole('admin helpdesk') => 'admin.tiket.data',
+default => 'tiket.index'
+};
+
 
 $priorityStyle = match($tiket->priority?->name) {
 'Emergency' => 'text-danger',
@@ -101,7 +107,7 @@ default => 'btn-secondary',
                                         </div>
                                     </div>
                                     <div class="col d-flex justify-content-md-end" style="height: fit-content;">
-                                        <a href="{{route($prefix.'tiket.index')}}" class="btn btn-outline-primary btn-sm" style="margin-right: 5px;"><i class="bi bi-arrow-left"></i> Kembali</a>
+                                        <a href="{{route($backs)}}" class="btn btn-outline-primary btn-sm" style="margin-right: 5px;"><i class="bi bi-arrow-left"></i> Kembali</a>
                                     </div>
                                 </div>
                             </div>
@@ -184,7 +190,7 @@ default => 'btn-secondary',
 
                                                 @elseif($tiket->status == 'Resolved' || $tiket->status == 'Closed')
                                                 <div class="p-3 bg-light  rounded mt-2">
-                                                    <p class="mb-0">{{ $tiket->description ?? '-' }}</p>
+                                                    <p class="mb-0">{{ $tiket->note ?? '-' }}</p>
                                                     @if($tiket->assignment?->Assignattachments->file_path)
                                                     <a href="{{ Storage::url($tiket->assignment?->Assignattachments->file_path) }}" target="_blank">
                                                         <span class="btn btn-sm btn-success mt-2">

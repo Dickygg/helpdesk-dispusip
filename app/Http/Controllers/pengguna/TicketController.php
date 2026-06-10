@@ -121,7 +121,7 @@ class TicketController extends Controller
 
             return match ($role) {
                 'super admin' => redirect()->route('sa.tiket.index')->with('success', 'Tiket berhasil dibuat!'),
-                'admin'       => redirect()->route('admin.tiket.index')->with('success', 'Tiket berhasil dibuat!'),
+                'admin helpdesk'       => redirect()->route('admin.tiket.data')->with('success', 'Tiket berhasil dibuat!'),
                 default       => redirect()->route('tiket.index')->with('success', 'Tiket berhasil dibuat!'),
             };
         } catch (\Exception $e) {
@@ -172,7 +172,14 @@ class TicketController extends Controller
                     "⚡ Code Tiket: {$data->ticket_code}\n" .
                     "📢 Pemberitahuan: Pengguna Sudah Mengkonfirmasi Tiket, Segera Tutup Tiket.!.\n"
             );
-            return redirect()->back()->with('success', 'Tiket berhasil diKonfirmasi!');
+            $user     = Auth::user();
+            $role = $user->roles->first()->name; // ← ambil nama role dulu
+
+            return match ($role) {
+                'super admin' => redirect()->route('sa.tiket.index')->with('success', 'Tiket berhasil diKonfirmasi!'),
+                'admin helpdesk'       => redirect()->route('admin.tiket.data')->with('success', 'Tiket berhasil diKonfirmasi!'),
+                default       => redirect()->route('tiket.index')->with('success', 'Tiket berhasil diKonfirmasi!'),
+            };
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error($e);
@@ -183,11 +190,6 @@ class TicketController extends Controller
 
     public function rejectedKonfirmasi(Request $request, string $id)
     {
-        $prefix = match (true) {
-            Auth::user()->hasRole('super admin') => 'sa.',
-            Auth::user()->hasRole('admin helpdesk') => 'admin.',
-            default => ''
-        };
         $data = TicketModels::findOrFail($id);
 
         $request->validate([
@@ -216,12 +218,19 @@ class TicketController extends Controller
                     "⚡ Code Tiket: {$data->ticket_code}\n" .
                     "📢 Pemberitahuan: Pengguna Menolak Konfrimasi Tiket.!.\n"
             );
-            return redirect()->route($prefix . 'tiket.index')->with('success', 'Tiket berhasil ditolak!');
+            $user     = Auth::user();
+            $role = $user->roles->first()->name; // ← ambil nama role dulu
+
+            return match ($role) {
+                'super admin' => redirect()->route('sa.tiket.index')->with('success', 'Berhasil Menolak Konfirmasi'),
+                'admin helpdesk'       => redirect()->route('admin.tiket.data')->with('success', 'Berhasil Menolak Konfirmasi'),
+                default       => redirect()->route('tiket.index')->with('success', 'Berhasil Menolak Konfirmasi'),
+            };
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error($e);
             dd($e);
-            return redirect()->route($prefix . 'tiket.index')->with('error', 'Oops, Gagal Mengubah Status Konfirmasi!');
+            return redirect()->route($prefix . 'tiket.index')->with('error', 'Oops, Gagal Mengubah Status Menolak Konfirmasi!');
         }
     }
 
@@ -255,11 +264,7 @@ class TicketController extends Controller
 
     public function cancelTicket(string $id)
     {
-        $prefix = match (true) {
-            Auth::user()->hasRole('super admin') => 'sa.',
-            Auth::user()->hasRole('admin helpdesk') => 'admin.',
-            default => ''
-        };
+
         $tiket = TicketModels::findOrFail($id);
 
         if (in_array($tiket->status, ['Rejected', 'Closed', 'Cancel'])) {
@@ -286,12 +291,19 @@ class TicketController extends Controller
                     "⚡ Code Tiket: {$tiket->ticket_code}\n" .
                     "📢 Pemberitahuan: Pengguna Membatalkan Tiket.!.\n"
             );
-            return redirect()->route($prefix . 'tiket.index')->with('success', 'Berhasil Mengcancel Tiket!');
+            $user     = Auth::user();
+            $role = $user->roles->first()->name; // ← ambil nama role dulu
+
+            return match ($role) {
+                'super admin' => redirect()->route('sa.tiket.index')->with('success', 'Tiket berhasil DiBatalkan'),
+                'admin helpdesk'       => redirect()->route('admin.tiket.data')->with('success', 'Tiket berhasil DiBatalkan'),
+                default       => redirect()->route('tiket.index')->with('success', 'Tiket berhasil DiBatalkan'),
+            };
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error($e);
             dd($e);
-            return redirect()->route($prefix . 'tiket.index')->with('error', 'Oops, Gagal Mengubah Status Konfirmasi!');
+            return redirect()->route($prefix . 'tiket.index')->with('error', 'Oops, Gagal Mengubah Status DiBatalkan!');
         }
     }
 

@@ -279,10 +279,15 @@ default => ''
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;"><i class="bi bi-stopwatch"></i> kinerja Penyelesaian</div>
+                                    @php $kinerja = $tickets->kinerja @endphp
+                                    <div class="text-secondary" style="font-size: 0.85rem; font-weight: bold;">
+                                        <i class="bi bi-stopwatch"></i> Kinerja Penyelesaian
+                                    </div>
                                     <div class="d-flex align-items-center gap-1" style="font-size: 0.8rem;">
-                                        <span class="{{$nodepriorityStyle}}" style="margin-right:5px;width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
-                                        <span class="{{ $priorityStyle }}" style="font-size: 0.75rem; font-weight:bolder;">{{$tickets->priority?->name ?? 'Belum Ditentukan'}}</span>
+                                        <i class="bi {{ $kinerja['icon'] }} {{ $kinerja['style'] }}" style="font-size: 0.85rem;"></i>
+                                        <span class="{{ $kinerja['style'] }}" style="font-size: 0.75rem; font-weight: bolder; margin-left:5px;">
+                                            {{ $kinerja['label'] }}
+                                        </span>
                                     </div>
                                 </div>
                             </div>

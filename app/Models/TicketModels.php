@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasActivityLog;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -72,6 +73,38 @@ class TicketModels extends BaseModel
 
             return 'APK-' . $today . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
         });
+    }
+
+    // App\Models\Ticket.php
+
+    public function getKinerjaAttribute(): array
+    {
+        $finishedAt = $this->assignment?->finished_at
+            ? Carbon::parse($this->assignment->finished_at)
+            : null;
+
+        $dueDate = $this->due_date
+            ? Carbon::parse($this->due_date)
+            : null;
+
+        if (!$dueDate) {
+            return ['label' => 'Belum Ditentukan', 'style' => 'text-secondary', 'icon' => 'bi-question-circle'];
+        } elseif ($finishedAt) {
+            if ($finishedAt->lte($dueDate)) {
+                return ['label' => 'Tepat Waktu', 'style' => 'text-success', 'icon' => 'bi-check-circle-fill'];
+            } else {
+                $diff = $dueDate->diff($finishedAt);
+                $label = 'Melewati Deadline (' . ($diff->days > 0 ? $diff->days . 'h ' : '') . $diff->h . 'j ' . $diff->i . 'm)';
+                return ['label' => $label, 'style' => 'text-danger', 'icon' => 'bi-x-circle-fill'];
+            }
+        } else {
+            if (now()->gt($dueDate)) {
+                $diff = $dueDate->diff(now());
+                $label = 'Melewati Deadline (' . ($diff->days > 0 ? $diff->days . 'h ' : '') . $diff->h . 'j ' . $diff->i . 'm)';
+                return ['label' => $label, 'style' => 'text-danger', 'icon' => 'bi-exclamation-circle-fill'];
+            }
+            return ['label' => 'Dalam Pengerjaan', 'style' => 'text-warning', 'icon' => 'bi-hourglass-split'];
+        }
     }
 
     public function user()

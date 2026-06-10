@@ -139,7 +139,7 @@ return [
             'divider' => true,
         ],
         [
-            'heading' => 'Data Tiket (Admin)'
+            'heading' => 'Data Tiket'
         ],
         [
             'title' => 'Buat Tiket',
@@ -147,9 +147,17 @@ return [
             'icon' => 'bi-ticket-detailed'
         ],
         [
+            'title' => 'Tiket Saya',
+            'route' => 'admin.tiket.data',   // ← diubah
+            'icon' => 'bi bi-list-task'
+        ],
+        [
             'title' => 'Data Riwayat Tiket Saya',
-            'route' => 'sa.tiket.history',
+            'route' => 'admin.tiket.history',
             'icon' => 'bi bi-clock'
+        ],
+        [
+            'heading' => 'Data Tiket (Admin)',
         ],
         [
             'title' => 'Daftar Tiket Berjalan',
@@ -175,7 +183,7 @@ return [
         ],
         [
             'title' => 'Daftar Riwayat Assigment',
-            'route' => 'sa.admin.assigment.history',
+            'route' => 'admin.assigment.history',
             'icon' => 'bi-ticket-detailed'
         ],
         [
