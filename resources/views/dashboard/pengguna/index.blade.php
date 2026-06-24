@@ -129,6 +129,11 @@
         color: #F59E0B;
     }
 
+    .status-cancel {
+        background: #FFF4E5;
+        color: #F59E0B;
+    }
+
     .status-resolved {
         background: #E8FFF3;
         color: #20C997;
@@ -155,7 +160,7 @@
         }
 
         .card-ticket {
-            height: 445px;
+            height: 410px;
         }
 
     }
@@ -441,6 +446,7 @@
                                 'Closed' => 'status-closed',
                                 'Rejected' => 'status-rejected',
                                 'Reopen' => 'status-reopen',
+                                'Cancel' => 'status-cancel',
                                 default => ''
                                 };
                                 @endphp

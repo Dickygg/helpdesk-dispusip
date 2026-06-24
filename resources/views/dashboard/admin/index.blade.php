@@ -403,7 +403,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                         {{-- Legenda --}}
                         <div class="small ml-md-3 mt-3 mt-md-0" style="flex: 1; width: 100%;">
                             @php
-                            $colors = ['#e74a3b', '#f6c23e', '#36b9cc', '#1cc88a', '#858796', '#5a5c69'];
+                            $colors = ['#e74a3b', '#f6c23e', '#36b9cc', '#1cc88a', '#2c399aff', '#5a5c69'];
                             @endphp
 
                             @foreach($typetikett['labels'] as $index => $label)
@@ -842,7 +842,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
 
             datasets: [{
                 data: @json($typetikett['data']),
-                backgroundColor: ['#e74a3b', '#f6c23e', '#36b9cc', '#1cc88a', '#858796', '#5a5c69'],
+                backgroundColor: ['#e74a3b', '#f6c23e', '#36b9cc', '#1cc88a', '#2c399aff', '#5a5c69'],
                 borderWidth: 0
             }]
         },

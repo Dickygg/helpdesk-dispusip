@@ -103,12 +103,12 @@ return [
         [
             'title' => 'Daftar Assigment',
             'route' => 'sa.admin.assigment.index',
-            'icon' => 'bi-ticket-detailed'
+            'icon' => 'bi bi-send'
         ],
         [
             'title' => 'Daftar Riwayat Assigment',
             'route' => 'sa.admin.assigment.history',
-            'icon' => 'bi-ticket-detailed'
+            'icon' => 'bi bi-archive'
         ],
         [
             'title' => 'Divider',
@@ -179,12 +179,12 @@ return [
         [
             'title' => 'Daftar Assignment',
             'route' => 'admin.assigment.index',
-            'icon' => 'bi-ticket-detailed'
+            'icon' => 'bi bi-send'
         ],
         [
             'title' => 'Daftar Riwayat Assigment',
             'route' => 'admin.assigment.history',
-            'icon' => 'bi-ticket-detailed'
+            'icon' => 'bi bi-archive'
         ],
         [
             'title' => 'Divider',

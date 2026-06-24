@@ -6,6 +6,7 @@ use App\Exports\GenericExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Helpres\ActivityHelper;
 use App\Http\Controllers\Controller;
+use App\Mail\TicketRejected;
 use App\Models\ApplicationModels;
 use App\Models\TicketAssignmentModels;
 use App\Models\TicketModels;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Spatie\Activitylog\Models\Activity;
@@ -187,10 +189,13 @@ class TicketAdminController extends Controller
                 ]
             );
             DB::commit();
+            Mail::to($tiket?->user?->email)
+                ->send(new TicketRejected($tiket));
             return redirect()->back()->with('succes', 'Tiket telah ditolak.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error($e);
+            dd($e);
             return redirect()->back()->with('error', 'Oops, Gagal Memperbarui Data!.');
         }
     }

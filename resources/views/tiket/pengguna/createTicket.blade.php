@@ -36,7 +36,7 @@ default => ''
                                 <div class="mb-3">
                                     <div class="form-group">
                                         <label class="form-label">Aplikasi Yang Digunakan<span class="text-danger">*</span></label>
-                                        <select class="form-select form-control" aria-label="Default select example" name="id_aplikasi" id="id_aplikasi">
+                                        <select class="form-select form-control @error('id_aplikasi') is-invalid @enderror" aria-label="Default select example" name="id_aplikasi" id="id_aplikasi">
                                             <option selected>Pilih Ruang Lingkup</option>
                                             @foreach($aplikasi as $s)
                                             <option value="{{$s->id}}">{{$s->name}}</option>
@@ -80,6 +80,9 @@ default => ''
                                             Maks: {{ config('upload.file.max.image') }} KB
                                         </small>
                                     </div>
+                                    @error('file')
+                                    <small class="text-danger">{{ $message }}</small>
+                                    @enderror
                                 </div>
                             </div>
                         </div>

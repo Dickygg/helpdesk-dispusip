@@ -265,13 +265,13 @@
                 </div>
 
             </div>
-            <!-- Reopen total -->
+            <!-- closed total -->
             <div class="col-lg col-md-4 col-sm-12 mb-0 mb-sm-4">
 
                 <div class="card border-0 shadow-sm rounded-4 card-filter">
                     <div class="card-body d-flex align-items-center">
-                        <div class="bg-danger bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
-                            <i class="bi bi-arrow-repeat text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
+                        <div class="bg-secondary bg-opacity-10 p-2 shadow-sm" style="width: 45px; height:45px; border-radius:20px; margin-right:7px;">
+                            <i class="bi bi-lock text-light d-flex justify-content-center align-items-center" style="font-size: 1.3rem; margin-top: 4px;"></i>
                         </div>
                         <div>
                             <div class="text-secondary title-cardtiket">Tiket Closed</div>
