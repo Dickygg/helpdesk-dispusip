@@ -211,7 +211,7 @@ class TicketAdminController extends Controller
             return redirect()->back()->with('error', 'Oops, Tiket Ini Belum Mempunyai Prioritas!.');
         }
         $rules = [
-            'priority_id' => [
+            'priority_id_escalate' => [
                 'required',
                 Rule::notIn([$tiket->priority_id])
             ]
@@ -219,8 +219,8 @@ class TicketAdminController extends Controller
 
 
         $messages = [
-            'priority_id.required' => 'Mohon Tentukan Pioritas Tiket Terlebih Dahulu!',
-            'priority_id.not_in' => 'Tidak bisa memilih prioritas yang sama dengan sekarang!'
+            'priority_id_escalate.required' => 'Mohon Tentukan Pioritas Tiket Terlebih Dahulu!',
+            'priority_id_escalate.not_in' => 'Tidak bisa memilih prioritas yang sama dengan sekarang!'
 
         ];
 
@@ -230,7 +230,7 @@ class TicketAdminController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $newpriority = TicketPriorityModels::findOrFail($request->priority_id);
+        $newpriority = TicketPriorityModels::findOrFail($request->priority_id_escalate);
         $oldpiority = $tiket->priority?->name;
         if (!$tiket) {
             abort(404);
@@ -238,7 +238,7 @@ class TicketAdminController extends Controller
         DB::beginTransaction();
         try {
             $tiket->update([
-                'priority_id' => $request->priority_id,
+                'priority_id' => $request->priority_id_escalate,
                 'due_date' => $tiket->assignment?->assigned_at
                     ->copy()
                     ->addHours($newpriority->estimated_hours)
@@ -273,7 +273,7 @@ class TicketAdminController extends Controller
             return redirect()->back()->with('error', 'Oops, Status Tiket Belum Resolved!.');
         }
         if (!$this->cekUserverified($tiket)) {
-            return redirect()->back()->with('error', 'Oops, Pengguna Belum ConfirmasiTiket!.');
+            return redirect()->back()->with('error', 'Oops, Pengguna Belum Konfirmasi Tiket!.');
         }
 
 

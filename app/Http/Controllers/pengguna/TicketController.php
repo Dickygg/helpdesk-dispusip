@@ -270,7 +270,7 @@ class TicketController extends Controller
         if (in_array($tiket->status, ['Rejected', 'Closed', 'Cancel'])) {
             return redirect()->back()->with('error', 'Oops, Tiket Sudah Ditutup!.');
         } elseif ($tiket->status !== 'Open') {
-            return redirect()->back()->with('error', 'Oops, Tiket Sudah Mulai Dikerjakan!.');
+            return redirect()->back()->with('error', 'Oops, Tiket Sudah Mulai Diproses!.');
         }
 
         $oldStatus = $tiket->status;

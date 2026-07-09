@@ -41,7 +41,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                $this->loginField => 'Username tidak ditemukan.',
+                $this->loginField => 'Username atau NRK tidak ditemukan.',
             ]);
         }
 

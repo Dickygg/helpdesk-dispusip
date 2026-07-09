@@ -67,7 +67,6 @@
                                                 name="username"
                                                 value="{{ old('username') }}"
                                                 placeholder="Masukkan Username"
-                                                required
                                                 autofocus>
 
                                             @error('username')
@@ -92,8 +91,7 @@
                                                 type="password"
                                                 class="form-control @error('password') is-invalid @enderror"
                                                 name="password"
-                                                placeholder="Masukkan Password"
-                                                required>
+                                                placeholder="Masukkan Password">
 
                                             @error('password')
                                             <div class="invalid-feedback">
