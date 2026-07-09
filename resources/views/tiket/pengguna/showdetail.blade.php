@@ -45,8 +45,8 @@ default => ''
 };
 
 $backs = match(true) {
-auth()->user()->hasRole('super admin') => 'sa.tiket.index',
-auth()->user()->hasRole('admin helpdesk') => 'admin.tiket.data',
+auth()->user()->hasRole('super admin') => 'sa.admin.tiket.index',
+auth()->user()->hasRole('admin helpdesk') => 'admin.tiket.index',
 default => 'tiket.index'
 };
 
