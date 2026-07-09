@@ -36,6 +36,7 @@
         },
         "files": [
             "app/Helpers/TelegramHelper.php",
+            "app/Helpers/TelegramGroupHelper.php",
             "app/Helpers/ActivityHelper.php"
         ]
     },

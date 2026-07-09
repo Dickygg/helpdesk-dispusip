@@ -117,6 +117,7 @@ class TicketController extends Controller
                     "📅 Tanggal: {$tiket->created_at}\n"
             );
 
+
             $role = $user->roles->first()->name; // ← ambil nama role dulu
 
             return match ($role) {
@@ -217,6 +218,14 @@ class TicketController extends Controller
                 "📢 *Pemberitahuan Tiket*\n" .
                     "⚡ Code Tiket: {$data->ticket_code}\n" .
                     "📢 Pemberitahuan: Pengguna Menolak Konfrimasi Tiket.!.\n"
+            );
+            sendgroupTelegram(
+                "📢 *Assignment Ditolak Pengguna*\n" .
+                    "⚡ Code Tiket: {$data->ticket_code}\n" .
+                    "👤 Petugas: {$data->assignment->technician->name}\n" .
+                    "📝 Judul: {$data->title}\n" .
+                    "🖥 Aplikasi: {$data->application->name}\n" .
+                    "📅 Deadline: {$data->due_date}\n"
             );
             $user     = Auth::user();
             $role = $user->roles->first()->name; // ← ambil nama role dulu

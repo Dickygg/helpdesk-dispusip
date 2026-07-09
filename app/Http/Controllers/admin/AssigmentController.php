@@ -112,6 +112,15 @@ class AssigmentController extends Controller
                 after: ['status' => $tiket->status],
             );
             DB::commit();
+            $tiket->refresh();
+            sendgroupTelegram(
+                "📢 *Assignment Baru*\n" .
+                    "⚡ Code Tiket: {$tiket->ticket_code}\n" .
+                    "👤 Petugas: {$tiket->assignment->technician->name}\n" .
+                    "📝 Judul: {$tiket->title}\n" .
+                    "🖥 Aplikasi: {$tiket->application->name}\n" .
+                    "📅 Deadline: {$tiket->due_date}\n"
+            );
             return redirect()->back()->with('success', 'Petugas berhasil di-assign.');
         } catch (\Exception $e) {
             DB::rollBack();
