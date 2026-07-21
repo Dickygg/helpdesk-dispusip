@@ -18,9 +18,9 @@
     .login-banner {
         min-height: 700px;
 
-        background-image:url('{{ asset("sb-admin/img/imageLogin.png") }}');
+        background-image:url('{{ asset("sb-admin/img/Login-image.png") }}');
         background-size: cover;
-        background-position: center;
+        background-position: top;
         background-repeat: no-repeat;
     }
 </style>

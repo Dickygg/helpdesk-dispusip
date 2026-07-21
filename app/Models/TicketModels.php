@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Support\Str;
 
 class TicketModels extends BaseModel
 {
@@ -60,21 +61,59 @@ class TicketModels extends BaseModel
         });
     }
 
-    public static function generateCode()
+    /**
+     * Generate kode tiket unik (uppercase, alfanumerik, dijamin ada huruf & angka).
+     *
+     * @param  int  $length
+     * @return string
+     *
+     * @throws \RuntimeException Jika gagal menghasilkan kode unik setelah beberapa kali percobaan.
+     */
+    public static function generateCode(int $length = 8): string
     {
-        return \DB::transaction(function () {
-            $today = now()->format('Ymd');
+        $maxAttempts = 10;
+        $attempt = 0;
 
-            $lastNumber = self::lockForUpdate()
-                ->selectRaw('MAX(CAST(RIGHT(ticket_code, 4) AS UNSIGNED)) as max_number')
-                ->value('max_number'); // ← tidak filter by tanggal
+        do {
+            $code = self::randomAlphaNumeric($length);
+            $attempt++;
+            if ($attempt >= $maxAttempts) {
+                throw new \RuntimeException('Gagal generate kode tiket unik setelah beberapa percobaan.');
+            }
+        } while (self::where('ticket_code', $code)->exists());
 
-            $number = $lastNumber ? $lastNumber + 1 : 1;
-
-            return 'APK-' . $today . '-' . str_pad($number, 4, '0', STR_PAD_LEFT);
-        });
+        return $code;
     }
 
+    /**
+     * Helper: generate string acak yang dijamin mengandung huruf & angka.
+     */
+    protected static function randomAlphaNumeric(int $length): string
+    {
+        $letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $numbers = '0123456789';
+        $all = $letters . $numbers;
+
+        // Pastikan minimal 1 huruf dan 1 angka
+        $code = $letters[random_int(0, strlen($letters) - 1)]
+            . $numbers[random_int(0, strlen($numbers) - 1)];
+
+        // Isi sisa karakter secara acak dari gabungan huruf+angka
+        for ($i = 2; $i < $length; $i++) {
+            $code .= $all[random_int(0, strlen($all) - 1)];
+        }
+
+        // Acak urutan karakternya biar posisi huruf/angka tidak selalu di depan
+        return str_shuffle($code);
+    }
+
+    // public static function generateCode()
+    // {
+    //     do {
+    //         $code = strtoupper(Str::random(8));
+    //     } while ((TicketModels::where('ticket_code', $code)->exists()));
+    //     return $code;
+    // }
     // App\Models\Ticket.php
 
     public function getKinerjaAttribute(): array
