@@ -544,9 +544,62 @@
     </div>
 </div>
 
+<!-- modal alert email -->
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel"
+    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
 
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="profileModalLabel" style="color: white;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Lengkapi Profil Anda
+                </h5>
+            </div>
+
+            <div class="modal-body">
+                <p class="mb-2">
+                    Alamat email Anda belum diisi.
+                </p>
+
+                <p class="mb-0">
+                    Silakan lengkapi alamat email pada menu <strong>Profil</strong> agar Anda dapat menerima notifikasi terkait Tiket Anda.
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <a href="{{ route('profile.index') }}" class="btn btn-primary">
+                    <i class="fas fa-user-edit me-1"></i>
+                    Lengkapi Profil
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
 @push('scripts')
 
+
+
+@php
+$showProfileModal = auth()->check() && empty(auth()->user()->email);
+@endphp
+<script>
+    $(function() {
+
+        let showProfileModal = @json($showProfileModal);
+
+        if (showProfileModal) {
+            $('#profileModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+        } else {
+            $('#infoModal').modal('show');
+        }
+
+    });
+</script>
 <script>
     function updateGreeting() {
         const jam = new Date().getHours();
@@ -569,10 +622,9 @@
     setInterval(updateGreeting, 3600000); // update tiap 1 menit
 
 
-
-    $(document).ready(function() {
-        $('#infoModal').modal('show');
-    });
+    // $(document).ready(function() {
+    //     $('#infoModal').modal('show');
+    // });
 
     document.addEventListener('DOMContentLoaded', function() {
 

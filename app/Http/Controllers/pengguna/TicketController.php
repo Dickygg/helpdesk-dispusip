@@ -55,6 +55,9 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         abort_if(Auth::user()->cannot('tiket.store'), 403);
+
+
+
         $request->validate([
             'title'       => 'required|min:3|max:50',
             'description' => 'required',
@@ -73,6 +76,9 @@ class TicketController extends Controller
         ]);
 
         $user     = Auth::user();
+        if (!$user->email) {
+            return redirect()->back()->withInput()->with('error', 'Oops, Email Anda belum diisi. Silakan lengkapi alamat email pada menu Profil terlebih dahulu.');
+        }
         $aplikasi = ApplicationModels::findOrFail($request->id_aplikasi);
         $path     = config('upload.file.path.' . strtolower($aplikasi->name));
 
@@ -122,7 +128,7 @@ class TicketController extends Controller
 
             return match ($role) {
                 'super admin' => redirect()->route('sa.tiket.index')->with('success', 'Tiket berhasil dibuat!'),
-                'admin helpdesk'       => redirect()->route('admin.tiket.data')->with('success', 'Tiket berhasil dibuat!'),
+                'admin helpdesk' => redirect()->route('admin.tiket.data')->with('success', 'Tiket berhasil dibuat!'),
                 default       => redirect()->route('tiket.index')->with('success', 'Tiket berhasil dibuat!'),
             };
         } catch (\Exception $e) {
