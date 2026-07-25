@@ -130,6 +130,7 @@ Route::middleware(['auth', 'role:admin helpdesk'])->group(function () {
     Route::get('admin/tiket/data', [TicketController::class, 'index'])->name('admin.tiket.data');
     Route::post('admin/tiket', [TicketController::class, 'store'])->name('admin.tiket.store');
     Route::get('admin/tiket/history', [TicketController::class, 'historyTicket'])->name('admin.tiket.history');
+    Route::put('admin/tiket/closeAlltiket', [TicketAdminController::class, 'closeAlltiket'])->name('admin.tiket.closeAlltiket');
     Route::get('admin/tiket/canceltiket/{tiket}', [TicketController::class, 'cancelTicket'])->name('admin.tiket.cancelTicket');
     Route::get('admin/tiket/create', [TicketController::class, 'create'])->name('admin.tiket.create');
     Route::post('admin/tiket/konfirmasi/{tiket}', [TicketController::class, 'konfirmasi'])->name('admin.tiket.konfirmasi');
@@ -149,6 +150,7 @@ Route::middleware(['auth', 'role:admin helpdesk'])->group(function () {
     Route::post('admin/tiket/assignment/{tiket}', [AssigmentController::class, 'assignment'])->name('admin.tiket.assignment');
     Route::put('admin/tiket/updatePiority/{tiket}', [TicketAdminController::class, 'updatePiorityTiket'])->name('admin.tiket.updatePiority');
     Route::get('admin/tiket/closeTiket/{tiket}', [TicketAdminController::class, 'closeTiket'])->name('admin.tiket.closeTiket');
+
 
     Route::get('admin/tiket/{tiket}', [TicketController::class, 'show'])->name('admin.tiket.show');
 

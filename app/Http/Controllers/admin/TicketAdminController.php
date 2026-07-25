@@ -365,6 +365,32 @@ class TicketAdminController extends Controller
         );
     }
 
+    public function closeAlltiket()
+    {
+        $user = Auth::user()->id;
+        DB::beginTransaction();
+        try {
+            $tikets = TicketModels::where('status', 'Resolved')->get();
+
+            foreach ($tikets as $tiket) {
+                $tiket->update([
+                    'status' => 'Closed',
+                    'closed_at' => now(),
+                    'closed_by' => $user,
+                ]);
+
+                ActivityHelper::logclosedtiket($tiket);
+            }
+            DB::commit();
+            return redirect()->back()->with('success', 'Tiket Berhasil DiClosed!.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e);
+            dd($e);
+            return redirect()->back()->with('error', 'Oops, Tiket Tidak Berhasil diClosed!.');
+        }
+    }
+
     private function Getdata(Request $request)
     {
         return TicketModels::with(['user' => function ($query) {

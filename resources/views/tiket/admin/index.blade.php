@@ -249,7 +249,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
 
     <div class="row">
         <!-- Total Ticket -->
-        <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
+        <div class="col-lg col-md-4 col-sm-12 mb-2 mb-lg-0">
             <a href="{{ route($prefix . 'admin.tiket.index') }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ !request('status') ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
@@ -266,7 +266,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
             </a>
         </div>
         <!-- Open -->
-        <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
+        <div class="col-lg col-md-4 col-sm-12 mb-2 mb-lg-3">
             <a href="{{ route($prefix . 'admin.tiket.index', array_merge(request()->query(), ['status' => 'Open'])) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Open' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
@@ -283,7 +283,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
             </a>
         </div>
         <!-- Accept -->
-        <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
+        <div class="col-lg col-md-4 col-sm-12  mb-2 mb-lg-3">
             <a href="{{ route($prefix . 'admin.tiket.index', array_merge(request()->query(), ['status' => 'Accept'])) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Accept' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
@@ -300,7 +300,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
             </a>
         </div>
         <!-- Assigned -->
-        <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
+        <div class="col-lg col-md-4 col-sm-12  mb-2 mb-lg-3">
             <a href="{{ route($prefix . 'admin.tiket.index', array_merge(request()->query(), ['status' => 'Assigned'])) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Assigned' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
@@ -317,7 +317,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
             </a>
         </div>
         <!-- In Progress -->
-        <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
+        <div class="col-lg col-md-4 col-sm-12 mb-2 mb-lg-3">
             <a href="{{ route($prefix . 'admin.tiket.index', array_merge(request()->query(), ['status' => 'In Progress'])) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'In Progress' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
@@ -334,7 +334,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
             </a>
         </div>
         <!-- Resolved -->
-        <div class="col-lg col-md-4 col-sm-12 mb-0 mb-md-4">
+        <div class="col-lg col-md-4 col-sm-12 mb-2 mb-lg-3">
             <a href="{{ route($prefix . 'admin.tiket.index', array_merge(request()->query(), ['status' => 'Resolved'])) }}" class="text-decoration-none">
                 <div class="card border-0 shadow-sm rounded-4 card-filter {{ request('status') == 'Resolved' ? 'active' : '' }}">
                     <div class="card-body d-flex align-items-center">
@@ -352,11 +352,12 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
         </div>
     </div>
 
-    <form action="{{ route($prefix . 'admin.tiket.index')}}" method="GET">
-        <div class="row">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm rounded-4 mb-4">
-                    <div class="card-body p-4">
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <form action="{{ route($prefix . 'admin.tiket.index')}}" method="GET">
                         <div class="row align-items-end g-3">
                             <!-- Tanggal Dari -->
                             <div class="col-lg-3 col-md-6">
@@ -425,32 +426,44 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                 @enderror
                             </div>
                             <!-- Tombol -->
-                            <div class="col-lg col-md-12 d-flex justify-content-end mt-md-2">
+                            <div class="col-lg col-md-12 d-flex justify-content-end mt-2 mt-md-0">
                                 <div class="d-grid gap-2">
                                     <button type="submit"
                                         class="btn btn-primary rounded-3 shadow-sm">
                                         <i class="bi bi-funnel me-1"></i>
                                         Filter
                                     </button>
+                                    <a href="{{route('admin.tiket.index')}}"
+                                        class="btn btn-outline-primary rounded-3 shadow-sm">
+                                        <i class="fas fa-sync-alt"></i>
+                                        Clear Filter
+                                    </a>
                                     <a href="{{ route($prefix .'admin.tiket.export', request()->query()) }}"
-                                        class="btn btn-outline-success rounded-3 shadow-sm">
+                                        class="btn btn-outline-success rounded-3 shadow-sm mt-2 mt-sm-0">
                                         <i class="bi bi-download me-1"></i>
                                         Export PDF
                                     </a>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
-    </form>
+    </div>
+
 
     <div class="row">
         <div class="col-12">
             <div class="card shadow-md mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold text-primary">Dispusip<span class="text-info">Helpdesk.</span></h6>
+                    <form id="closeAllForm" action="{{ route('admin.tiket.closeAlltiket') }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                    </form>
+
+                    <button class="btn btn-sm btn-outline-danger" type="button" onclick="confirmCloseAll()">Close All Tiket</button>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -567,5 +580,21 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
 </div>
 
 @push('scripts')
+<Script>
+    function confirmCloseAll() {
+        Swal.fire({
+            title: 'Yakin close semua tiket?',
+            text: 'Semua tiket yang Sudah Resolved akan ditutup.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, close semua',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('closeAllForm').submit();
+            }
+        });
+    }
+</Script>
 @endpush
 @endsection
