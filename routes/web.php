@@ -99,6 +99,7 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
     Route::get('super-admin/admin/tiket/exporthistory', [TicketAdminController::class, 'exporthistory'])
         ->name('sa.admin.tiket.exporthistory');
     Route::resource('super-admin/admin/tiket', TicketAdminController::class)->names('sa.admin.tiket');
+    Route::put('super-admin/tiket/closeAlltiket', [TicketAdminController::class, 'closeAlltiket'])->name('sa.admin.tiket.closeAlltiket');
     Route::get('super-admin/admin/tiket/proses/{tiket}', [TicketAdminController::class, 'SiteprosesTiket'])->name('sa.admin.tiket.proses');
     Route::put('super-admin/admin/tiket/rejected/{tiket}', [TicketAdminController::class, 'rejectVerificationAdmin'])->name('sa.admin.tiket.rejected');
     Route::put('super-admin/admin/tiket/verification/{tiket}', [TicketAdminController::class, 'VerificationAdmin'])->name('sa.admin.tiket.verification');

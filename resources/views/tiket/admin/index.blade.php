@@ -458,7 +458,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
             <div class="card shadow-md mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h6 class="m-0 font-weight-bold text-primary">Dispusip<span class="text-info">Helpdesk.</span></h6>
-                    <form id="closeAllForm" action="{{ route('admin.tiket.closeAlltiket') }}" method="POST">
+                    <form id="closeAllForm" action="{{ route($prefix.'admin.tiket.closeAlltiket') }}" method="POST">
                         @csrf
                         @method('PUT')
                     </form>
