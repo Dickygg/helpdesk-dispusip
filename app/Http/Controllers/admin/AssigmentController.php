@@ -72,6 +72,12 @@ class AssigmentController extends Controller
         abort_if(Auth::user()->cannot('tiket.admin.assignment'), 403);
 
 
+        $tiket   = TicketModels::findOrFail($id);
+
+        if ($tiket->admin_verified_at == NULL) {
+            return redirect()->back()->with('error', 'Tiket ini Belum Di verifikasi!.');
+        }
+
         $rules = [
             'user_id' => 'required'
         ];
@@ -86,7 +92,7 @@ class AssigmentController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $tiket   = TicketModels::findOrFail($id);
+
         if (in_array($tiket->status, ['Rejected', 'Closed'])) {
             return redirect()->back()->with('error', 'Tiket ini sudah ditutup atau Ditolak dan tidak dapat diubah.');
         }
