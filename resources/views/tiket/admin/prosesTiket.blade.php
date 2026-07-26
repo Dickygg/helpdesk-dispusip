@@ -599,13 +599,13 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                     <input type="hidden" name="status" value="true">
                     <div class="form-group">
                         <label class="form-label">Pioritas Tiket<span class="text-danger">*</span></label>
-                        <select class="form-select form-control" aria-label="Default select example" name="priority_id" id="priority_id">
+                        <select class="form-select form-control" aria-label="Default select example" name="priority_id_escalate" id="priority_id_escalate">
                             <option value="" selected disabled>---- Pilih Prioritas ----</option>
                             @foreach($piority as $s)
                             <option value="{{$s->id}}">{{$s->name}} ({{$s->estimated_hours}} Jam) {{ $tiket->priority_id == $s->id ? '(Aktif)' : '' }}</option>
                             @endforeach
                         </select>
-                        @error('priority_id')
+                        @error('priority_id_escalate')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
@@ -670,6 +670,13 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
 <Script>
     $(window).on('load', function() {
         $('#PiorityModal').modal('show');
+    });
+</script>
+@endif
+@if($errors->has('priority_id_escalate'))
+<Script>
+    $(window).on('load', function() {
+        $('#PiorityUpdateModal').modal('show');
     });
 </script>
 @endif
