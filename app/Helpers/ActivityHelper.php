@@ -65,9 +65,16 @@ class ActivityHelper
         );
     }
 
-    public static function logAssign(Model $model, array $before, array $after): void
+    public static function logAssign(Model $model, array $before, array $after,): void
     {
         self::log($model, 'Tiket Diassign', 'Assigned', [
+            'before' => $before,
+            'after' => $after,
+        ]);
+    }
+    public static function logreAssign(Model $model, array $before, array $after,): void
+    {
+        self::log($model, 'Petugas Diubah', 'Reassigned', [
             'before' => $before,
             'after' => $after,
         ]);

@@ -267,6 +267,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                                 <div class="row">
 
                                                     <div class="col-md-12">
+                                                        @if(!$tiket->assignment)
                                                         <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:2px;">*Assign Petugas</div>
                                                         <div class="text-secondary" style="font-size: 0.65rem; font-weight: bold; margin:0;">Lakukan Pemilihan Petugas Teknis.</div>
                                                         <div class="mt-2">
@@ -275,7 +276,6 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                                                 @method('POST')
                                                                 <input type="hidden" value="{{$tiket->id}}" name="ticket_id">
                                                                 <div class="row align-items-end">
-                                                                    @if(!$tiket->assignment)
                                                                     <div class="col-6">
                                                                         <select class="form-select form-control" name="user_id" id="user_id" style="min-width: 180px;">
                                                                             <option value="" selected disabled>---- Pilih Petugas ----</option>
@@ -288,19 +288,30 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                                                         @enderror
 
                                                                     </div>
-                                                                    <div class="col-6 d-flex justify-content-end">
+                                                                    <div class="col-12 col-sm-6 mt-2 mt-sm-0 d-flex justify-content-start justify-content-sm-end">
                                                                         <button type="submit" class="btn btn-sm btn-primary">
                                                                             <i class="bi bi-person-check"></i> Assign Sekarang
                                                                         </button>
                                                                     </div>
-                                                                    @else
-                                                                    <div class="col-6">
-                                                                        <input type="text" class="form-user form-control" value="{{ $tiket->assignment?->technician?->name ?? '-' }}" disabled>
-                                                                    </div>
-                                                                    @endif
                                                                 </div>
                                                             </form>
                                                         </div>
+                                                        @else
+                                                        <div class="text-primary" style="font-size: 0.85rem; font-weight: bold; margin-bottom:2px;">*Perubahan Petugas Teknis</div>
+                                                        <div class="text-secondary" style="font-size: 0.65rem; font-weight: bold; margin:0;">Lakukan Perubahan Petugas Teknis.</div>
+                                                        <div class="mt-2">
+                                                            <div class="row align-items-end">
+                                                                <div class="col-6">
+                                                                    <input type="text" class="form-user form-control" value="{{ $tiket->assignment?->technician?->name ?? '-' }}" disabled>
+                                                                </div>
+                                                                <div class="col-12 col-md-6 mt-2 mt-sm-0 d-flex justify-content-start justify-content-sm-end">
+                                                                    <button data-toggle="modal" data-target="#PetugasUpdateModal" class="btn btn-sm btn-primary">
+                                                                        <i class="bi bi-person-check"></i> Update Petugas Sekarang
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
@@ -516,169 +527,217 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                     </div>
                 </div>
             </div>
-            </section>
-            <div class="modal fade" id="PiorityModal" tabindex="-1"
-                role="dialog" aria-labelledby="PiorityModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title"
-                                id="PiorityModalLabel">Tentukan Pioritas Tiket</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form action="{{ route($prefix.'admin.tiket.verification',$tiket->id)}}" method="post"
-                            enctype="multipart/form-data">
-                            @csrf
-                            @method('put')
-                            <div class="modal-body">
-                                <input type="hidden" name="status" value="true">
-                                <div class="form-group">
-                                    <label class="form-label">Pioritas Tiket<span class="text-danger">*</span></label>
-                                    <select class="form-select form-control" aria-label="Default select example" name="priority_id" id="priority_id">
-                                        <option value="" selected disabled>---- Pilih Prioritas ----</option>
-                                        @foreach($piority as $s)
-                                        <option value="{{$s->id}}">{{$s->name}} ({{$s->estimated_hours}} Jam)</option>
-                                        @endforeach
-                                    </select>
-                                    @error('priority_id')
-                                    <small class="text-danger">{{ $message }}</small>
-                                    @enderror
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Tentukan Tipe Tiket<span class="text-danger">*</span></label>
-                                    <select class="form-select form-control" aria-label="Default select example" name="ticket_type_id" id="ticket_type_id">
-                                        <option value="" selected disabled>---- Pilih Tipe Tiket ----</option>
-                                        @foreach($tikettipe as $s)
-                                        <option value="{{$s->id}}">{{$s->name}}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('ticket_type_id')
-                                    <small class="text-danger">{{ $message }}</small>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-ban"></i> Close</button>
-                                <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Tambah</button>
-                            </div>
-                        </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="PiorityModal" tabindex="-1"
+    role="dialog" aria-labelledby="PiorityModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"
+                    id="PiorityModalLabel">Tentukan Pioritas Tiket</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route($prefix.'admin.tiket.verification',$tiket->id)}}" method="post"
+                enctype="multipart/form-data">
+                @csrf
+                @method('put')
+                <div class="modal-body">
+                    <input type="hidden" name="status" value="true">
+                    <div class="form-group">
+                        <label class="form-label">Pioritas Tiket<span class="text-danger">*</span></label>
+                        <select class="form-select form-control" aria-label="Default select example" name="priority_id" id="priority_id">
+                            <option value="" selected disabled>---- Pilih Prioritas ----</option>
+                            @foreach($piority as $s)
+                            <option value="{{$s->id}}">{{$s->name}} ({{$s->estimated_hours}} Jam)</option>
+                            @endforeach
+                        </select>
+                        @error('priority_id')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tentukan Tipe Tiket<span class="text-danger">*</span></label>
+                        <select class="form-select form-control" aria-label="Default select example" name="ticket_type_id" id="ticket_type_id">
+                            <option value="" selected disabled>---- Pilih Tipe Tiket ----</option>
+                            @foreach($tikettipe as $s)
+                            <option value="{{$s->id}}">{{$s->name}}</option>
+                            @endforeach
+                        </select>
+                        @error('ticket_type_id')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-ban"></i> Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Tambah</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="PiorityUpdateModal" tabindex="-1"
+    role="dialog" aria-labelledby="PiorityUpdateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"
+                    id="PiorityUpdateModalLabel">Update Pioritas Tiket</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="modal fade" id="PiorityUpdateModal" tabindex="-1"
-                role="dialog" aria-labelledby="PiorityUpdateModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title"
-                                id="PiorityUpdateModalLabel">Update Pioritas Tiket</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form action="{{route($prefix.'admin.tiket.updatePiority',$tiket->id)}}" method="post"
-                            enctype="multipart/form-data">
-                            @csrf
-                            @method('put')
-                            <div class="modal-body">
-                                <input type="hidden" name="status" value="true">
-                                <div class="form-group">
-                                    <label class="form-label">Pioritas Tiket<span class="text-danger">*</span></label>
-                                    <select class="form-select form-control" aria-label="Default select example" name="priority_id" id="priority_id">
-                                        <option value="" selected disabled>---- Pilih Prioritas ----</option>
-                                        @foreach($piority as $s)
-                                        <option value="{{$s->id}}">{{$s->name}} ({{$s->estimated_hours}} Jam) {{ $tiket->priority_id == $s->id ? '(Aktif)' : '' }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('priority_id')
-                                    <small class="text-danger">{{ $message }}</small>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-ban"></i> Close</button>
-                                <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Tambah</button>
-                            </div>
-                        </form>
+            <form action="{{route($prefix.'admin.tiket.updatePiority',$tiket->id)}}" method="post"
+                enctype="multipart/form-data">
+                @csrf
+                @method('put')
+                <div class="modal-body">
+                    <input type="hidden" name="status" value="true">
+                    <div class="form-group">
+                        <label class="form-label">Pioritas Tiket<span class="text-danger">*</span></label>
+                        <select class="form-select form-control" aria-label="Default select example" name="priority_id" id="priority_id">
+                            <option value="" selected disabled>---- Pilih Prioritas ----</option>
+                            @foreach($piority as $s)
+                            <option value="{{$s->id}}">{{$s->name}} ({{$s->estimated_hours}} Jam) {{ $tiket->priority_id == $s->id ? '(Aktif)' : '' }}</option>
+                            @endforeach
+                        </select>
+                        @error('priority_id')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-ban"></i> Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Tambah</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="PetugasUpdateModal" tabindex="-1"
+    role="dialog" aria-labelledby="PetugasUpdateModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"
+                    id="PetugasUpdateModalLabel">Update Petugas Teknis</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            @push('scripts')
-            <script>
-                document.getElementById('btnTolak').addEventListener('click', function() {
-                    document.getElementById('noteSection').style.display = 'block';
-                });
-                document.getElementById('btnBatal').addEventListener('click', function() {
-                    document.getElementById('noteSection').style.display = 'none';
-                });
-            </script>
-            @if($errors->has('priority_id'))
-            <Script>
-                $(window).on('load', function() {
-                    $('#PiorityModal').modal('show');
-                });
-            </script>
-            @endif
-            @if($errors->has('note'))
-            <script>
-                document.getElementById('noteSection').style.display = 'block';
-            </script>
-            @endif
+            <form action="{{route($prefix.'admin.tiket.reassignment',$tiket->id)}}" method="post"
+                enctype="multipart/form-data">
+                @csrf
+                @method('put')
+                <div class="modal-body">
+                    <input type="hidden" name="status" value="true">
+                    <div class="form-group">
+                        <label class="form-label">Petugas Teknis<span class="text-danger">*</span></label>
+                        <select class="form-select form-control" name="user_id_update" id="user_id_update" style="min-width: 180px;">
+                            <option value="" selected disabled>---- Pilih Petugas ----</option>
+                            @foreach($petugas as $s)
+                            <option value="{{ $s->id }}">{{ $s->username }}</option>
+                            @endforeach
+                        </select>
+                        @error('user_id_update')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-ban"></i> Close</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Tambah</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@push('scripts')
+<script>
+    document.getElementById('btnTolak').addEventListener('click', function() {
+        document.getElementById('noteSection').style.display = 'block';
+    });
+    document.getElementById('btnBatal').addEventListener('click', function() {
+        document.getElementById('noteSection').style.display = 'none';
+    });
+</script>
+@if($errors->has('priority_id'))
+<Script>
+    $(window).on('load', function() {
+        $('#PiorityModal').modal('show');
+    });
+</script>
+@endif
+@if($errors->has('user_id_update'))
+<Script>
+    $(window).on('load', function() {
+        $('#PetugasUpdateModal').modal('show');
+    });
+</script>
+@endif
+@if($errors->has('note'))
+<script>
+    document.getElementById('noteSection').style.display = 'block';
+</script>
+@endif
 
-            <script>
-                const ticketCode = "{{ $tiket->ticket_code }}";
-                async function downloadPDF() {
-                    const element = document.getElementById('section-print');
+<script>
+    const ticketCode = "{{ $tiket->ticket_code }}";
+    async function downloadPDF() {
+        const element = document.getElementById('section-print');
 
-                    const canvas = await html2canvas(element, {
-                        scale: 2, // kualitas lebih tinggi
-                        useCORS: true, // izinkan asset eksternal
-                        allowTaint: true,
-                        backgroundColor: '#ffffff'
-                    });
+        const canvas = await html2canvas(element, {
+            scale: 2, // kualitas lebih tinggi
+            useCORS: true, // izinkan asset eksternal
+            allowTaint: true,
+            backgroundColor: '#ffffff'
+        });
 
-                    const imgData = canvas.toDataURL('image/png');
-                    const {
-                        jsPDF
-                    } = window.jspdf;
+        const imgData = canvas.toDataURL('image/png');
+        const {
+            jsPDF
+        } = window.jspdf;
 
-                    const pdf = new jsPDF({
-                        orientation: 'portrait',
-                        unit: 'mm',
-                        format: 'a4'
-                    });
+        const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
 
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
-                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                    pdf.save(`Proses_Tiket_${ticketCode}.pdf`);
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(`Proses_Tiket_${ticketCode}.pdf`);
+    }
+
+    // hide activity
+    function toggleLogs(btn) {
+        const hiddenLogs = document.querySelectorAll('.log-hidden, .log-item.log-visible-extra');
+
+        const isHidden = document.querySelector('.log-item:nth-child(4)') &&
+            document.querySelector('.log-item:nth-child(4)').style.display === 'none' ||
+            document.querySelector('.log-hidden') !== null;
+
+        document.querySelectorAll('.log-item').forEach((el, index) => {
+            if (index >= 3) {
+                if (el.classList.contains('log-hidden')) {
+                    el.classList.remove('log-hidden');
+                    btn.innerHTML = '<i class="fas fa-chevron-up mr-1"></i> Sembunyikan';
+                    btn.classList.replace('btn-outline-primary', 'btn-outline-secondary');
+                } else {
+                    el.classList.add('log-hidden');
+                    btn.innerHTML = '<i class="fas fa-chevron-down mr-1"></i> Selengkapnya ({{ $logs->count() - 3 }} lainnya)';
+                    btn.classList.replace('btn-outline-secondary', 'btn-outline-primary');
                 }
-
-                // hide activity
-                function toggleLogs(btn) {
-                    const hiddenLogs = document.querySelectorAll('.log-hidden, .log-item.log-visible-extra');
-
-                    const isHidden = document.querySelector('.log-item:nth-child(4)') &&
-                        document.querySelector('.log-item:nth-child(4)').style.display === 'none' ||
-                        document.querySelector('.log-hidden') !== null;
-
-                    document.querySelectorAll('.log-item').forEach((el, index) => {
-                        if (index >= 3) {
-                            if (el.classList.contains('log-hidden')) {
-                                el.classList.remove('log-hidden');
-                                btn.innerHTML = '<i class="fas fa-chevron-up mr-1"></i> Sembunyikan';
-                                btn.classList.replace('btn-outline-primary', 'btn-outline-secondary');
-                            } else {
-                                el.classList.add('log-hidden');
-                                btn.innerHTML = '<i class="fas fa-chevron-down mr-1"></i> Selengkapnya ({{ $logs->count() - 3 }} lainnya)';
-                                btn.classList.replace('btn-outline-secondary', 'btn-outline-primary');
-                            }
-                        }
-                    });
-                }
-            </script>
-            @endpush
-            @endsection
+            }
+        });
+    }
+</script>
+@endpush
+@endsection

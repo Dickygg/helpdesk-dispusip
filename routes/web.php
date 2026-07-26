@@ -104,6 +104,7 @@ Route::middleware(['auth', 'role:super admin'])->group(function () {
     Route::put('super-admin/admin/tiket/rejected/{tiket}', [TicketAdminController::class, 'rejectVerificationAdmin'])->name('sa.admin.tiket.rejected');
     Route::put('super-admin/admin/tiket/verification/{tiket}', [TicketAdminController::class, 'VerificationAdmin'])->name('sa.admin.tiket.verification');
     Route::post('super-admin/admin/tiket/assignment/{tiket}', [AssigmentController::class, 'assignment'])->name('sa.admin.tiket.assignment');
+    Route::put('super-admin/admin/tiket/reassignment/{tiket}', [AssigmentController::class, 'reassignment'])->name('sa.admin.tiket.reassignment');
     Route::put('super-admin/admin/tiket/updatePiority/{tiket}', [TicketAdminController::class, 'updatePiorityTiket'])->name('sa.admin.tiket.updatePiority');
     Route::get('super-admin/admin/tiket/closeTiket/{tiket}', [TicketAdminController::class, 'closeTiket'])->name('sa.admin.tiket.closeTiket');
 
@@ -149,6 +150,7 @@ Route::middleware(['auth', 'role:admin helpdesk'])->group(function () {
     Route::put('admin/tiket/rejected/{tiket}', [TicketAdminController::class, 'rejectVerificationAdmin'])->name('admin.tiket.rejected');
     Route::put('admin/tiket/verification/{tiket}', [TicketAdminController::class, 'VerificationAdmin'])->name('admin.tiket.verification');
     Route::post('admin/tiket/assignment/{tiket}', [AssigmentController::class, 'assignment'])->name('admin.tiket.assignment');
+    Route::put('admin/tiket/reassignment/{tiket}', [AssigmentController::class, 'reassignment'])->name('admin.tiket.reassignment');
     Route::put('admin/tiket/updatePiority/{tiket}', [TicketAdminController::class, 'updatePiorityTiket'])->name('admin.tiket.updatePiority');
     Route::get('admin/tiket/closeTiket/{tiket}', [TicketAdminController::class, 'closeTiket'])->name('admin.tiket.closeTiket');
 

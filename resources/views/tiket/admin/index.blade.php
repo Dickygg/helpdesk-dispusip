@@ -433,7 +433,7 @@ $prefix = auth()->user()->hasRole('super admin') ? 'sa.' : '';
                                         <i class="bi bi-funnel me-1"></i>
                                         Filter
                                     </button>
-                                    <a href="{{route('admin.tiket.index')}}"
+                                    <a href="{{route($prefix.'admin.tiket.index')}}"
                                         class="btn btn-outline-primary rounded-3 shadow-sm">
                                         <i class="fas fa-sync-alt"></i>
                                         Clear Filter

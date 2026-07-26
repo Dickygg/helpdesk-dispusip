@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Spatie\Activitylog\Models\Activity;
 
 class AssigmentController extends Controller
@@ -109,7 +110,7 @@ class AssigmentController extends Controller
             ActivityHelper::logAssign(
                 $tiket,
                 before: ['status' => $oldStatus],
-                after: ['status' => $tiket->status],
+                after: ['status' => $tiket->status . '- Petugas: ' . $tiket->assignment->technician?->name],
             );
             DB::commit();
             $tiket->refresh();
@@ -127,6 +128,73 @@ class AssigmentController extends Controller
             Log::error($e);
             dd($e);
             return redirect()->back()->with('error', 'Gagal melakukan assign petugas.');
+        }
+    }
+
+    public function reassignment(Request $request, string $id)
+    {
+        $tiket = TicketModels::findOrFail($id);
+        $rules = [
+            'user_id_update' => [
+                'required',
+                Rule::notIn([$tiket->assignment->user_id])
+            ]
+        ];
+
+        $messages = [
+            'user_id_update.required' => 'Petugas Teknis Belum Dipilih!.',
+            'user_id_update.not_in' => 'Tidak bisa memilih prioritas yang sama dengan sekarang!'
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        if (!$tiket->assignment) {
+            return redirect()->back()->with('error', 'Tiket ini Belum diassign!.');
+        }
+
+        if (in_array($tiket->status, ['Rejected', 'Closed', 'Resolved'])) {
+            return redirect()->back()->with('error', 'Tiket ini sudah tidak dapat diubah.');
+        }
+
+        $oldpetugas = $tiket->assignment?->technician?->name;
+        $assigned_atNEW = now();
+        DB::beginTransaction();
+        try {
+            $assignment = TicketAssignmentModels::whereTicketId($id);
+            $assignment->update([
+                'user_id' => $request->user_id_update,
+                'assigned_by' => Auth::user()->id,
+                'assigned_at' => $assigned_atNEW
+            ]);
+            $tiket->update([
+                'due_date' => $assigned_atNEW
+                    ->copy()
+                    ->addHours($tiket->priority->estimated_hours)
+            ]);
+            $tiket->refresh();
+            ActivityHelper::logreAssign(
+                $tiket,
+                before: ['Petugas Sebelumnya' => $oldpetugas],
+                after: ['Petugas Baru' => $tiket->assignment->technician->name],
+            );
+            DB::commit();
+            sendgroupTelegram(
+                "📢 *Assignment DiUpdate*\n" .
+                    "⚡ Code Tiket: {$tiket->ticket_code}\n" .
+                    "👤 Petugas Baru: {$tiket->assignment->technician->name}\n" .
+                    "👤 Petugas Lama: {$oldpetugas}\n" .
+                    "📅 Deadline: {$tiket->due_date}\n"
+            );
+            return redirect()->back()->with('success', 'Petugas berhasil di-ubah.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e);
+            dd($e);
+            return redirect()->back()->with('error', 'Gagal mengubah petugas.');
         }
     }
 
