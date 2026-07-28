@@ -252,6 +252,15 @@ class TicketAdminController extends Controller
             );
 
             DB::commit();
+            $tiket->refresh();
+            sendgroupTelegram(
+                "📢 *Assignment DiUpdate*\n" .
+                    "⚡ Code Tiket: {$tiket->ticket_code}\n" .
+                    "👤 Petuga Teknis: {$tiket->assignment->technician->name}\n" .
+                    "📅 Deadline Baru: {$tiket->due_date}\n" .
+                    "Tingkat Prioritas Baru: {$newpriority->name}\n" .
+                    "Tingkat Prioritas Lama: {$oldpiority}\n"
+            );
             return redirect()->back()->with('success', 'Pioritas Tiket telah Ditingkatkan.');
         } catch (\Exception $e) {
             DB::rollBack();
