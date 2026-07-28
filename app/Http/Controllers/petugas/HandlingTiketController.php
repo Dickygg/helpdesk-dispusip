@@ -205,7 +205,7 @@ class HandlingTiketController extends Controller
 
             DB::commit();
             Mail::to($data->ticket?->user?->email)
-                ->send(new TicketCompletedMail($data->ticket));
+                ->queue(new TicketCompletedMail($data->ticket));
             return redirect()->back()->with('success', 'Berhasil Menyelesaikan Tiket, Menunggu Pengguna Konfirmasi!.');
         } catch (\Exception $e) {
             DB::rollBack();

@@ -190,7 +190,7 @@ class TicketAdminController extends Controller
             );
             DB::commit();
             Mail::to($tiket?->user?->email)
-                ->send(new TicketRejected($tiket));
+                ->queue(new TicketRejected($tiket));
             return redirect()->back()->with('succes', 'Tiket telah ditolak.');
         } catch (\Exception $e) {
             DB::rollBack();
